@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="description" content="A colour-sorting sliding block puzzle. Every level is checked by a solver before it ships. No timers, no lives, free hints." />
+    <meta name="theme-color" content="#f4f1ea" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>Colour Jam</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Home -->
+      <section class="screen" id="screen-home">
+        <div class="stack">
+          <header class="brand">
+            <h1>Colour Jam</h1>
+            <p class="tagline">Slide every block out through a gate of its own colour.</p>
+          </header>
+          <div class="menu">
+            <button class="btn btn-primary" id="btn-continue">Play</button>
+            <button class="btn" id="btn-levels">Levels</button>
+            <button class="btn" id="btn-themes">Themes</button>
+            <button class="btn" id="btn-settings">Settings</button>
+            <button class="btn btn-quiet" id="btn-promises">Our promises</button>
+          </div>
+          <p class="footnote" id="home-progress"></p>
+        </div>
+      </section>
+
+      <!-- Level select -->
+      <section class="screen" id="screen-levels" hidden>
+        <header class="bar">
+          <button class="icon-btn" data-back aria-label="Back">←</button>
+          <h2>Levels</h2>
+          <span class="coins" id="levels-coins"></span>
+        </header>
+        <div class="level-grid" id="level-grid"></div>
+      </section>
+
+      <!-- Game -->
+      <section class="screen screen-game" id="screen-game" hidden>
+        <header class="bar">
+          <button class="icon-btn" id="btn-game-back" aria-label="Back to menu">←</button>
+          <div class="game-title">
+            <strong id="game-level">Level 1</strong>
+            <span id="game-moves">0 moves</span>
+          </div>
+          <span class="coins" id="game-coins"></span>
+        </header>
+        <div class="board-wrap">
+          <canvas id="board" aria-label="Puzzle board"></canvas>
+        </div>
+        <div class="tools">
+          <button class="tool" id="btn-undo"><span>↩</span>Undo</button>
+          <button class="tool" id="btn-hint"><span>💡</span>Hint</button>
+          <button class="tool" id="btn-restart"><span>⟳</span>Restart</button>
+        </div>
+        <p class="tool-note" id="tool-note">Undo, hints and restarts are free and unlimited.</p>
+      </section>
+
+      <!-- Themes -->
+      <section class="screen" id="screen-themes" hidden>
+        <header class="bar">
+          <button class="icon-btn" data-back aria-label="Back">←</button>
+          <h2>Themes</h2>
+          <span class="coins" id="themes-coins"></span>
+        </header>
+        <div class="panel">
+          <p class="lead">Themes are the only thing coins buy. They change how the board looks and nothing else.</p>
+          <div id="theme-list" class="theme-list"></div>
+        </div>
+      </section>
+
+      <!-- Settings -->
+      <section class="screen" id="screen-settings" hidden>
+        <header class="bar">
+          <button class="icon-btn" data-back aria-label="Back">←</button>
+          <h2>Settings</h2>
+          <span></span>
+        </header>
+        <div class="panel">
+          <label class="row"><span>Sound effects</span><input type="checkbox" id="set-sound" /></label>
+          <label class="row"><span>Music</span><input type="checkbox" id="set-music" /></label>
+          <label class="row"><span>Vibration</span><input type="checkbox" id="set-haptics" /></label>
+          <label class="row">
+            <span>Shapes on blocks<small>Colour is never the only cue</small></span>
+            <input type="checkbox" id="set-glyphs" />
+          </label>
+          <label class="row"><span>Reduce motion</span><input type="checkbox" id="set-motion" /></label>
+          <hr />
+          <button class="btn btn-quiet" id="btn-remove-ads">Remove ads</button>
+          <button class="btn btn-quiet" id="btn-restore">Restore purchases</button>
+          <button class="btn btn-danger" id="btn-reset">Reset progress</button>
+          <p class="footnote">Progress is stored on this device only. Nothing is uploaded and no account is needed.</p>
+        </div>
+      </section>
+
+      <!-- Promises -->
+      <section class="screen" id="screen-promises" hidden>
+        <header class="bar">
+          <button class="icon-btn" data-back aria-label="Back">←</button>
+          <h2>Our promises</h2>
+          <span></span>
+        </header>
+        <div class="panel">
+          <h3>Every level can be solved</h3>
+          <p class="lead">
+            Each board is built backwards from a finished position and then checked by a solver
+            before it ships. If a level could not be beaten, it never reaches you. The move count
+            shown next to <em>par</em> is a real solution we have on file.
+          </p>
+          <h3>No pressure mechanics</h3>
+          <p class="lead">
+            There are no timers, no lives, and no energy to wait for. A puzzle waits as long as you do.
+          </p>
+          <h3>Advertising</h3>
+          <ul class="promises" id="promise-list"></ul>
+        </div>
+      </section>
+
+      <!-- Win overlay -->
+      <div class="overlay" id="overlay-win" hidden>
+        <div class="card">
+          <h2 id="win-title">Level complete</h2>
+          <div class="stars" id="win-stars"></div>
+          <p id="win-detail"></p>
+          <p class="reward" id="win-reward"></p>
+          <button class="btn btn-primary" id="btn-next">Next level</button>
+          <button class="btn" id="btn-replay">Play again</button>
+          <button class="btn btn-quiet" id="btn-win-menu">Menu</button>
+        </div>
+      </div>
+
+      <!-- Generic confirm -->
+      <div class="overlay" id="overlay-confirm" hidden>
+        <div class="card">
+          <h2 id="confirm-title">Are you sure?</h2>
+          <p id="confirm-body"></p>
+          <button class="btn btn-danger" id="confirm-yes">Yes</button>
+          <button class="btn" id="confirm-no">Cancel</button>
+        </div>
+      </div>
+
+      <div class="toast" id="toast" hidden></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "colour-jam",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A colour-sorting sliding block puzzle. Every level is solver-verified before it ships.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "node --test test/",
+    "levels": "node scripts/build-levels.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  }
+}

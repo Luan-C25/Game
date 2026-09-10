@@ -1,5 +1,10 @@
 # Market Research: Replication Targets (Sept 2026)
 
+> **Decision: Color Block Jam.** The build is in this repository, and the
+> complaints listed below are mapped to the code that answers them in
+> [DESIGN.md](./DESIGN.md). Candidates 2 and 3 remain on file as alternatives.
+
+
 Goal: find a currently-trending, high-retention mobile game that a solo dev can rebuild
 with $0 tooling, ship to Google Play + web, and **improve** by fixing the things its own
 players complain about.
