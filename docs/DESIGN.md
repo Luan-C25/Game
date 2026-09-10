@@ -68,15 +68,30 @@ The look is built from geometry, not from gradients:
 
 - A tile has a **real extruded side face** - a solid darker slab drawn beneath
   it - rather than a vertical gradient pretending to be depth.
-- Its **chamfer is two strokes**, offset in opposite directions and clipped to
-  the tile so only their inner halves show: one lit edge, one shaded.
-- The glaze is a **flat colour with a fine speckle**, generated once as a
-  repeating pattern. Not a multi-stop gradient with a gloss sweep - that
-  particular shine is the clearest sign of an interface nobody designed.
-- The board floor is **recessed wells**, one per cell, each with a lit bottom
-  lip. The grid is a physical thing, not lines ruled across a surface.
+- Its top is **one smooth, solid colour** under a broad low-contrast sheen,
+  with a crisp inset rim just inside the edge for moulded thickness. No
+  speckle and no sparkle: the satisfaction comes from weight and shadow.
+- The floor is a **continuous moulded plate with rounded grooves channelled
+  between its pads**, each groove carrying a lit lower wall. Both tones are
+  derived from the floor colour, so a groove always reads as a recess in that
+  surface rather than a line drawn on top of it.
+- The frame **casts an inner shadow down into the tray**, which is what makes
+  the tiles read as sitting inside a physical object rather than floating on
+  a picture of one.
+- Exits are **cut clean through the frame**: a dark slot with its own inner
+  shadow, a painted lip seated below the frame's top face, and a solid
+  moulded arrow debossed into that lip pointing out of the tray.
+- Crates are **embossed obstacle pieces** - raised ribs, each with a lit edge
+  and a shaded one - so they never read as something you could move.
 - A block is one merged silhouette with **seams scored between its cells**, so
   it reads as a single piece while still showing how many squares it covers.
+
+The game screen's furniture is moulded from the same device: the level and
+coin readouts are **raised badges** with a lit top edge and a hard base, the
+move count is a **readout sunk into the frame**, and the controls are **caps
+that physically travel** when pressed. The primary action is a wider pill in
+the accent colour so it never reads as a third identical utility, and each
+label sits beneath its cap rather than on it.
 
 The same language carries into the chrome: solid fills, hard dark outlines, a
 real bottom edge that a press sinks into. No blurred drop shadows, no gradient

@@ -177,7 +177,7 @@ function renderThemes(): void {
     name.textContent = theme.name;
     const swatches = document.createElement('div');
     swatches.className = 'swatches';
-    for (const colour of [theme.backdrop, theme.tray, theme.well, theme.rim]) {
+    for (const colour of [theme.backdrop, theme.tray, theme.floor, theme.rim]) {
       const dot = document.createElement('span');
       dot.className = 'swatch';
       dot.style.background = colour;
@@ -260,10 +260,10 @@ function resizeCanvas(): void {
 
 function updateHud(): void {
   if (!session) return;
-  $('game-level').textContent = `Level ${currentLevelId}`;
+  $('game-level').textContent = String(currentLevelId);
   $('game-moves').textContent =
     `${session.moves} ${session.moves === 1 ? 'move' : 'moves'} · par ${session.par}`;
-  $('game-coins').textContent = `${saveData.coins} coins`;
+  $('game-coins').textContent = String(saveData.coins);
   $<HTMLButtonElement>('btn-undo').disabled = !session.canUndo();
 }
 

@@ -390,23 +390,6 @@ hr {
   gap: 10px;
 }
 
-.game-title {
-  text-align: center;
-  line-height: 1.2;
-}
-
-.game-title strong {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-}
-
-.game-title span {
-  display: block;
-  font-size: 0.82rem;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-}
-
 .board-wrap {
   flex: 1;
   min-height: 0;
@@ -428,44 +411,6 @@ hr {
   max-width: 460px;
   width: 100%;
   margin: 0 auto;
-}
-
-.tool {
-  font-family: var(--font-display);
-  border: 3px solid var(--surface-edge);
-  background: var(--surface);
-  color: var(--text);
-  border-radius: var(--radius);
-  padding: 9px 6px;
-  font: inherit;
-  font-size: 0.76rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  min-height: 60px;
-  box-shadow:
-    0 var(--lift) 0 var(--surface-edge),
-    inset 0 2px 0 rgba(255, 255, 255, 0.14);
-}
-
-.tool span {
-  font-size: 1.3rem;
-  line-height: 1.1;
-}
-
-.tool:active {
-  transform: translateY(var(--lift));
-  box-shadow: none;
-}
-
-.tool:disabled {
-  opacity: 0.4;
-  cursor: default;
-  box-shadow: none;
-  transform: none;
 }
 
 .tool-note {
@@ -818,3 +763,219 @@ hr {
   margin-top: -4px;
 }
 
+
+/* ==========================================================================
+   Game screen furniture
+   --------------------------------------------------------------------------
+   The header and the controls are moulded parts of the same device as the
+   tray: raised badges with a lit top edge and a hard base, a readout sunk
+   into the frame, and caps that physically travel when pressed. Same matte
+   satin finish throughout - no blurred shadows, no floating rectangles.
+   ========================================================================== */
+
+.game-bar {
+  align-items: center;
+}
+
+/* The badge is sized by its contents and centred in the bar, rather than
+   stretching to fill the column. */
+.game-bar .pod-level {
+  justify-self: center;
+}
+
+/* --- raised badges ----------------------------------------------------- */
+
+.pod {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border: 3px solid var(--surface-edge);
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow:
+    0 4px 0 var(--surface-edge),
+    inset 0 2px 0 rgba(255, 255, 255, 0.18);
+}
+
+.pod strong {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+}
+
+.pod-cap {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pod-level {
+  gap: 7px;
+}
+
+/* A chunky struck coin, with a thick rim and a lit upper face. */
+.coin {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  flex: none;
+  background: #ffc93d;
+  border: 3px solid #9a6510;
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -4px 0 #e0a52c,
+    0 2px 0 #7d5210;
+}
+
+/* --- recessed readout -------------------------------------------------- */
+
+.readout {
+  margin: 0 auto;
+  padding: 5px 18px;
+  border-radius: 999px;
+  background: var(--surface-edge);
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  box-shadow:
+    inset 0 3px 5px rgba(0, 0, 0, 0.45),
+    0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* --- control caps ------------------------------------------------------ */
+
+.tools {
+  display: grid;
+  /* The primary action is wider than the two utilities beside it. */
+  grid-template-columns: 1fr 1.45fr 1fr;
+  gap: 12px;
+  align-items: end;
+  max-width: 440px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.tool {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+/* The cap is the physical part; the label sits beneath it, not on it. */
+.tool-cap {
+  --cap-face: var(--surface);
+  --cap-base: var(--surface-edge);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 58px;
+  border: 3px solid var(--cap-base);
+  border-radius: 18px;
+  background: var(--cap-face);
+  color: var(--text);
+  box-shadow:
+    0 6px 0 var(--cap-base),
+    inset 0 3px 0 rgba(255, 255, 255, 0.16);
+  transition: transform 0.06s linear, box-shadow 0.06s linear;
+}
+
+.tool-name {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  line-height: 1;
+}
+
+.tool svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tool svg .solid {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* The primary action: a pill, in the accent, physically taller. */
+.tool-key .tool-cap {
+  --cap-face: var(--accent);
+  --cap-base: var(--accent-edge);
+  height: 66px;
+  border-radius: 999px;
+  color: var(--accent-ink);
+  box-shadow:
+    0 7px 0 var(--cap-base),
+    inset 0 3px 0 rgba(255, 255, 255, 0.42);
+}
+
+.tool-key .tool-name {
+  color: var(--text);
+}
+
+.tool-key svg {
+  width: 30px;
+  height: 30px;
+}
+
+.tool:active .tool-cap {
+  transform: translateY(6px);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.12);
+}
+
+.tool-key:active .tool-cap {
+  transform: translateY(7px);
+}
+
+.tool:disabled {
+  cursor: default;
+}
+
+.tool:disabled .tool-cap {
+  opacity: 0.42;
+  transform: none;
+  box-shadow: 0 6px 0 var(--cap-base);
+}
+
+.tool:disabled .tool-name {
+  opacity: 0.5;
+}
+
+.icon-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

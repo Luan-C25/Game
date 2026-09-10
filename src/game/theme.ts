@@ -28,10 +28,11 @@ export interface Theme {
   trayEdge: string;
   trayLip: string;
 
-  /** Grout between the cell wells, and the wells themselves. */
-  grout: string;
-  well: string;
-  wellLip: string;
+  /**
+   * The moulded floor plate. The grooves channelled between its pads are
+   * derived from this in the renderer, so they stay in harmony with it.
+   */
+  floor: string;
 
   /** Exit channel cut through the frame, and its metal rim. */
   channel: string;
@@ -61,9 +62,7 @@ export const THEMES: Theme[] = [
     tray: '#515f73',
     trayEdge: '#2b3342',
     trayLip: '#71819a',
-    grout: '#161a26',
-    well: '#252c3b',
-    wellLip: '#39435a',
+    floor: '#252c3b',
     channel: '#12151f',
     rim: '#aab6c8',
     crate: '#77839a',
@@ -86,9 +85,7 @@ export const THEMES: Theme[] = [
     tray: '#b98a68',
     trayEdge: '#8a604a',
     trayLip: '#d5ab8b',
-    grout: '#8d6a53',
-    well: '#e5d8c8',
-    wellLip: '#f2e9dd',
+    floor: '#e5d8c8',
     channel: '#7b5942',
     rim: '#e0c9a8',
     crate: '#a08d7a',
@@ -111,9 +108,7 @@ export const THEMES: Theme[] = [
     tray: '#343a49',
     trayEdge: '#15171f',
     trayLip: '#4e566a',
-    grout: '#0f1116',
-    well: '#1b1e26',
-    wellLip: '#262a34',
+    floor: '#1b1e26',
     channel: '#0b0d11',
     rim: '#6f7a8c',
     crate: '#565e6c',
@@ -136,9 +131,7 @@ export const THEMES: Theme[] = [
     tray: '#9fabba',
     trayEdge: '#74808f',
     trayLip: '#c4cedb',
-    grout: '#8a94a1',
-    well: '#eef1f5',
-    wellLip: '#ffffff',
+    floor: '#eef1f5',
     channel: '#6f7885',
     rim: '#dbe1e8',
     crate: '#9aa4b0',

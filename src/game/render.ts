@@ -1,12 +1,16 @@
 /**
  * Canvas renderer.
  *
- * The look is built from geometry rather than from gradients. A tile has a
- * real extruded side face under it, a chamfer drawn as two clipped strokes,
- * and a flat glaze on top - not a vertical gradient with a gloss sweep, which
- * is the thing that makes a puzzle board look generated rather than made.
+ * The board is drawn as a physical object: a moulded tray with grooves
+ * channelled between its pads, tiles that sit *inside* it with real
+ * thickness, and exits cut clean through the frame. Depth comes from
+ * geometry - extruded sides, inner shadows, lit and shaded chamfers - never
+ * from a gradient standing in for a shape.
  *
- * Two rules the styling must not break: tile colours stay fixed because they
+ * Surfaces stay smooth and colours stay solid. No speckle, no sparkle: the
+ * satisfaction is meant to come from weight and shadow, not from decoration.
+ *
+ * Two rules the styling must not break: tile colours are fixed because they
  * carry the rules, and every animation stops when "reduce motion" is on.
  */
 
@@ -38,7 +42,7 @@ export interface RenderOptions {
   particles?: Particles;
 }
 
-const WALL_RATIO = 0.34;
+const WALL_RATIO = 0.36;
 const MAX_CELL = 88;
 /** Tile thickness, as a fraction of a cell. */
 const DEPTH_RATIO = 0.13;
@@ -53,7 +57,7 @@ export function computeViewport(level: Level, widthPx: number, heightPx: number)
       Math.min(usableW / (level.width + WALL_RATIO * 2), usableH / (level.height + WALL_RATIO * 2)),
     ),
   );
-  const wall = Math.max(11, Math.round(cell * WALL_RATIO));
+  const wall = Math.max(12, Math.round(cell * WALL_RATIO));
   return {
     cell,
     wall,
@@ -101,42 +105,35 @@ function box(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: 
   roundRectPath(ctx, x, y, w, h, { tl: r, tr: r, br: r, bl: r });
 }
 
-/* ---------------------------------------------------------------- texture */
-
 /**
- * A speckle tile, built once and reused as a fill pattern. It is what stops
- * a flat colour reading as flat vector art - a ceramic glaze is never a
- * perfectly even field.
+ * Casts a shadow *inwards* from the edge of a shape: fill everything outside
+ * the shape while clipped to the inside, so only the blur bleeds in. This is
+ * what makes the tiles read as sitting down inside the tray.
  */
-let speckle: CanvasPattern | null = null;
+function innerShadow(
+  ctx: CanvasRenderingContext2D,
+  append: () => void,
+  blur: number,
+  offsetY: number,
+  colour: string,
+): void {
+  ctx.save();
+  ctx.beginPath();
+  append();
+  ctx.clip();
 
-function specklePattern(ctx: CanvasRenderingContext2D): CanvasPattern | null {
-  if (speckle) return speckle;
-  const size = 64;
-  const tile = document.createElement('canvas');
-  tile.width = size;
-  tile.height = size;
-  const tctx = tile.getContext('2d');
-  if (!tctx) return null;
-
-  // Deterministic noise, so the glaze does not shimmer between frames.
-  let seed = 0x9e3779b9;
-  const rand = (): number => {
-    seed = (seed + 0x6d2b79f5) >>> 0;
-    let t = seed;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-
-  for (let i = 0; i < 900; i++) {
-    const light = rand() > 0.5;
-    tctx.fillStyle = light ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
-    tctx.fillRect(rand() * size, rand() * size, 1, 1);
-  }
-
-  speckle = ctx.createPattern(tile, 'repeat');
-  return speckle;
+  // Fill everything *outside* the shape while clipped to the inside, so only
+  // the blur bleeds in. `append` must add a subpath without resetting the
+  // path, or the outer rectangle is lost and this fills solid.
+  ctx.beginPath();
+  ctx.rect(-2000, -2000, 6000, 6000);
+  append();
+  ctx.shadowColor = colour;
+  ctx.shadowBlur = blur;
+  ctx.shadowOffsetY = offsetY;
+  ctx.fillStyle = 'rgba(0,0,0,1)';
+  ctx.fill('evenodd');
+  ctx.restore();
 }
 
 /* ------------------------------------------------------------------ board */
@@ -145,73 +142,181 @@ function drawTray(ctx: CanvasRenderingContext2D, level: Level, vp: Viewport, the
   const { cell, wall, originX, originY } = vp;
   const boardW = level.width * cell;
   const boardH = level.height * cell;
-  const radius = Math.round(wall * 0.7);
-  const depth = Math.max(4, Math.round(wall * 0.34));
+  const outer = Math.round(wall * 0.72);
+  const slab = Math.max(5, Math.round(wall * 0.38));
 
-  // The tray has a thickness of its own: a dark slab behind the face.
+  // The tray is a moulded part with thickness: a dark under-slab, then the
+  // satin face on top of it.
   ctx.fillStyle = theme.trayEdge;
-  box(ctx, originX - wall, originY - wall + depth, boardW + wall * 2, boardH + wall * 2, radius);
+  box(ctx, originX - wall, originY - wall + slab, boardW + wall * 2, boardH + wall * 2, outer);
   ctx.fill();
 
   ctx.fillStyle = theme.tray;
-  box(ctx, originX - wall, originY - wall, boardW + wall * 2, boardH + wall * 2, radius);
+  box(ctx, originX - wall, originY - wall, boardW + wall * 2, boardH + wall * 2, outer);
   ctx.fill();
 
-  // Lit top lip, clipped inside the frame so it reads as a chamfer.
+  // Lit chamfer around the outside of the frame.
   ctx.save();
-  box(ctx, originX - wall, originY - wall, boardW + wall * 2, boardH + wall * 2, radius);
+  box(ctx, originX - wall, originY - wall, boardW + wall * 2, boardH + wall * 2, outer);
   ctx.clip();
   ctx.strokeStyle = theme.trayLip;
-  ctx.lineWidth = Math.max(2, wall * 0.16);
+  ctx.lineWidth = Math.max(2, wall * 0.14);
   ctx.beginPath();
-  roundRectPath(
-    ctx,
-    originX - wall + 1,
-    originY - wall + 1,
-    boardW + wall * 2 - 2,
-    boardH + wall * 2 - 2,
-    { tl: radius, tr: radius, br: radius, bl: radius },
-  );
+  roundRectPath(ctx, originX - wall + 1, originY - wall + 1, boardW + wall * 2 - 2, boardH + wall * 2 - 2, {
+    tl: outer,
+    tr: outer,
+    br: outer,
+    bl: outer,
+  });
   ctx.stroke();
   ctx.restore();
+}
 
-  // Recessed floor: grout first, then a well per cell.
-  ctx.fillStyle = theme.grout;
-  box(ctx, originX, originY, boardW, boardH, Math.round(cell * 0.1));
+function drawFloor(ctx: CanvasRenderingContext2D, level: Level, vp: Viewport, theme: Theme): void {
+  const { cell, wall, originX, originY } = vp;
+  const boardW = level.width * cell;
+  const boardH = level.height * cell;
+  const radius = Math.round(cell * 0.14);
+  const plate = (): void =>
+    roundRectPath(ctx, originX, originY, boardW, boardH, {
+      tl: radius,
+      tr: radius,
+      br: radius,
+      bl: radius,
+    });
+
+  ctx.fillStyle = theme.floor;
+  ctx.beginPath();
+  plate();
   ctx.fill();
 
-  const gap = Math.max(1.5, cell * 0.045);
-  const wellRadius = Math.max(2, cell * 0.12);
-  for (let y = 0; y < level.height; y++) {
-    for (let x = 0; x < level.width; x++) {
-      const wx = originX + x * cell + gap;
-      const wy = originY + y * cell + gap;
-      const ws = cell - gap * 2;
+  // Rounded channels moulded between the pads, in place of ruled grid lines.
+  // Both tones come off the floor colour, so a groove always reads as a
+  // shallow recess in *this* surface rather than a line drawn on top of it.
+  const grooveInk = shade(theme.floor, 0.36);
+  const grooveLip = tint(theme.floor, 0.18);
+  const groove = Math.max(3, Math.round(cell * 0.075));
+  const half = groove / 2;
+  ctx.save();
+  ctx.beginPath();
+  plate();
+  ctx.clip();
 
-      ctx.fillStyle = theme.well;
-      box(ctx, wx, wy, ws, ws, wellRadius);
-      ctx.fill();
-
-      // A single lit edge along the bottom of each well sells the recess.
-      ctx.save();
-      box(ctx, wx, wy, ws, ws, wellRadius);
-      ctx.clip();
-      ctx.strokeStyle = theme.wellLip;
-      ctx.lineWidth = Math.max(1, cell * 0.03);
-      ctx.beginPath();
-      roundRectPath(ctx, wx, wy - ctx.lineWidth, ws, ws, {
-        tl: wellRadius,
-        tr: wellRadius,
-        br: wellRadius,
-        bl: wellRadius,
-      });
-      ctx.stroke();
-      ctx.restore();
-    }
+  for (let x = 1; x < level.width; x++) {
+    const gx = originX + x * cell - half;
+    ctx.fillStyle = grooveInk;
+    box(ctx, gx, originY, groove, boardH, half);
+    ctx.fill();
+    // Light catches the far wall of the channel.
+    ctx.fillStyle = withAlpha(grooveLip, 0.6);
+    box(ctx, gx + groove - 1.2, originY, 1.2, boardH, 0.6);
+    ctx.fill();
   }
+
+  for (let y = 1; y < level.height; y++) {
+    const gy = originY + y * cell - half;
+    ctx.fillStyle = grooveInk;
+    box(ctx, originX, gy, boardW, groove, half);
+    ctx.fill();
+    ctx.fillStyle = withAlpha(grooveLip, 0.6);
+    box(ctx, originX, gy + groove - 1.2, boardW, 1.2, 0.6);
+    ctx.fill();
+  }
+
+  ctx.restore();
+
+  // The frame casts down into the tray, so the pieces read as sitting inside.
+  innerShadow(ctx, plate, wall * 0.8, wall * 0.2, 'rgba(0,0,0,0.55)');
+
+  // Crisp lip where the floor meets the frame.
+  ctx.save();
+  ctx.beginPath();
+  plate();
+  ctx.clip();
+  ctx.strokeStyle = withAlpha(theme.trayEdge, 0.9);
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  plate();
+  ctx.stroke();
+  ctx.restore();
 }
 
 /* ------------------------------------------------------------------ gates */
+
+/** A solid, moulded arrow with a lit top facet and a shaded underside. */
+function mouldedArrow(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number,
+  side: 'top' | 'bottom' | 'left' | 'right',
+  face: string,
+  lip: string,
+  ink: string,
+): void {
+  const w = size;
+  const h = size * 0.78;
+
+  const trace = (dx: number, dy: number): void => {
+    ctx.beginPath();
+    if (side === 'top') {
+      ctx.moveTo(cx + dx, cy - h * 0.62 + dy);
+      ctx.lineTo(cx + w * 0.62 + dx, cy + h * 0.3 + dy);
+      ctx.lineTo(cx + w * 0.24 + dx, cy + h * 0.3 + dy);
+      ctx.lineTo(cx + w * 0.24 + dx, cy + h * 0.62 + dy);
+      ctx.lineTo(cx - w * 0.24 + dx, cy + h * 0.62 + dy);
+      ctx.lineTo(cx - w * 0.24 + dx, cy + h * 0.3 + dy);
+      ctx.lineTo(cx - w * 0.62 + dx, cy + h * 0.3 + dy);
+    } else if (side === 'bottom') {
+      ctx.moveTo(cx + dx, cy + h * 0.62 + dy);
+      ctx.lineTo(cx + w * 0.62 + dx, cy - h * 0.3 + dy);
+      ctx.lineTo(cx + w * 0.24 + dx, cy - h * 0.3 + dy);
+      ctx.lineTo(cx + w * 0.24 + dx, cy - h * 0.62 + dy);
+      ctx.lineTo(cx - w * 0.24 + dx, cy - h * 0.62 + dy);
+      ctx.lineTo(cx - w * 0.24 + dx, cy - h * 0.3 + dy);
+      ctx.lineTo(cx - w * 0.62 + dx, cy - h * 0.3 + dy);
+    } else if (side === 'left') {
+      ctx.moveTo(cx - h * 0.62 + dx, cy + dy);
+      ctx.lineTo(cx + h * 0.3 + dx, cy + w * 0.62 + dy);
+      ctx.lineTo(cx + h * 0.3 + dx, cy + w * 0.24 + dy);
+      ctx.lineTo(cx + h * 0.62 + dx, cy + w * 0.24 + dy);
+      ctx.lineTo(cx + h * 0.62 + dx, cy - w * 0.24 + dy);
+      ctx.lineTo(cx + h * 0.3 + dx, cy - w * 0.24 + dy);
+      ctx.lineTo(cx + h * 0.3 + dx, cy - w * 0.62 + dy);
+    } else {
+      ctx.moveTo(cx + h * 0.62 + dx, cy + dy);
+      ctx.lineTo(cx - h * 0.3 + dx, cy + w * 0.62 + dy);
+      ctx.lineTo(cx - h * 0.3 + dx, cy + w * 0.24 + dy);
+      ctx.lineTo(cx - h * 0.62 + dx, cy + w * 0.24 + dy);
+      ctx.lineTo(cx - h * 0.62 + dx, cy - w * 0.24 + dy);
+      ctx.lineTo(cx - h * 0.3 + dx, cy - w * 0.24 + dy);
+      ctx.lineTo(cx - h * 0.3 + dx, cy - w * 0.62 + dy);
+    }
+    ctx.closePath();
+  };
+
+  const rise = Math.max(1.5, size * 0.1);
+
+  // Light catching the lower wall of the impression, then the arrow itself
+  // pressed into the lip above it.
+  ctx.fillStyle = lip;
+  trace(0, rise);
+  ctx.fill();
+
+  ctx.fillStyle = face;
+  trace(0, 0);
+  ctx.fill();
+
+  // A darker core keeps the shape crisp at small sizes.
+  ctx.save();
+  trace(0, 0);
+  ctx.clip();
+  ctx.strokeStyle = ink;
+  ctx.lineWidth = Math.max(1, size * 0.08);
+  trace(0, 0);
+  ctx.stroke();
+  ctx.restore();
+}
 
 function drawGates(
   ctx: CanvasRenderingContext2D,
@@ -223,7 +328,6 @@ function drawGates(
   const boardW = level.width * cell;
   const boardH = level.height * cell;
   const theme = options.theme;
-  const pulse = options.reduceMotion ? 0.35 : 0.35 + (Math.sin(options.time * 2) * 0.5 + 0.5) * 0.4;
 
   for (const gate of level.gates) {
     const colour = blockColour(gate.color);
@@ -231,7 +335,6 @@ function drawGates(
     const span = gate.length * cell;
     const inset = Math.max(2, cell * 0.05);
 
-    // Slot cut clean through the frame.
     let sx = 0;
     let sy = 0;
     let sw = 0;
@@ -258,80 +361,58 @@ function drawGates(
       sh = span - inset * 2;
     }
 
-    const slotRadius = Math.max(2, wall * 0.22);
-    ctx.fillStyle = theme.channel;
-    box(ctx, sx, sy, sw, sh, slotRadius);
-    ctx.fill();
+    const slotRadius = Math.max(3, wall * 0.24);
+    const slot = (): void =>
+      roundRectPath(ctx, sx, sy, sw, sh, {
+        tl: slotRadius,
+        tr: slotRadius,
+        br: slotRadius,
+        bl: slotRadius,
+      });
 
-    // Painted colour bar seated inside the slot, with a metal rim above it.
-    const pad = Math.max(2, wall * 0.18);
+    // An open cutout through the frame: dark inside, with the wall's own
+    // shadow falling into it.
+    ctx.fillStyle = theme.channel;
+    ctx.beginPath();
+    slot();
+    ctx.fill();
+    innerShadow(ctx, slot, wall * 0.45, wall * 0.12, 'rgba(0,0,0,0.7)');
+
+    // The painted lip of the slot, seated below the frame's top face.
+    const pad = Math.max(2, wall * 0.2);
     const bx = sx + (horizontal ? 0 : pad);
     const by = sy + (horizontal ? pad : 0);
     const bw = sw - (horizontal ? 0 : pad * 2);
     const bh = sh - (horizontal ? pad * 2 : 0);
+    const barRadius = Math.max(2, slotRadius * 0.65);
 
+    ctx.fillStyle = shade(colour, 0.3);
+    box(ctx, bx, by, bw, bh, barRadius);
+    ctx.fill();
     ctx.fillStyle = colour;
-    box(ctx, bx, by, bw, bh, Math.max(2, slotRadius * 0.7));
+    box(ctx, bx, by, bw - (horizontal ? 0 : 1.5), bh - (horizontal ? 1.5 : 0), barRadius);
     ctx.fill();
 
-    ctx.save();
-    box(ctx, bx, by, bw, bh, Math.max(2, slotRadius * 0.7));
-    ctx.clip();
-    ctx.strokeStyle = withAlpha(theme.rim, 0.55 + pulse * 0.45);
-    ctx.lineWidth = Math.max(1.5, wall * 0.1);
-    ctx.beginPath();
-    roundRectPath(ctx, bx + 0.5, by + 0.5, bw - 1, bh - 1, {
-      tl: slotRadius,
-      tr: slotRadius,
-      br: slotRadius,
-      bl: slotRadius,
-    });
-    ctx.stroke();
-    ctx.restore();
-
-    // Engraved arrow: a dark notch with a light edge under it, pointing out.
-    const cx = bx + bw / 2;
-    const cy = by + bh / 2;
-    const reach = Math.min(bw, bh) * 0.26;
-    const spread = Math.min(bw, bh) * 0.3;
-    const arrow = (dx: number, dy: number, style: string, width: number): void => {
-      ctx.strokeStyle = style;
-      ctx.lineWidth = width;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.beginPath();
-      if (gate.side === 'top') {
-        ctx.moveTo(cx - spread + dx, cy + reach + dy);
-        ctx.lineTo(cx + dx, cy - reach + dy);
-        ctx.lineTo(cx + spread + dx, cy + reach + dy);
-      } else if (gate.side === 'bottom') {
-        ctx.moveTo(cx - spread + dx, cy - reach + dy);
-        ctx.lineTo(cx + dx, cy + reach + dy);
-        ctx.lineTo(cx + spread + dx, cy - reach + dy);
-      } else if (gate.side === 'left') {
-        ctx.moveTo(cx + reach + dx, cy - spread + dy);
-        ctx.lineTo(cx - reach + dx, cy + dy);
-        ctx.lineTo(cx + reach + dx, cy + spread + dy);
-      } else {
-        ctx.moveTo(cx - reach + dx, cy - spread + dy);
-        ctx.lineTo(cx + reach + dx, cy + dy);
-        ctx.lineTo(cx - reach + dx, cy + spread + dy);
-      }
-      ctx.stroke();
-    };
-
-    const stroke = Math.max(2, cell * 0.06);
-    arrow(0, Math.max(1, stroke * 0.5), withAlpha(tint(colour, 0.6), 0.5), stroke);
-    arrow(0, 0, withAlpha(shade(colour, 0.55), 0.9), stroke);
+    // A moulded arrow set into the lip, pointing out of the tray.
+    mouldedArrow(
+      ctx,
+      bx + bw / 2,
+      by + bh / 2,
+      Math.min(bw, bh) * 0.8,
+      gate.side,
+      shade(colour, 0.42),
+      tint(colour, 0.5),
+      shade(colour, 0.6),
+    );
 
     if (options.glyphs) {
-      ctx.fillStyle = withAlpha(shade(colour, 0.6), 0.9);
-      ctx.font = `700 ${Math.round(Math.min(bw, bh) * 0.4)}px system-ui, sans-serif`;
+      ctx.fillStyle = withAlpha(shade(colour, 0.62), 0.95);
+      ctx.font = `800 ${Math.round(Math.min(bw, bh) * 0.36)}px system-ui, sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      const offX = gate.side === 'left' ? -bw * 0.3 : gate.side === 'right' ? bw * 0.3 : 0;
-      const offY = gate.side === 'top' ? -bh * 0.3 : gate.side === 'bottom' ? bh * 0.3 : 0;
-      ctx.fillText(blockGlyph(gate.color), cx + offX, cy + offY);
+      const offX = gate.side === 'left' ? -bw * 0.32 : gate.side === 'right' ? bw * 0.32 : 0;
+      const offY = gate.side === 'top' ? -bh * 0.32 : gate.side === 'bottom' ? bh * 0.32 : 0;
+      ctx.fillText(blockGlyph(gate.color), bx + bw / 2 + offX, by + bh / 2 + offY);
     }
   }
 }
@@ -341,7 +422,7 @@ function drawGates(
 /**
  * Traces a whole block as one silhouette. Each cell contributes a rectangle
  * whose corners are rounded only where no neighbour adjoins, so a 2x2 reads
- * as a single slab rather than four loose tiles.
+ * as a single moulded slab rather than four loose tiles.
  */
 function blockPath(
   ctx: CanvasRenderingContext2D,
@@ -354,7 +435,7 @@ function blockPath(
   const { cell, originX, originY } = vp;
   const cells = blockCells(block);
   const has = (x: number, y: number): boolean => cells.some((c) => c.x === x && c.y === y);
-  const radius = cell * 0.18;
+  const radius = cell * 0.2;
 
   ctx.beginPath();
   for (const c of cells) {
@@ -404,59 +485,74 @@ function drawBlock(
   const { cell } = vp;
   const isCrate = block.kind === 'crate';
   const base = isCrate ? options.theme.crate : blockColour(block.color);
-  const inset = Math.max(2, Math.round(cell * 0.055));
+  const inset = Math.max(2, Math.round(cell * 0.06));
   const depth = Math.max(3, Math.round(cell * DEPTH_RATIO));
-  const bevel = Math.max(1.5, cell * 0.045);
   const bounds = blockBounds(block, vp, dx, dy);
   const highlighted = options.highlight?.includes(block.id) ?? false;
+  const face = (): void => blockPath(ctx, block, vp, dx, dy, inset);
 
-  // Cast shadow into the well below the tile.
+  // Contact shadow in the groove beneath the tile.
   ctx.save();
-  ctx.globalAlpha = 0.32;
+  ctx.globalAlpha = 0.34;
   ctx.fillStyle = '#000000';
-  blockPath(ctx, block, vp, dx + depth * 0.35, dy + depth * 1.3, inset);
+  blockPath(ctx, block, vp, dx + depth * 0.3, dy + depth * 1.25, inset);
   ctx.fill();
   ctx.restore();
 
-  // The extruded side: a solid darker slab, not a gradient. This is what
-  // gives the tile real thickness.
-  ctx.fillStyle = shade(base, 0.42);
+  // The moulded side wall: a solid darker slab, giving the tile thickness.
+  ctx.fillStyle = shade(base, 0.44);
   blockPath(ctx, block, vp, dx, dy + depth, inset);
   ctx.fill();
 
-  // Glaze: flat colour, then a fine speckle so it is not a dead vector fill.
-  blockPath(ctx, block, vp, dx, dy, inset);
+  // Top face: one solid, smooth colour.
   ctx.fillStyle = base;
+  face();
   ctx.fill();
 
-  const pattern = specklePattern(ctx);
-  if (pattern) {
+  // A soft, broad top highlight - satin, not a candy sparkle.
+  ctx.save();
+  face();
+  ctx.clip();
+  const sheen = ctx.createLinearGradient(bounds.x, bounds.y, bounds.x, bounds.y + bounds.h * 0.62);
+  sheen.addColorStop(0, 'rgba(255,255,255,0.24)');
+  sheen.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = sheen;
+  ctx.fillRect(bounds.x, bounds.y, bounds.w, bounds.h * 0.62);
+  ctx.restore();
+
+  // Crates are embossed obstacle pieces: raised ribs, each with a lit edge
+  // and a shaded one, so they read as moulded rather than painted.
+  if (isCrate) {
     ctx.save();
-    blockPath(ctx, block, vp, dx, dy, inset);
+    face();
     ctx.clip();
-    ctx.fillStyle = pattern;
-    ctx.fillRect(bounds.x - cell, bounds.y - cell, bounds.w + cell * 2, bounds.h + cell * 2);
+    const step = Math.max(8, cell * 0.28);
+    const rib = Math.max(2.5, cell * 0.09);
+    for (let i = -bounds.h; i < bounds.w + bounds.h; i += step) {
+      ctx.lineWidth = rib;
+      ctx.strokeStyle = withAlpha(tint(base, 0.4), 0.55);
+      ctx.beginPath();
+      ctx.moveTo(bounds.x + i, bounds.y);
+      ctx.lineTo(bounds.x + i + bounds.h, bounds.y + bounds.h);
+      ctx.stroke();
+      ctx.lineWidth = rib * 0.7;
+      ctx.strokeStyle = withAlpha(shade(base, 0.45), 0.6);
+      ctx.beginPath();
+      ctx.moveTo(bounds.x + i + rib * 0.8, bounds.y);
+      ctx.lineTo(bounds.x + i + rib * 0.8 + bounds.h, bounds.y + bounds.h);
+      ctx.stroke();
+    }
     ctx.restore();
   }
 
-  // Chamfer: two strokes offset in opposite directions and clipped to the
-  // tile, so only their inner halves show - a lit edge and a shaded one.
-  ctx.save();
-  blockPath(ctx, block, vp, dx, dy, inset);
-  ctx.clip();
-  ctx.lineWidth = bevel * 2;
-  ctx.strokeStyle = withAlpha(tint(base, 0.55), isCrate ? 0.5 : 0.75);
-  blockPath(ctx, block, vp, dx - bevel * 0.7, dy - bevel * 0.7, inset);
-  ctx.stroke();
-  ctx.strokeStyle = withAlpha(shade(base, 0.35), 0.75);
-  blockPath(ctx, block, vp, dx + bevel * 0.7, dy + bevel * 0.7, inset);
-  ctx.stroke();
-
-  // Seams between the cells of one block: it is a single piece, but you can
-  // still read how many squares it covers.
+  // Seams between the cells of one piece: still one object, but you can read
+  // how many squares it covers.
   const cells = blockCells(block);
-  ctx.strokeStyle = withAlpha(shade(base, 0.3), 0.45);
-  ctx.lineWidth = Math.max(1, cell * 0.022);
+  ctx.save();
+  face();
+  ctx.clip();
+  ctx.strokeStyle = withAlpha(shade(base, 0.32), 0.5);
+  ctx.lineWidth = Math.max(1, cell * 0.02);
   ctx.beginPath();
   for (const c of cells) {
     if (cells.some((o) => o.x === c.x + 1 && o.y === c.y)) {
@@ -473,39 +569,33 @@ function drawBlock(
   ctx.stroke();
   ctx.restore();
 
-  // Crates are scenery: scored across so they never read as movable.
-  if (isCrate) {
-    ctx.save();
-    blockPath(ctx, block, vp, dx, dy, inset);
-    ctx.clip();
-    ctx.strokeStyle = withAlpha(shade(base, 0.45), 0.5);
-    ctx.lineWidth = Math.max(1.5, cell * 0.05);
-    ctx.beginPath();
-    for (let i = -bounds.h; i < bounds.w + bounds.h; i += Math.max(7, cell * 0.26)) {
-      ctx.moveTo(bounds.x + i, bounds.y);
-      ctx.lineTo(bounds.x + i + bounds.h, bounds.y + bounds.h);
-    }
-    ctx.stroke();
-    ctx.restore();
-  }
+  // The crisp inset line just inside the edge - the moulded tile's own rim.
+  ctx.save();
+  face();
+  ctx.clip();
+  ctx.strokeStyle = withAlpha(tint(base, 0.5), 0.85);
+  ctx.lineWidth = 1;
+  blockPath(ctx, block, vp, dx + 1.5, dy + 1.5, inset + 1.5);
+  ctx.stroke();
+  ctx.restore();
 
-  // Hard outline. Keeps every tile legible against its neighbours.
-  blockPath(ctx, block, vp, dx, dy, inset);
-  ctx.strokeStyle = withAlpha(shade(base, 0.55), 0.85);
+  // Hard outline, so every tile stays legible against its neighbours.
+  face();
+  ctx.strokeStyle = withAlpha(shade(base, 0.58), 0.9);
   ctx.lineWidth = Math.max(1.2, cell * 0.025);
   ctx.stroke();
 
   if (highlighted) {
     const pulse = options.reduceMotion ? 1 : 0.55 + Math.sin(options.time * 5.5) * 0.45;
-    blockPath(ctx, block, vp, dx, dy, inset);
+    face();
     ctx.strokeStyle = `rgba(255,255,255,${0.45 + pulse * 0.5})`;
     ctx.lineWidth = Math.max(2.5, cell * 0.07);
     ctx.stroke();
   }
 
   if (options.glyphs && !isCrate) {
-    ctx.fillStyle = withAlpha(shade(base, 0.5), 0.75);
-    ctx.font = `700 ${Math.round(cell * 0.38)}px system-ui, sans-serif`;
+    ctx.fillStyle = withAlpha(shade(base, 0.5), 0.7);
+    ctx.font = `800 ${Math.round(cell * 0.36)}px system-ui, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(blockGlyph(block.color), bounds.cx, bounds.cy);
@@ -524,6 +614,7 @@ export function render(
   ctx.clearRect(0, 0, ctx.canvas.width / dpr, ctx.canvas.height / dpr);
 
   drawTray(ctx, level, vp, options.theme);
+  drawFloor(ctx, level, vp, options.theme);
   drawGates(ctx, level, vp, options);
 
   // Tiles nearer the bottom draw later, so their thickness overlaps correctly.
