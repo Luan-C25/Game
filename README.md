@@ -10,6 +10,9 @@ pay for. What each of those complaints turned into is written down in
 [docs/DESIGN.md](docs/DESIGN.md), and the research behind them is in
 [docs/MARKET-RESEARCH.md](docs/MARKET-RESEARCH.md).
 
+**Picking this up after a break?** [docs/STATUS.md](docs/STATUS.md) has where
+things stand, the open decisions, and what comes next.
+
 **Every level can be solved.** Boards are built backwards from a finished
 position and then checked by a solver before they ship. The `par` shown next
 to your move count is a real solution held on file, not an estimate.
