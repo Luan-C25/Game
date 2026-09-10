@@ -1,0 +1,11 @@
+{
+  "appId": "com.example.colourjam",
+  "appName": "Colour Jam",
+  "webDir": "dist",
+  "android": {
+    "backgroundColor": "#f4f1ea"
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

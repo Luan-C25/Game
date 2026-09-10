@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="description" content="A colour-sorting sliding block puzzle. Every level is checked by a solver before it ships. No timers, no lives, free hints." />
+    <meta name="theme-color" content="#f4f1ea" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>Colour Jam</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Home -->
+      <section class="screen screen-home" id="screen-home">
+        <div class="stack">
+          <header class="brand">
+            <!-- The same tiles the board is made of, so the menu and the game
+                 share one material. Decorative only. -->
+            <div class="brand-tiles" aria-hidden="true">
+              <span style="--tile: #E69F00; --tile-deep: #a06e00"></span>
+              <span style="--tile: #56B4E9; --tile-deep: #2e7ba8"></span>
+              <span style="--tile: #009E73; --tile-deep: #006b4e"></span>
+              <span style="--tile: #CC79A7; --tile-deep: #8f4a73"></span>
+            </div>
+            <h1><span>Colour Jam</span></h1>
+            <p class="tagline">Slide every block out through a gate of its own colour.</p>
+          </header>
+          <nav class="menu">
+            <!-- One action dominates; everything else is grouped and quieter. -->
+            <button class="pill pill-play" id="btn-continue">
+              <span class="pill-label">Play</span>
+              <span class="pill-sub" id="home-continue-sub"></span>
+            </button>
+            <div class="pill-pair">
+              <button class="pill pill-sweet" style="--candy: #ffd27a; --candy-deep: #d99b28" id="btn-levels">Levels</button>
+              <button class="pill pill-sweet" style="--candy: #9fd9ff; --candy-deep: #4f9fd6" id="btn-themes">Themes</button>
+            </div>
+            <div class="pill-pair">
+              <button class="pill pill-sweet pill-small" style="--candy: #b9ecc9; --candy-deep: #62b585" id="btn-settings">Settings</button>
+              <button class="pill pill-sweet pill-small" style="--candy: #ffc2dd; --candy-deep: #d9739f" id="btn-promises">Promises</button>
+            </div>
+          </nav>
+          <p class="footnote" id="home-progress"></p>
+        </div>
+      </section>
+
+      <!-- Level select -->
+      <section class="screen" id="screen-levels" hidden>
+        <header class="bar">
+          <button class="icon-btn" data-back aria-label="Back">←</button>
+          <h2>Levels</h2>
+          <span class="coins" id="levels-coins"></span>
+        </header>
+        <div class="level-grid" id="level-grid"></div>
+      </section>
+
+      <!-- Game -->
+      <section class="screen screen-game" id="screen-game" hidden>
+        <header class="bar game-bar">
+          <button class="icon-btn" id="btn-game-back" aria-label="Back to menu">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 12H5" />
+              <path d="M11 5 4 12l7 7" />
+            </svg>
+          </button>
+          <!-- Raised badges moulded into the top frame. -->
+          <div class="pod pod-level">
+            <span class="pod-cap">Level</span>
+            <strong id="game-level">1</strong>
+          </div>
+          <div class="pod pod-coins">
+            <span class="coin" aria-hidden="true"></span>
+            <strong id="game-coins">0</strong>
+          </div>
+        </header>
+        <!-- A recessed readout, sunk into the frame rather than raised on it. -->
+        <p class="readout" id="game-moves">0 moves &middot; par 0</p>
+        <div class="board-wrap">
+          <canvas id="board" aria-label="Puzzle board"></canvas>
+        </div>
+        <div class="tools">
+          <button class="tool tool-util" id="btn-undo">
+            <span class="tool-cap">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 9h11a5 5 0 0 1 0 10h-3" />
+                <path d="M8.5 4 3.5 9l5 5" />
+              </svg>
+            </span>
+            <span class="tool-name">Undo</span>
+          </button>
+          <button class="tool tool-key" id="btn-hint">
+            <span class="tool-cap">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2.6a6.4 6.4 0 0 0-3.8 11.6c.6.44.9 1.03.9 1.67v.62h5.8v-.62c0-.64.3-1.23.9-1.67A6.4 6.4 0 0 0 12 2.6Z" />
+                <path d="M9.6 19.5h4.8" />
+                <path d="M10.7 22.1h2.6" />
+              </svg>
+            </span>
+            <span class="tool-name">Hint</span>
+          </button>
+          <button class="tool tool-util" id="btn-restart">
+            <span class="tool-cap">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20.5 12a8.5 8.5 0 1 1-2.8-6.3" />
+                <path d="M20.5 3.5V10h-6.2" />
+              </svg>
+            </span>
+            <span class="tool-name">Restart</span>
+          </button>
+        </div>
+        <p class="tool-note" id="tool-note">Undo, hints and restarts are free and unlimited.</p>
+      </section>
+
+      <!-- Themes -->
+      <section class="screen" id="screen-themes" hidden>
+        <header class="bar">
+          <button class="icon-btn" data-back aria-label="Back">←</button>
+          <h2>Themes</h2>
+          <span class="coins" id="themes-coins"></span>
+        </header>
+        <div class="panel">
+          <p class="lead">Themes are the only thing coins buy. They change how the board looks and nothing else.</p>
+          <div id="theme-list" class="theme-list"></div>
+        </div>
+      </section>
+
+      <!-- Settings -->
+      <section class="screen" id="screen-settings" hidden>
+        <header class="bar">
+          <button class="icon-btn" data-back aria-label="Back">←</button>
+          <h2>Settings</h2>
+          <span></span>
+        </header>
+        <div class="panel">
+          <label class="row"><span>Sound effects</span><input type="checkbox" id="set-sound" /></label>
+          <label class="row"><span>Music</span><input type="checkbox" id="set-music" /></label>
+          <label class="row"><span>Vibration</span><input type="checkbox" id="set-haptics" /></label>
+          <label class="row">
+            <span>Shapes on blocks<small>Colour is never the only cue</small></span>
+            <input type="checkbox" id="set-glyphs" />
+          </label>
+          <label class="row"><span>Reduce motion</span><input type="checkbox" id="set-motion" /></label>
+          <hr />
+          <button class="btn btn-quiet" id="btn-remove-ads">Remove ads</button>
+          <button class="btn btn-quiet" id="btn-restore">Restore purchases</button>
+          <button class="btn btn-danger" id="btn-reset">Reset progress</button>
+          <p class="footnote">Progress is stored on this device only. Nothing is uploaded and no account is needed.</p>
+        </div>
+      </section>
+
+      <!-- Promises -->
+      <section class="screen" id="screen-promises" hidden>
+        <header class="bar">
+          <button class="icon-btn" data-back aria-label="Back">←</button>
+          <h2>Our promises</h2>
+          <span></span>
+        </header>
+        <div class="panel">
+          <h3>Every level can be solved</h3>
+          <p class="lead">
+            Each board is built backwards from a finished position and then checked by a solver
+            before it ships. If a level could not be beaten, it never reaches you. The move count
+            shown next to <em>par</em> is a real solution we have on file.
+          </p>
+          <h3>No pressure mechanics</h3>
+          <p class="lead">
+            There are no timers, no lives, and no energy to wait for. A puzzle waits as long as you do.
+          </p>
+          <h3>Advertising</h3>
+          <ul class="promises" id="promise-list"></ul>
+        </div>
+      </section>
+
+      <!-- Win overlay -->
+      <div class="overlay" id="overlay-win" hidden>
+        <div class="card">
+          <h2 id="win-title">Level complete</h2>
+          <div class="stars" id="win-stars"></div>
+          <p id="win-detail"></p>
+          <p class="reward" id="win-reward"></p>
+          <button class="btn btn-primary" id="btn-next">Next level</button>
+          <button class="btn" id="btn-replay">Play again</button>
+          <button class="btn btn-quiet" id="btn-win-menu">Menu</button>
+        </div>
+      </div>
+
+      <!-- Generic confirm -->
+      <div class="overlay" id="overlay-confirm" hidden>
+        <div class="card">
+          <h2 id="confirm-title">Are you sure?</h2>
+          <p id="confirm-body"></p>
+          <button class="btn btn-danger" id="confirm-yes">Yes</button>
+          <button class="btn" id="confirm-no">Cancel</button>
+        </div>
+      </div>
+
+      <div class="toast" id="toast" hidden></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
