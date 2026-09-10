@@ -1,32 +1,25 @@
-/* Layout is phone-first: one column, large touch targets, safe-area aware. */
+/*
+ * Chrome styling.
+ *
+ * Every colour comes from a custom property that the active theme sets at
+ * runtime (see applyTheme in main.ts), so adding a theme never means writing
+ * a matching block of CSS. Layout is phone-first: one column, large touch
+ * targets, safe-area aware.
+ */
 
 :root {
-  --bg: #f4f1ea;
-  --surface: #fffdf8;
-  --line: #e2ddd1;
-  --text: #2b2924;
-  --muted: #6d675c;
-  --accent: #0072b2;
-  --danger: #b03030;
-  --radius: 14px;
-}
-
-:root[data-theme='midnight'] {
-  --bg: #14161c;
-  --surface: #1c1f27;
-  --line: #2f3442;
-  --text: #e8eaf0;
-  --muted: #9aa2b4;
-  --accent: #56b4e9;
-}
-
-:root[data-theme='orchard'] {
-  --bg: #eef4ec;
-  --surface: #f8fcf7;
-  --line: #d7e6d3;
-  --text: #22301f;
-  --muted: #5d6d59;
-  --accent: #009e73;
+  --bg-from: #fff4e6;
+  --bg-to: #ffe0ec;
+  --glow-a: #ffb37a;
+  --glow-b: #ff8fb1;
+  --glow-c: #ffd166;
+  --surface: #fffdfa;
+  --line: #f3ddcb;
+  --text: #3a2a22;
+  --muted: #8a6f5f;
+  --accent: #f4703a;
+  --accent-ink: #ffffff;
+  --radius: 16px;
 }
 
 * {
@@ -42,12 +35,57 @@ body {
 }
 
 body {
-  background: var(--bg);
   color: var(--text);
   font: 16px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(160deg, var(--bg-from), var(--bg-to));
+  background-attachment: fixed;
+}
+
+/* Soft colour bloom behind the chrome, echoing the canvas background. */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: -20%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::before {
+  background:
+    radial-gradient(45vmax 45vmax at 22% 16%, color-mix(in srgb, var(--glow-a) 55%, transparent), transparent 62%),
+    radial-gradient(40vmax 40vmax at 80% 30%, color-mix(in srgb, var(--glow-b) 50%, transparent), transparent 62%);
+  animation: drift-a 26s ease-in-out infinite alternate;
+}
+
+body::after {
+  background:
+    radial-gradient(42vmax 42vmax at 55% 88%, color-mix(in srgb, var(--glow-c) 48%, transparent), transparent 62%),
+    radial-gradient(34vmax 34vmax at 12% 72%, color-mix(in srgb, var(--glow-b) 38%, transparent), transparent 62%);
+  animation: drift-b 34s ease-in-out infinite alternate;
+}
+
+@keyframes drift-a {
+  to {
+    transform: translate3d(4%, 5%, 0) scale(1.12);
+  }
+}
+
+@keyframes drift-b {
+  to {
+    transform: translate3d(-5%, -4%, 0) scale(1.1);
+  }
+}
+
+/* The in-app "reduce motion" switch stops the drift as well as the canvas. */
+:root.still body::before,
+:root.still body::after {
+  animation: none !important;
 }
 
 #app {
+  position: relative;
+  z-index: 1;
   min-height: 100%;
   display: flex;
   flex-direction: column;
@@ -77,19 +115,31 @@ body {
 
 .brand h1 {
   margin: 0;
-  font-size: clamp(2.2rem, 11vw, 3rem);
-  letter-spacing: -0.02em;
+  font-size: clamp(2.6rem, 13vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  background: linear-gradient(
+    115deg,
+    color-mix(in srgb, var(--accent) 88%, black),
+    var(--glow-b) 42%,
+    color-mix(in srgb, var(--glow-c) 75%, black) 92%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--glow-b) 35%, transparent));
 }
 
 .tagline {
-  margin: 8px 0 0;
+  margin: 10px 0 0;
   color: var(--muted);
 }
 
 .menu {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 11px;
 }
 
 .btn {
@@ -98,38 +148,49 @@ body {
   background: var(--surface);
   color: var(--text);
   font: inherit;
-  font-weight: 600;
+  font-weight: 650;
   padding: 14px 18px;
   border-radius: var(--radius);
   cursor: pointer;
-  min-height: 50px;
+  min-height: 52px;
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--line) 70%, transparent);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 
 .btn:active {
-  transform: translateY(1px);
+  transform: translateY(2px);
+  box-shadow: none;
 }
 
 .btn-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
+  border: 0;
+  color: var(--accent-ink);
+  background: linear-gradient(135deg, var(--glow-a), var(--accent));
+  box-shadow:
+    0 3px 0 color-mix(in srgb, var(--accent) 60%, black),
+    0 8px 22px color-mix(in srgb, var(--accent) 40%, transparent);
+  font-size: 1.05rem;
+  font-weight: 750;
 }
 
 .btn-quiet {
   background: transparent;
-  font-weight: 500;
+  border-color: transparent;
+  box-shadow: none;
+  font-weight: 550;
   color: var(--muted);
 }
 
 .btn-danger {
   background: transparent;
-  border-color: var(--danger);
-  color: var(--danger);
+  border-color: #d0574f;
+  color: #d0574f;
+  box-shadow: none;
 }
 
 .bar {
   display: grid;
-  grid-template-columns: 44px 1fr auto;
+  grid-template-columns: 46px 1fr auto;
   align-items: center;
   gap: 8px;
 }
@@ -141,33 +202,41 @@ body {
 }
 
 .icon-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
   border: 1px solid var(--line);
   background: var(--surface);
   color: var(--text);
   font-size: 1.2rem;
   cursor: pointer;
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--line) 70%, transparent);
 }
 
 .coins {
   font-variant-numeric: tabular-nums;
-  color: var(--muted);
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--text);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
 }
 
 .panel {
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 16px;
+  border-radius: 20px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   max-width: 560px;
   width: 100%;
   margin: 0 auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+  backdrop-filter: blur(8px);
 }
 
 .panel h3 {
@@ -195,8 +264,8 @@ body {
 }
 
 .row input {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   accent-color: var(--accent);
 }
 
@@ -229,28 +298,42 @@ hr {
 
 .level-cell {
   aspect-ratio: 1;
-  border-radius: 12px;
+  border-radius: 14px;
   border: 1px solid var(--line);
   background: var(--surface);
   color: var(--text);
-  font-weight: 700;
+  font-weight: 750;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--line) 70%, transparent);
+}
+
+/* A cleared level wears its theme colour, so the grid fills in as you play. */
+.level-cell.cleared {
+  border-color: transparent;
+  color: var(--accent-ink);
+  background: linear-gradient(140deg, var(--glow-a), var(--accent));
+  box-shadow: 0 3px 12px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.level-cell.cleared small {
+  color: color-mix(in srgb, var(--accent-ink) 85%, transparent);
 }
 
 .level-cell small {
-  font-size: 0.65rem;
+  font-size: 0.66rem;
   color: var(--muted);
   letter-spacing: 1px;
 }
 
 .level-cell[disabled] {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: default;
+  box-shadow: none;
 }
 
 .screen-game {
@@ -280,6 +363,9 @@ hr {
   height: 100%;
   touch-action: none;
   display: block;
+  /* Transparent: the page background shows through, so the board sits in the
+     scene rather than on a rectangle of its own. */
+  background: transparent;
 }
 
 .tools {
@@ -293,28 +379,35 @@ hr {
 
 .tool {
   border: 1px solid var(--line);
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
   color: var(--text);
   border-radius: var(--radius);
   padding: 10px 6px;
   font: inherit;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 650;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 3px;
-  min-height: 58px;
+  min-height: 60px;
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--line) 70%, transparent);
 }
 
 .tool span {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
+}
+
+.tool:active {
+  transform: translateY(2px);
+  box-shadow: none;
 }
 
 .tool:disabled {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: default;
+  box-shadow: none;
 }
 
 .tool-note {
@@ -336,26 +429,28 @@ hr {
   justify-content: space-between;
   gap: 12px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 12px;
 }
 
 .swatches {
   display: flex;
-  gap: 4px;
+  gap: 5px;
+  margin-top: 6px;
 }
 
 .swatch {
-  width: 18px;
-  height: 18px;
-  border-radius: 5px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  width: 20px;
+  height: 20px;
+  border-radius: 7px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 20, 24, 0.55);
+  background: rgba(16, 12, 26, 0.6);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -369,18 +464,28 @@ hr {
 
 .card {
   background: var(--surface);
-  border-radius: 18px;
-  padding: 22px;
+  border-radius: 24px;
+  padding: 24px;
   width: 100%;
   max-width: 360px;
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 11px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: pop 0.26s cubic-bezier(0.2, 1.3, 0.5, 1);
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.88) translateY(12px);
+    opacity: 0;
+  }
 }
 
 .card h2 {
   margin: 0;
+  font-size: 1.5rem;
 }
 
 .card p {
@@ -389,13 +494,33 @@ hr {
 }
 
 .stars {
-  font-size: 1.8rem;
-  letter-spacing: 4px;
+  font-size: 2.4rem;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.star {
+  color: color-mix(in srgb, var(--muted) 45%, transparent);
+  animation: star-land 0.42s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+
+.star.earned {
+  color: #ffb703;
+  filter: drop-shadow(0 2px 8px rgba(255, 183, 3, 0.7));
+}
+
+@keyframes star-land {
+  from {
+    transform: scale(2.4) rotate(-25deg);
+    opacity: 0;
+  }
 }
 
 .reward {
-  font-weight: 600;
-  color: var(--text) !important;
+  font-weight: 700;
+  color: var(--accent) !important;
+  font-size: 1.05rem;
 }
 
 .footnote {
@@ -411,13 +536,15 @@ hr {
   bottom: calc(24px + env(safe-area-inset-bottom));
   transform: translateX(-50%);
   background: var(--text);
-  color: var(--bg);
-  padding: 10px 16px;
+  color: var(--surface);
+  padding: 11px 18px;
   border-radius: 999px;
   font-size: 0.85rem;
+  font-weight: 550;
   z-index: 30;
   max-width: calc(100vw - 32px);
   text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .toast[hidden] {

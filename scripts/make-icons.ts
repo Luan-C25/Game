@@ -62,8 +62,11 @@ function hex(value: string): [number, number, number] {
 /** The icon is the game itself: three blocks queued at a coloured gate. */
 function draw(size: number): Uint8Array {
   const px = new Uint8Array(size * size * 4);
-  const background = hex('#f4f1ea');
-  const board = hex('#ffffff');
+  // Matches the Sunrise theme: a warm vertical wash behind a light board.
+  const skyTop = hex('#ffd9a8');
+  const skyBottom = hex('#ff9ec4');
+  const board = hex('#fffaf3');
+  const boardEdge = hex('#f7b98f');
 
   const set = (x: number, y: number, [r, g, b]: [number, number, number]): void => {
     if (x < 0 || y < 0 || x >= size || y >= size) return;
@@ -87,16 +90,25 @@ function draw(size: number): Uint8Array {
     }
   };
 
-  rect(0, 0, size, size, background);
+  for (let y = 0; y < size; y++) {
+    const t = y / (size - 1);
+    const row: [number, number, number] = [
+      skyTop[0] + (skyBottom[0] - skyTop[0]) * t,
+      skyTop[1] + (skyBottom[1] - skyTop[1]) * t,
+      skyTop[2] + (skyBottom[2] - skyTop[2]) * t,
+    ];
+    for (let x = 0; x < size; x++) set(x, y, row);
+  }
 
   const unit = size / 16;
-  rect(Math.round(unit * 2), Math.round(unit * 2), Math.round(unit * 12), Math.round(unit * 12), board, Math.round(unit * 1.6));
+  rect(Math.round(unit * 1.7), Math.round(unit * 1.7), Math.round(unit * 12.6), Math.round(unit * 12.6), boardEdge, Math.round(unit * 2));
+  rect(Math.round(unit * 2.4), Math.round(unit * 2.4), Math.round(unit * 11.2), Math.round(unit * 11.2), board, Math.round(unit * 1.5));
 
   const blocks: Array<[number, number, number, number, string]> = [
-    [3, 3.5, 3, 3, '#E69F00'],
-    [7.5, 3.5, 3, 3, '#56B4E9'],
-    [3, 8, 3, 3, '#009E73'],
-    [7.5, 8, 3, 3, '#CC79A7'],
+    [3.4, 3.8, 2.8, 2.8, '#E69F00'],
+    [7.6, 3.8, 2.8, 2.8, '#56B4E9'],
+    [3.4, 7.9, 2.8, 2.8, '#009E73'],
+    [7.6, 7.9, 2.8, 2.8, '#CC79A7'],
   ];
   for (const [x, y, w, h, colour] of blocks) {
     rect(
@@ -110,7 +122,7 @@ function draw(size: number): Uint8Array {
   }
 
   // The exit gate, cut into the right-hand wall.
-  rect(Math.round(unit * 13.2), Math.round(unit * 3.5), Math.round(unit * 1.4), Math.round(unit * 3), hex('#E69F00'), Math.round(unit * 0.5));
+  rect(Math.round(unit * 13.1), Math.round(unit * 3.8), Math.round(unit * 1.5), Math.round(unit * 2.8), hex('#E69F00'), Math.round(unit * 0.6));
 
   return px;
 }

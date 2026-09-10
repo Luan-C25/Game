@@ -27,6 +27,8 @@ export interface DragVisualState {
 
 export interface InputCallbacks {
   onChange(): void;
+  /** Fires while the block is still on the board, so effects can use its position. */
+  onBeforeExit(blockId: number): void;
   onBlockExited(): void;
   onBlocked(): void;
   onPickUp(): void;
@@ -136,6 +138,10 @@ export class DragController {
     while (current !== wanted) {
       const forward = wanted > current;
       const dir: Dir = this.axis === 'x' ? (forward ? 'right' : 'left') : forward ? 'down' : 'up';
+      // Only when this very step takes it off the board - reach.exits alone
+      // is true from several cells away.
+      const reach = session.reachIn(this.blockId, dir);
+      if (reach.exits && reach.distance === 1) this.callbacks.onBeforeExit(this.blockId);
       if (!session.step(this.blockId, dir, 1)) {
         jammed = true;
         this.callbacks.onBlocked();

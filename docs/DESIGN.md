@@ -57,6 +57,31 @@ and the shortest solution found is still genuinely the shortest.
 That is what makes `par` an honest number: it is a real solution we have on
 file, not an estimate.
 
+## Presentation
+
+A puzzle game is judged in its first ten seconds, so the styling is
+deliberately loud: a drifting gradient background, blocks drawn as one merged
+glossy slab rather than a grid of separate tiles, gates that glow and carry a
+chevron pointing out of the board, sparks when a block leaves, and confetti on
+a win. The win card waits about six hundred milliseconds so the celebration
+happens in the clear rather than behind a dimmed overlay.
+
+Two limits keep that from working against the player:
+
+- **Block colours never change with the theme.** A theme restyles the world
+  around the blocks - background, board, walls, chrome - because the block
+  hues carry the rules. They come from the Okabe-Ito palette, which stays
+  distinguishable under the common forms of colour blindness, and the
+  shapes-on-blocks setting adds a second cue on top.
+- **Motion is a setting.** Turning on "reduce motion" stops the animation
+  clock, which freezes the background drift, the gate pulse and the hint glow,
+  and disables particles entirely. The OS-level `prefers-reduced-motion` hint
+  is honoured separately in CSS.
+
+Themes are defined once, in `src/game/theme.ts`, and drive both the canvas and
+the DOM chrome through CSS custom properties - so adding a theme never means
+writing a matching block of CSS by hand.
+
 ## What is deliberately absent
 
 No timers. No lives or energy. No fail state. No streaks or daily login

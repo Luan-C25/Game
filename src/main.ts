@@ -12,8 +12,9 @@ import './styles.css';
 import { DragController } from './game/input.ts';
 import { LEVEL_COUNT, getLevel } from './game/levels.ts';
 import { Session } from './game/session.ts';
-import { computeViewport, render, type Viewport } from './game/render.ts';
-import { THEMES, themeById } from './game/theme.ts';
+import { blockCentre, computeViewport, render, type Viewport } from './game/render.ts';
+import { BLOCK_COLOURS, THEMES, themeById } from './game/theme.ts';
+import { Particles } from './game/particles.ts';
 import { AD_PROMISES, mayShowInterstitial, noopAdProvider } from './game/ads.ts';
 import { isMusicEnabled, setMusicEnabled, setSoundEnabled, sfx, unlockAudio } from './game/audio.ts';
 import * as store from './game/save.ts';
@@ -30,8 +31,11 @@ let saveData = store.load();
 let session: Session | null = null;
 let currentLevelId = 1;
 let viewport: Viewport = { cell: 40, originX: 0, originY: 0, wall: 12 };
-let dirty = true;
 let hintedBlocks: number[] = [];
+const particles = new Particles();
+/** Seconds since boot, used by the background drift and the gate pulse. */
+let clock = 0;
+let lastFrameMs = 0;
 let screenStack: ScreenId[] = ['home'];
 
 const canvas = $<HTMLCanvasElement>('board');
@@ -59,11 +63,27 @@ function buzz(pattern: number | number[]): void {
   navigator.vibrate?.(pattern);
 }
 
+/**
+ * One theme definition drives both the canvas and the DOM chrome, so a new
+ * theme never needs a matching block of CSS written by hand.
+ */
 function applyTheme(): void {
-  document.documentElement.dataset.theme = saveData.settings.theme;
   const theme = themeById(saveData.settings.theme);
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme.background);
-  dirty = true;
+  const root = document.documentElement;
+  root.dataset.theme = theme.id;
+  root.style.setProperty('--bg-from', theme.bgFrom);
+  root.style.setProperty('--bg-to', theme.bgTo);
+  root.style.setProperty('--surface', theme.surface);
+  root.style.setProperty('--line', theme.line);
+  root.style.setProperty('--text', theme.text);
+  root.style.setProperty('--muted', theme.muted);
+  root.style.setProperty('--accent', theme.accent);
+  root.style.setProperty('--accent-ink', theme.accentInk);
+  root.style.setProperty('--glow-a', theme.blobs[0]);
+  root.style.setProperty('--glow-b', theme.blobs[1]);
+  root.style.setProperty('--glow-c', theme.blobs[2]);
+  root.classList.toggle('still', saveData.settings.reduceMotion);
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme.bgFrom);
 }
 
 function showScreen(id: ScreenId, { push = true } = {}): void {
@@ -136,6 +156,7 @@ function renderLevelGrid(): void {
       const label = document.createElement('small');
       label.textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
       button.append(label);
+      button.classList.add('cleared');
     }
 
     if (unlocked) button.addEventListener('click', () => startLevel(id));
@@ -157,7 +178,7 @@ function renderThemes(): void {
     name.textContent = theme.name;
     const swatches = document.createElement('div');
     swatches.className = 'swatches';
-    for (const colour of [theme.background, theme.boardWall, theme.boardFloor]) {
+    for (const colour of [theme.bgFrom, theme.bgTo, ...theme.blobs]) {
       const dot = document.createElement('span');
       dot.className = 'swatch';
       dot.style.background = colour;
@@ -236,7 +257,6 @@ function resizeCanvas(): void {
   ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   viewport = computeViewport(session.level, rect.width, rect.height);
-  dirty = true;
 }
 
 function updateHud(): void {
@@ -248,16 +268,31 @@ function updateHud(): void {
   $<HTMLButtonElement>('btn-undo').disabled = !session.canUndo();
 }
 
-function frame(): void {
-  if (dirty && session && !$('screen-game').hidden) {
+function frame(nowMs: number): void {
+  const dt = lastFrameMs === 0 ? 0 : Math.min(0.05, (nowMs - lastFrameMs) / 1000);
+  lastFrameMs = nowMs;
+
+  if (session && !$('screen-game').hidden) {
+    // Motion is a setting, not a given: with it off the clock stops, which
+    // freezes the background drift, the gate pulse and the hint glow.
+    if (!saveData.settings.reduceMotion) {
+      clock += dt;
+      particles.update(dt);
+    } else {
+      particles.clear();
+    }
+
     render(ctx!, session.level, viewport, {
       theme: themeById(saveData.settings.theme),
       glyphs: saveData.settings.colourBlindGlyphs,
+      time: clock,
+      reduceMotion: saveData.settings.reduceMotion,
       drag: drag.visual,
       highlight: hintedBlocks,
+      particles,
     });
-    dirty = false;
   }
+
   requestAnimationFrame(frame);
 }
 
@@ -266,13 +301,18 @@ const drag = new DragController(
   () => session!,
   () => viewport,
   {
-    onChange: () => {
-      dirty = true;
-      updateHud();
-    },
+    onChange: updateHud,
     onPickUp: () => {
       hintedBlocks = [];
       sfx.pick();
+    },
+    onBeforeExit: (blockId: number) => {
+      // Spawn the burst while the block is still on the board, so the sparks
+      // start from where the player last saw it.
+      const block = session?.level.blocks.find((b) => b.id === blockId);
+      if (!block || saveData.settings.reduceMotion) return;
+      const centre = blockCentre(block, viewport);
+      particles.burst(centre.x, centre.y, blockColourFor(block.color), 0, 0);
     },
     onBlocked: () => sfx.blocked(),
     onBlockExited: () => {
@@ -306,9 +346,21 @@ function checkComplete(): void {
 
   sfx.win();
   buzz([12, 40, 18]);
+  if (!saveData.settings.reduceMotion) {
+    particles.celebrate(canvas.width / (window.devicePixelRatio || 1), BLOCK_COLOURS);
+  }
 
   $('win-title').textContent = currentLevelId >= LEVEL_COUNT ? 'Final level complete' : 'Level complete';
-  $('win-stars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+  const starRow = $('win-stars');
+  starRow.textContent = '';
+  for (let i = 0; i < 3; i++) {
+    const star = document.createElement('span');
+    const earned = i < stars;
+    star.className = earned ? 'star earned' : 'star';
+    star.textContent = earned ? '★' : '☆';
+    star.style.animationDelay = `${140 + i * 160}ms`;
+    starRow.append(star);
+  }
   $('win-detail').textContent =
     moves <= session.par
       ? `Solved in ${moves} moves — that matches par.`
@@ -317,8 +369,15 @@ function checkComplete(): void {
 
   const next = $<HTMLButtonElement>('btn-next');
   next.hidden = currentLevelId >= LEVEL_COUNT;
-  $('overlay-win').hidden = false;
-  // Deliberately no ad here. See AD_POLICY.neverAfterWin.
+
+  // A short beat so the confetti and the cleared board are visible before the
+  // card covers them. Deliberately no ad here - see AD_POLICY.neverAfterWin.
+  const wonLevel = currentLevelId;
+  const reveal = saveData.settings.reduceMotion ? 0 : 620;
+  window.setTimeout(() => {
+    // The player may have left in the meantime; do not yank them back.
+    if (session?.isComplete() && currentLevelId === wonLevel) $('overlay-win').hidden = false;
+  }, reveal);
 }
 
 function startLevel(id: number): void {
@@ -330,6 +389,7 @@ function startLevel(id: number): void {
   currentLevelId = id;
   session = new Session(level);
   hintedBlocks = [];
+  particles.clear();
   drag.cancel();
   $('overlay-win').hidden = true;
   showScreen('game');
@@ -358,6 +418,7 @@ function leaveLevel(): void {
   }
 
   session = null;
+  particles.clear();
   drag.cancel();
   $('overlay-win').hidden = true;
   screenStack = ['home'];
@@ -378,7 +439,6 @@ function showHint(): void {
   }
 
   hintedBlocks = [outcome.move.blockId];
-  dirty = true;
   const arrows = { up: 'up', down: 'down', left: 'left', right: 'right' } as const;
   toast(`Try sliding the highlighted block ${arrows[outcome.move.dir]}.`);
   sfx.tap();
@@ -394,7 +454,6 @@ function bindSettings(): void {
       (saveData.settings[key] as boolean) = input.checked;
       persist();
       onChange?.(input.checked);
-      dirty = true;
     });
   };
 
@@ -402,7 +461,7 @@ function bindSettings(): void {
   bind('set-music', 'music', setMusicEnabled);
   bind('set-haptics', 'haptics');
   bind('set-glyphs', 'colourBlindGlyphs');
-  bind('set-motion', 'reduceMotion');
+  bind('set-motion', 'reduceMotion', () => applyTheme());
 
   $('btn-remove-ads').addEventListener('click', () => {
     toast('Remove Ads is a store purchase, available in the Android build.');
@@ -440,7 +499,6 @@ function bindNavigation(): void {
   $('btn-undo').addEventListener('click', () => {
     if (session?.undo()) {
       hintedBlocks = [];
-      dirty = true;
       updateHud();
       sfx.tap();
     }
@@ -450,7 +508,7 @@ function bindNavigation(): void {
     if (!session) return;
     session.restart();
     hintedBlocks = [];
-    dirty = true;
+    particles.clear();
     updateHud();
   });
 
@@ -509,6 +567,11 @@ function boot(): void {
 
   exposeTestHook();
   requestAnimationFrame(frame);
+}
+
+/** Block hue lookup, kept here so the effects layer stays theme-agnostic. */
+function blockColourFor(index: number): string {
+  return BLOCK_COLOURS[((index % BLOCK_COLOURS.length) + BLOCK_COLOURS.length) % BLOCK_COLOURS.length];
 }
 
 boot();
