@@ -27,7 +27,7 @@ npm run typecheck  # strict TypeScript, no emit
 npm run build      # typecheck + production bundle into dist/
 ```
 
-The production bundle is about **30 kB gzipped**, including all 200 levels.
+The production bundle is about **31 kB gzipped** plus a 33 kB font, including all 200 levels.
 
 ## How it fits together
 
@@ -45,6 +45,8 @@ src/game/       everything the player touches
   input.ts      drag handling
   render.ts     canvas renderer
   theme.ts      materials: tray, wells, rims, and the fixed tile palette
+
+public/fonts/  Baloo 2 (SIL OFL 1.1) plus its licence text
   particles.ts  exit sparks and win confetti
   audio.ts      synthesised sound; no audio files ship
   save.ts       defensive localStorage persistence
@@ -122,5 +124,12 @@ under, with no rebuild.
 
 ## Licence
 
-Not yet chosen. The code is original; the palette is the Okabe-Ito
-colour-blind-safe set, and no third-party assets are bundled.
+Not yet chosen for the project itself. The code is original and the tile
+palette is the Okabe-Ito colour-blind-safe set.
+
+One third-party asset ships with the build: **Baloo 2**, used for headings and
+button labels, under the SIL Open Font License 1.1. The licence text is
+included at `public/fonts/OFL.txt` as that licence requires, and it permits
+commercial use and bundling. Only the latin subset is included (33 kB, one
+variable file covering every weight), and it is served from the build rather
+than fetched at runtime so the game still works offline.

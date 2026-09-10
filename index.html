@@ -14,27 +14,35 @@
   <body>
     <div id="app">
       <!-- Home -->
-      <section class="screen" id="screen-home">
+      <section class="screen screen-home" id="screen-home">
         <div class="stack">
           <header class="brand">
             <!-- The same tiles the board is made of, so the menu and the game
                  share one material. Decorative only. -->
             <div class="brand-tiles" aria-hidden="true">
-              <span style="--tile: #E69F00"></span>
-              <span style="--tile: #56B4E9"></span>
-              <span style="--tile: #009E73"></span>
-              <span style="--tile: #CC79A7"></span>
+              <span style="--tile: #E69F00; --tile-deep: #a06e00"></span>
+              <span style="--tile: #56B4E9; --tile-deep: #2e7ba8"></span>
+              <span style="--tile: #009E73; --tile-deep: #006b4e"></span>
+              <span style="--tile: #CC79A7; --tile-deep: #8f4a73"></span>
             </div>
-            <h1>Colour Jam</h1>
+            <h1><span>Colour Jam</span></h1>
             <p class="tagline">Slide every block out through a gate of its own colour.</p>
           </header>
-          <div class="menu">
-            <button class="btn btn-primary" id="btn-continue">Play</button>
-            <button class="btn" id="btn-levels">Levels</button>
-            <button class="btn" id="btn-themes">Themes</button>
-            <button class="btn" id="btn-settings">Settings</button>
-            <button class="btn btn-quiet" id="btn-promises">Our promises</button>
-          </div>
+          <nav class="menu">
+            <!-- One action dominates; everything else is grouped and quieter. -->
+            <button class="pill pill-play" id="btn-continue">
+              <span class="pill-label">Play</span>
+              <span class="pill-sub" id="home-continue-sub"></span>
+            </button>
+            <div class="pill-pair">
+              <button class="pill pill-sweet" style="--candy: #ffd27a; --candy-deep: #d99b28" id="btn-levels">Levels</button>
+              <button class="pill pill-sweet" style="--candy: #9fd9ff; --candy-deep: #4f9fd6" id="btn-themes">Themes</button>
+            </div>
+            <div class="pill-pair">
+              <button class="pill pill-sweet pill-small" style="--candy: #b9ecc9; --candy-deep: #62b585" id="btn-settings">Settings</button>
+              <button class="pill pill-sweet pill-small" style="--candy: #ffc2dd; --candy-deep: #d9739f" id="btn-promises">Promises</button>
+            </div>
+          </nav>
           <p class="footnote" id="home-progress"></p>
         </div>
       </section>

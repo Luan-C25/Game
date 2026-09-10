@@ -129,8 +129,8 @@ function renderHome(): void {
     cleared === 0
       ? `${LEVEL_COUNT} hand-verified levels. No timers, no lives.`
       : `${cleared} of ${LEVEL_COUNT} levels cleared · ${saveData.coins} coins`;
-  $<HTMLButtonElement>('btn-continue').textContent =
-    saveData.highestUnlocked > 1 ? `Continue · level ${saveData.highestUnlocked}` : 'Play';
+  const sub = document.getElementById('home-continue-sub');
+  if (sub) sub.textContent = saveData.highestUnlocked > 1 ? `Level ${saveData.highestUnlocked}` : '';
 }
 
 function renderLevelGrid(): void {

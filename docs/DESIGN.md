@@ -101,6 +101,25 @@ palettes - there are separate entries for a bevel, a recess and a rim - and
 they drive both the canvas and the DOM chrome through CSS custom properties,
 so adding one never means writing matching CSS by hand.
 
+### The menu is a different room
+
+The main menu deliberately breaks from the board's material. It is the shop
+window - the first thing anyone sees and the screen that has to sell the game
+in a second - so it goes bright and toy-like where the board stays restrained:
+moulded capsules with a glossy cap and a thick coloured underside that a press
+physically sinks into, a chunky rounded wordmark with a crisp outline and a
+slab of extrusion, and a warm backdrop it keeps across every theme.
+
+Hierarchy carries the weight there. **Play** is roughly twice the height of
+anything else and the only saturated capsule on the screen; Levels and Themes
+sit tight beneath it as a softer pastel pair, with Settings and Promises
+quieter again below. Nothing on that screen is the same size as anything else,
+which is what stops it reading as a stack of identical rectangles.
+
+Headings and button labels across the whole app use Baloo 2, a rounded display
+face bundled with the build. Body copy and small print stay on the system font,
+which is more legible at small sizes.
+
 ## What is deliberately absent
 
 No timers. No lives or energy. No fail state. No streaks or daily login
