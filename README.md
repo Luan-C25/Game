@@ -27,7 +27,7 @@ npm run typecheck  # strict TypeScript, no emit
 npm run build      # typecheck + production bundle into dist/
 ```
 
-The production bundle is about **31 kB gzipped**, including all 200 levels.
+The production bundle is about **30 kB gzipped**, including all 200 levels.
 
 ## How it fits together
 
@@ -44,7 +44,7 @@ src/game/       everything the player touches
   session.ts    one attempt at one level: moves, undo, hints, winning
   input.ts      drag handling
   render.ts     canvas renderer
-  theme.ts      colour-blind-safe palette and unlockable themes
+  theme.ts      materials: tray, wells, rims, and the fixed tile palette
   particles.ts  exit sparks and win confetti
   audio.ts      synthesised sound; no audio files ship
   save.ts       defensive localStorage persistence

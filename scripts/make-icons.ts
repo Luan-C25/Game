@@ -59,14 +59,9 @@ function hex(value: string): [number, number, number] {
   return [(n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff];
 }
 
-/** The icon is the game itself: three blocks queued at a coloured gate. */
+/** The icon is the game itself: glazed tiles seated in a slate tray. */
 function draw(size: number): Uint8Array {
   const px = new Uint8Array(size * size * 4);
-  // Matches the Sunrise theme: a warm vertical wash behind a light board.
-  const skyTop = hex('#ffd9a8');
-  const skyBottom = hex('#ff9ec4');
-  const board = hex('#fffaf3');
-  const boardEdge = hex('#f7b98f');
 
   const set = (x: number, y: number, [r, g, b]: [number, number, number]): void => {
     if (x < 0 || y < 0 || x >= size || y >= size) return;
@@ -77,9 +72,16 @@ function draw(size: number): Uint8Array {
     px[i + 3] = 255;
   };
 
-  const rect = (x0: number, y0: number, w: number, h: number, colour: [number, number, number], radius = 0): void => {
-    for (let y = y0; y < y0 + h; y++) {
-      for (let x = x0; x < x0 + w; x++) {
+  const rect = (
+    x0: number,
+    y0: number,
+    w: number,
+    h: number,
+    colour: [number, number, number],
+    radius = 0,
+  ): void => {
+    for (let y = Math.round(y0); y < Math.round(y0 + h); y++) {
+      for (let x = Math.round(x0); x < Math.round(x0 + w); x++) {
         if (radius > 0) {
           const dx = Math.max(x0 + radius - x, x - (x0 + w - 1 - radius), 0);
           const dy = Math.max(y0 + radius - y, y - (y0 + h - 1 - radius), 0);
@@ -90,39 +92,43 @@ function draw(size: number): Uint8Array {
     }
   };
 
-  for (let y = 0; y < size; y++) {
-    const t = y / (size - 1);
-    const row: [number, number, number] = [
-      skyTop[0] + (skyBottom[0] - skyTop[0]) * t,
-      skyTop[1] + (skyBottom[1] - skyTop[1]) * t,
-      skyTop[2] + (skyBottom[2] - skyTop[2]) * t,
-    ];
-    for (let x = 0; x < size; x++) set(x, y, row);
-  }
-
   const unit = size / 16;
-  rect(Math.round(unit * 1.7), Math.round(unit * 1.7), Math.round(unit * 12.6), Math.round(unit * 12.6), boardEdge, Math.round(unit * 2));
-  rect(Math.round(unit * 2.4), Math.round(unit * 2.4), Math.round(unit * 11.2), Math.round(unit * 11.2), board, Math.round(unit * 1.5));
+  rect(0, 0, size, size, hex('#20263a'));
 
-  const blocks: Array<[number, number, number, number, string]> = [
-    [3.4, 3.8, 2.8, 2.8, '#E69F00'],
-    [7.6, 3.8, 2.8, 2.8, '#56B4E9'],
-    [3.4, 7.9, 2.8, 2.8, '#009E73'],
-    [7.6, 7.9, 2.8, 2.8, '#CC79A7'],
-  ];
-  for (const [x, y, w, h, colour] of blocks) {
-    rect(
-      Math.round(unit * x),
-      Math.round(unit * y),
-      Math.round(unit * w),
-      Math.round(unit * h),
-      hex(colour),
-      Math.round(unit * 0.7),
-    );
+  // Tray, with its own thickness under the face.
+  rect(unit * 1.4, unit * 1.9, unit * 13.2, unit * 12.7, hex('#2b3342'), unit * 1.8);
+  rect(unit * 1.4, unit * 1.4, unit * 13.2, unit * 12.7, hex('#515f73'), unit * 1.8);
+  rect(unit * 2.5, unit * 2.5, unit * 11, unit * 11, hex('#161a26'), unit * 1);
+
+  // Recessed wells behind the tiles.
+  for (let gy = 0; gy < 2; gy++) {
+    for (let gx = 0; gx < 2; gx++) {
+      rect(unit * (2.9 + gx * 5.2), unit * (2.9 + gy * 5.2), unit * 4.8, unit * 4.8, hex('#252c3b'), unit * 0.7);
+    }
   }
 
-  // The exit gate, cut into the right-hand wall.
-  rect(Math.round(unit * 13.1), Math.round(unit * 3.8), Math.round(unit * 1.5), Math.round(unit * 2.8), hex('#E69F00'), Math.round(unit * 0.6));
+  // Four glaze tiles: a solid extruded side, then the flat top.
+  const tiles: Array<[number, number, string]> = [
+    [3.3, 3.3, '#E69F00'],
+    [8.5, 3.3, '#56B4E9'],
+    [3.3, 8.5, '#009E73'],
+    [8.5, 8.5, '#CC79A7'],
+  ];
+  for (const [tx, ty, colour] of tiles) {
+    const [r, g, b] = hex(colour);
+    rect(unit * tx, unit * (ty + 0.5), unit * 4, unit * 4, [r * 0.58, g * 0.58, b * 0.58], unit * 0.7);
+    rect(unit * tx, unit * ty, unit * 4, unit * 4, [r, g, b], unit * 0.7);
+    // Lit chamfer along the top edge.
+    rect(unit * (tx + 0.5), unit * (ty + 0.35), unit * 3, unit * 0.5, [
+      r + (255 - r) * 0.45,
+      g + (255 - g) * 0.45,
+      b + (255 - b) * 0.45,
+    ], unit * 0.25);
+  }
+
+  // One exit channel cut through the right-hand frame.
+  rect(unit * 13.4, unit * 4, unit * 1.2, unit * 3.2, hex('#12151f'), unit * 0.5);
+  rect(unit * 13.6, unit * 4.3, unit * 0.9, unit * 2.6, hex('#E69F00'), unit * 0.4);
 
   return px;
 }

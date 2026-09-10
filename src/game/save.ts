@@ -39,7 +39,7 @@ export const DEFAULT_SETTINGS: Settings = {
   haptics: true,
   colourBlindGlyphs: false,
   reduceMotion: false,
-  theme: 'sunrise',
+  theme: 'slate',
 };
 
 export function defaultSave(): SaveData {
@@ -48,7 +48,7 @@ export function defaultSave(): SaveData {
     highestUnlocked: 1,
     bestMoves: {},
     coins: 0,
-    unlockedThemes: ['sunrise'],
+    unlockedThemes: ['slate'],
     adsRemoved: false,
     levelsSinceLastAd: 0,
     lastAdAtMs: 0,
@@ -103,7 +103,7 @@ export function reconcile(raw: unknown): SaveData {
         : base.highestUnlocked,
     bestMoves,
     coins: typeof raw.coins === 'number' && raw.coins >= 0 ? Math.floor(raw.coins) : base.coins,
-    unlockedThemes: themes.includes('sunrise') ? themes : ['sunrise', ...themes],
+    unlockedThemes: themes.includes('slate') ? themes : ['slate', ...themes],
     // A purchase is never silently revoked by a bad read.
     adsRemoved: raw.adsRemoved === true,
     levelsSinceLastAd:

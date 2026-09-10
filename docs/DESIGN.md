@@ -59,28 +59,47 @@ file, not an estimate.
 
 ## Presentation
 
-A puzzle game is judged in its first ten seconds, so the styling is
-deliberately loud: a drifting gradient background, blocks drawn as one merged
-glossy slab rather than a grid of separate tiles, gates that glow and carry a
-chevron pointing out of the board, sparks when a block leaves, and confetti on
-a win. The win card waits about six hundred milliseconds so the celebration
-happens in the clear rather than behind a dimmed overlay.
+The game commits to one physical idea: **glazed ceramic tiles seated in a
+slate tray, with the exits cut as metal-rimmed channels through the frame.**
+Every visual decision follows from that, which is what stops the board looking
+like a set of coloured rectangles that happen to be arranged in a grid.
 
-Two limits keep that from working against the player:
+The look is built from geometry, not from gradients:
 
-- **Block colours never change with the theme.** A theme restyles the world
-  around the blocks - background, board, walls, chrome - because the block
-  hues carry the rules. They come from the Okabe-Ito palette, which stays
-  distinguishable under the common forms of colour blindness, and the
-  shapes-on-blocks setting adds a second cue on top.
-- **Motion is a setting.** Turning on "reduce motion" stops the animation
-  clock, which freezes the background drift, the gate pulse and the hint glow,
-  and disables particles entirely. The OS-level `prefers-reduced-motion` hint
-  is honoured separately in CSS.
+- A tile has a **real extruded side face** - a solid darker slab drawn beneath
+  it - rather than a vertical gradient pretending to be depth.
+- Its **chamfer is two strokes**, offset in opposite directions and clipped to
+  the tile so only their inner halves show: one lit edge, one shaded.
+- The glaze is a **flat colour with a fine speckle**, generated once as a
+  repeating pattern. Not a multi-stop gradient with a gloss sweep - that
+  particular shine is the clearest sign of an interface nobody designed.
+- The board floor is **recessed wells**, one per cell, each with a lit bottom
+  lip. The grid is a physical thing, not lines ruled across a surface.
+- A block is one merged silhouette with **seams scored between its cells**, so
+  it reads as a single piece while still showing how many squares it covers.
 
-Themes are defined once, in `src/game/theme.ts`, and drive both the canvas and
-the DOM chrome through CSS custom properties - so adding a theme never means
-writing a matching block of CSS by hand.
+The same language carries into the chrome: solid fills, hard dark outlines, a
+real bottom edge that a press sinks into. No blurred drop shadows, no gradient
+text, no glows.
+
+The backdrop is deliberately quiet - one soft light from above and nothing
+else. Anything more competes with the board, which is the only thing on screen
+that should be loud.
+
+Two limits keep the styling from working against the player:
+
+- **Tile colours never change with the theme.** A theme restyles the tray, the
+  light and the chrome, because the tile hues carry the rules. They come from
+  the Okabe-Ito palette, which stays distinguishable under the common forms of
+  colour blindness, and the shapes-on-tiles setting adds a second cue on top.
+- **Motion is a setting.** "Reduce motion" stops the animation clock, which
+  freezes the rim shimmer and the hint pulse, and disables particles. The
+  OS-level `prefers-reduced-motion` hint is honoured separately in CSS.
+
+Themes are defined once, in `src/game/theme.ts`, as materials rather than
+palettes - there are separate entries for a bevel, a recess and a rim - and
+they drive both the canvas and the DOM chrome through CSS custom properties,
+so adding one never means writing matching CSS by hand.
 
 ## What is deliberately absent
 

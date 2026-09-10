@@ -1,133 +1,159 @@
 /**
- * Colour and theme system.
+ * Materials.
  *
- * Two rules constrain the styling. Block hues come from the Okabe-Ito
+ * The game commits to one physical idea: glazed ceramic tiles set into a
+ * slate tray, with the exits cut as metal-rimmed channels through the frame.
+ * Everything here describes that material rather than a set of decorative
+ * colours - which is why there are separate entries for a bevel, a recess and
+ * a rim, and why nothing in a theme is a gradient.
+ *
+ * Tile colours never change with the theme. They come from the Okabe-Ito
  * palette, which stays distinguishable under the common forms of colour
- * blindness, and themes are never allowed to change them - a theme restyles
- * the world around the blocks, because the blocks carry the rules. Within
- * those limits the styling is meant to be loud: gradients, glow, drifting
- * colour in the background.
+ * blindness, and they carry the rules; a theme restyles the tray, the light
+ * and the chrome around them.
  */
 
 export interface Theme {
   id: string;
   name: string;
   price: number;
-  /** True when the theme needs light text on dark chrome. */
   dark: boolean;
 
-  /** Background gradient, top to bottom. */
-  bgFrom: string;
-  bgTo: string;
-  /** Slow-drifting colour blobs painted over the background. */
-  blobs: [string, string, string];
+  /** Page and canvas backdrop. Deliberately quiet: the board is the subject. */
+  backdrop: string;
+  backdropLift: string;
 
-  /** Wall ring gradient. */
-  wallFrom: string;
-  wallTo: string;
-  /** Playfield gradient. */
-  floorFrom: string;
-  floorTo: string;
-  gridDot: string;
+  /** Tray frame: face, outer edge, and the lit top bevel. */
+  tray: string;
+  trayEdge: string;
+  trayLip: string;
+
+  /** Grout between the cell wells, and the wells themselves. */
+  grout: string;
+  well: string;
+  wellLip: string;
+
+  /** Exit channel cut through the frame, and its metal rim. */
+  channel: string;
+  rim: string;
+
   crate: string;
 
-  /** Chrome, pushed into CSS custom properties by the app shell. */
+  /* Chrome, pushed into CSS custom properties by the app shell. */
   surface: string;
+  surfaceEdge: string;
   line: string;
   text: string;
   muted: string;
   accent: string;
+  accentEdge: string;
   accentInk: string;
 }
 
 export const THEMES: Theme[] = [
   {
-    id: 'sunrise',
-    name: 'Sunrise',
+    id: 'slate',
+    name: 'Slate',
     price: 0,
-    dark: false,
-    bgFrom: '#fff3df',
-    bgTo: '#ffdcea',
-    blobs: ['#ff9a4d', '#ff6f9c', '#b58cff'],
-    wallFrom: '#ffd9b8',
-    wallTo: '#f7b98f',
-    floorFrom: '#fffaf3',
-    floorTo: '#fff1e2',
-    gridDot: '#f0d5c0',
-    crate: '#9c8878',
-    surface: '#fffdfa',
-    line: '#f3ddcb',
-    text: '#3a2a22',
-    muted: '#8a6f5f',
-    accent: '#f4703a',
-    accentInk: '#ffffff',
+    dark: true,
+    backdrop: '#20263a',
+    backdropLift: '#2f3852',
+    tray: '#515f73',
+    trayEdge: '#2b3342',
+    trayLip: '#71819a',
+    grout: '#161a26',
+    well: '#252c3b',
+    wellLip: '#39435a',
+    channel: '#12151f',
+    rim: '#aab6c8',
+    crate: '#77839a',
+    surface: '#39435a',
+    surfaceEdge: '#1e2432',
+    line: '#4d5a72',
+    text: '#eef2f7',
+    muted: '#a3adbb',
+    accent: '#e8a33d',
+    accentEdge: '#a86f18',
+    accentInk: '#2a2110',
   },
   {
-    id: 'midnight',
-    name: 'Midnight Neon',
+    id: 'clay',
+    name: 'Warm Clay',
     price: 250,
-    dark: true,
-    bgFrom: '#161033',
-    bgTo: '#2b1055',
-    blobs: ['#6a3df0', '#1fd1c8', '#f25fa0'],
-    wallFrom: '#4a3691',
-    wallTo: '#2b1f5c',
-    floorFrom: '#221a45',
-    floorTo: '#1a1436',
-    gridDot: '#3d3170',
-    crate: '#5b5289',
-    surface: '#241d47',
-    line: '#3a3070',
-    text: '#f0ecff',
-    muted: '#a79ed4',
-    accent: '#1fd1c8',
-    accentInk: '#0f1030',
+    dark: false,
+    backdrop: '#ddcdba',
+    backdropLift: '#efe4d5',
+    tray: '#b98a68',
+    trayEdge: '#8a604a',
+    trayLip: '#d5ab8b',
+    grout: '#8d6a53',
+    well: '#e5d8c8',
+    wellLip: '#f2e9dd',
+    channel: '#7b5942',
+    rim: '#e0c9a8',
+    crate: '#a08d7a',
+    surface: '#f7f1e8',
+    surfaceEdge: '#c9b8a3',
+    line: '#ddcdb9',
+    text: '#3d2f24',
+    muted: '#7d6a58',
+    accent: '#d2683c',
+    accentEdge: '#9c4526',
+    accentInk: '#fff6ef',
   },
   {
-    id: 'candy',
-    name: 'Candy Pop',
+    id: 'ink',
+    name: 'Ink',
+    price: 400,
+    dark: true,
+    backdrop: '#101219',
+    backdropLift: '#1d212c',
+    tray: '#343a49',
+    trayEdge: '#15171f',
+    trayLip: '#4e566a',
+    grout: '#0f1116',
+    well: '#1b1e26',
+    wellLip: '#262a34',
+    channel: '#0b0d11',
+    rim: '#6f7a8c',
+    crate: '#565e6c',
+    surface: '#22262f',
+    surfaceEdge: '#101218',
+    line: '#343a46',
+    text: '#e9edf4',
+    muted: '#8f98a8',
+    accent: '#4bb8a9',
+    accentEdge: '#2b7d72',
+    accentInk: '#0c1a18',
+  },
+  {
+    id: 'porcelain',
+    name: 'Porcelain',
     price: 400,
     dark: false,
-    bgFrom: '#f6e8ff',
-    bgTo: '#dff1ff',
-    blobs: ['#c46bff', '#4bc4ff', '#ff7ec0'],
-    wallFrom: '#e6d3ff',
-    wallTo: '#c9adf0',
-    floorFrom: '#fdfaff',
-    floorTo: '#f2ecff',
-    gridDot: '#e0d0f2',
-    crate: '#9a8fb0',
-    surface: '#fffdff',
-    line: '#e8dcf7',
-    text: '#33234a',
-    muted: '#7b6a94',
-    accent: '#a34ff0',
+    backdrop: '#cfd6df',
+    backdropLift: '#e8edf2',
+    tray: '#9fabba',
+    trayEdge: '#74808f',
+    trayLip: '#c4cedb',
+    grout: '#8a94a1',
+    well: '#eef1f5',
+    wellLip: '#ffffff',
+    channel: '#6f7885',
+    rim: '#dbe1e8',
+    crate: '#9aa4b0',
+    surface: '#fbfcfe',
+    surfaceEdge: '#b6bfca',
+    line: '#d3dae2',
+    text: '#2a3038',
+    muted: '#6d7784',
+    accent: '#3f7fd0',
+    accentEdge: '#28558f',
     accentInk: '#ffffff',
-  },
-  {
-    id: 'reef',
-    name: 'Deep Reef',
-    price: 400,
-    dark: true,
-    bgFrom: '#04283b',
-    bgTo: '#07485a',
-    blobs: ['#14b8a6', '#0ea5e9', '#22d3a6'],
-    wallFrom: '#12798a',
-    wallTo: '#0a4d5f',
-    floorFrom: '#0a3d50',
-    floorTo: '#062e3d',
-    gridDot: '#14566b',
-    crate: '#3f7183',
-    surface: '#0b3c4e',
-    line: '#14566b',
-    text: '#e6fbff',
-    muted: '#8fc4d4',
-    accent: '#22d3a6',
-    accentInk: '#04283b',
   },
 ];
 
-/** Block hues never change with the theme; they are part of the rules. */
+/** Tile glaze colours. Fixed across every theme: they carry the rules. */
 export const BLOCK_COLOURS: string[] = [
   '#E69F00',
   '#56B4E9',
@@ -166,13 +192,13 @@ function toHex(r: number, g: number, b: number): string {
   return `#${((clamp(r) << 16) | (clamp(g) << 8) | clamp(b)).toString(16).padStart(6, '0')}`;
 }
 
-/** Darkens a hex colour, for bevels and outlines. */
+/** Darkens a colour, for extruded sides and recessed edges. */
 export function shade(hex: string, amount: number): string {
   const [r, g, b] = channels(hex);
   return toHex(r * (1 - amount), g * (1 - amount), b * (1 - amount));
 }
 
-/** Lightens a hex colour towards white, for gradient tops and gloss. */
+/** Lightens a colour towards white, for lit bevels. */
 export function tint(hex: string, amount: number): string {
   const [r, g, b] = channels(hex);
   return toHex(r + (255 - r) * amount, g + (255 - g) * amount, b + (255 - b) * amount);

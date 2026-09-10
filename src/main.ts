@@ -71,19 +71,18 @@ function applyTheme(): void {
   const theme = themeById(saveData.settings.theme);
   const root = document.documentElement;
   root.dataset.theme = theme.id;
-  root.style.setProperty('--bg-from', theme.bgFrom);
-  root.style.setProperty('--bg-to', theme.bgTo);
+  root.style.setProperty('--backdrop', theme.backdrop);
+  root.style.setProperty('--backdrop-lift', theme.backdropLift);
   root.style.setProperty('--surface', theme.surface);
+  root.style.setProperty('--surface-edge', theme.surfaceEdge);
   root.style.setProperty('--line', theme.line);
   root.style.setProperty('--text', theme.text);
   root.style.setProperty('--muted', theme.muted);
   root.style.setProperty('--accent', theme.accent);
+  root.style.setProperty('--accent-edge', theme.accentEdge);
   root.style.setProperty('--accent-ink', theme.accentInk);
-  root.style.setProperty('--glow-a', theme.blobs[0]);
-  root.style.setProperty('--glow-b', theme.blobs[1]);
-  root.style.setProperty('--glow-c', theme.blobs[2]);
   root.classList.toggle('still', saveData.settings.reduceMotion);
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme.bgFrom);
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme.backdrop);
 }
 
 function showScreen(id: ScreenId, { push = true } = {}): void {
@@ -178,7 +177,7 @@ function renderThemes(): void {
     name.textContent = theme.name;
     const swatches = document.createElement('div');
     swatches.className = 'swatches';
-    for (const colour of [theme.bgFrom, theme.bgTo, ...theme.blobs]) {
+    for (const colour of [theme.backdrop, theme.tray, theme.well, theme.rim]) {
       const dot = document.createElement('span');
       dot.className = 'swatch';
       dot.style.background = colour;
