@@ -39,24 +39,36 @@ install the Android SDK when it offers.
 Start this first: verification runs in the background while you do everything
 else.
 
-## Step 2 — Create the AdMob account and get your ad ids
+## Step 2 — AdMob ids — done
 
-1. Sign up at https://admob.google.com with the same Google account.
-2. **Add app → Android → the app isn't listed yet**, named Colour Jam.
-3. Note the **App ID** — it looks like `ca-app-pub-XXXXXXXX~YYYYYYYY`.
-4. Create two ad units: one **Interstitial**, one **Rewarded**. Note both
-   unit ids — they look like `ca-app-pub-XXXXXXXX/ZZZZZZZZ`.
+The account exists and the ids are already wired in:
 
-Then put them in two places:
+| What | Value | Where it lives |
+| --- | --- | --- |
+| App ID | `ca-app-pub-5852720871132319~2774752359` | `android/app/src/main/AndroidManifest.xml` |
+| Interstitial unit | `ca-app-pub-5852720871132319/8787295239` | `src/game/ad-units.ts` (`LIVE_UNITS`) |
+| Rewarded unit | not created | — |
 
-- `android/app/src/main/AndroidManifest.xml` — replace the test value in the
-  `com.google.android.gms.ads.APPLICATION_ID` meta-data with your App ID.
-- `src/game/ad-units.ts` — paste the unit ids into `LIVE_UNITS`.
+The rewarded unit is absent on purpose: the game has no rewarded placement, so
+nothing calls `showRewarded()`. Add the id to `LIVE_UNITS.rewarded` at the same
+time as the opt-in reward UI, not before.
 
-**Until you do this the app uses Google's test ads.** That is deliberate:
-requesting real ads from a development build generates invalid traffic, which
-is the quickest way to get an AdMob account suspended. Test ads earn nothing
-but are completely safe.
+An App ID that is under review still issues ad ids and still lets the app
+build; what review gates is *fill*. Expect "no fill" in the logs until it
+clears, and note that the message is indistinguishable from a genuine no-fill,
+so it is not a useful signal either way.
+
+### Keeping your own taps out of the numbers
+
+Development builds cannot request live ads — `useTestAds()` is keyed off
+`import.meta.env.PROD`, so `npm run dev` is always test ads. A **release** build
+installed on your own phone is a different matter: it requests real ads, and
+tapping one is invalid traffic against your own account.
+
+Before you sideload a release build, add that handset under **AdMob → Settings
+→ Test devices**. It is then served test ads even from a release build. Your
+closed-test testers do not need this — real people using the app normally is
+exactly what the account is for.
 
 ## Step 3 — Create your signing key
 

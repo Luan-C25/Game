@@ -37,16 +37,16 @@
 
         <!--
             Google Mobile Ads application id. The SDK crashes at launch if this
-            is missing, so it ships with Google's public TEST app id.
+            is missing, so it must be present in every build, debug included.
 
-            Replace the value with your own AdMob app id before the production
-            release, and paste the matching unit ids into
-            src/game/ad-units.ts (LIVE_UNITS). Using a real app id during
-            development generates invalid traffic and risks account suspension.
+            The app id alone requests nothing, so unlike an ad unit id it is
+            safe here at all times. What keeps development traffic clean is
+            src/game/ad-units.ts, which serves Google's test units in any
+            non-production build.
         -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="ca-app-pub-5852720871132319~2774752359" />
 
     </application>
 

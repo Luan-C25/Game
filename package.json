@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "node --test test/",
+    "test": "node --test \"test/*.test.ts\"",
     "levels": "node scripts/build-levels.ts",
     "typecheck": "tsc --noEmit"
   },
