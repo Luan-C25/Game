@@ -47,11 +47,11 @@ The account exists and the ids are already wired in:
 | --- | --- | --- |
 | App ID | `ca-app-pub-5852720871132319~2774752359` | `android/app/src/main/AndroidManifest.xml` |
 | Interstitial unit | `ca-app-pub-5852720871132319/8787295239` | `src/game/ad-units.ts` (`LIVE_UNITS`) |
-| Rewarded unit | not created | — |
+| Rewarded unit | `ca-app-pub-5852720871132319/5147433120` | `src/game/ad-units.ts` (`LIVE_UNITS`) |
 
-The rewarded unit is absent on purpose: the game has no rewarded placement, so
-nothing calls `showRewarded()`. Add the id to `LIVE_UNITS.rewarded` at the same
-time as the opt-in reward UI, not before.
+The rewarded unit is configured but not yet reachable: nothing in the game
+calls `showRewarded()` because no opt-in reward button exists. It will report
+zero impressions until one does. That is expected, not a misconfiguration.
 
 An App ID that is under review still issues ad ids and still lets the app
 build; what review gates is *fill*. Expect "no fill" in the logs until it

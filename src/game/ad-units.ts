@@ -27,14 +27,13 @@ export const TEST_UNITS: AdUnits = {
 /**
  * The real units for this app.
  *
- * The rewarded slot is deliberately empty: the game has no rewarded placement
- * yet, so nothing calls showRewarded(). An empty string falls back to the test
- * unit rather than making a malformed request, which keeps the dormant path
- * harmless. Fill it in when the opt-in reward UI lands.
+ * The rewarded unit is configured but not yet reachable: no placement in the
+ * game calls showRewarded(), so it will report zero impressions until an
+ * opt-in reward button exists. That is expected, not a misconfiguration.
  */
 export const LIVE_UNITS: AdUnits = {
   interstitial: 'ca-app-pub-5852720871132319/8787295239',
-  rewarded: '',
+  rewarded: 'ca-app-pub-5852720871132319/5147433120',
 };
 
 /**
