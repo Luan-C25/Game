@@ -1,0 +1,120 @@
+<!doctype html>
+<!--
+  Play Store feature graphic, 1024x500. This file is the source; the PNG beside
+  it is generated from it by scripts/make-store-assets.mjs, so the banner can
+  always be regenerated rather than re-drawn by hand.
+
+  Play scales and crops this in places, so nothing important sits near an edge.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: 'Baloo 2';
+        font-style: normal;
+        font-weight: 400 800;
+        src: url('../public/fonts/baloo2.woff2') format('woff2');
+      }
+
+      * { box-sizing: border-box; margin: 0; }
+
+      body {
+        width: 1024px;
+        height: 500px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        gap: 54px;
+        padding: 0 78px;
+        background: radial-gradient(120% 90% at 22% -10%, #2f3852, #20263a 68%);
+        font-family: 'Baloo 2', system-ui, sans-serif;
+        color: #eef2f7;
+      }
+
+      .words { flex: 1; }
+
+      h1 {
+        font-size: 92px;
+        font-weight: 800;
+        line-height: 0.98;
+        letter-spacing: -0.015em;
+        color: #fff4fa;
+        transform: rotate(-2deg);
+        text-shadow:
+          -3px 0 0 #2a1c33, 3px 0 0 #2a1c33, 0 -3px 0 #2a1c33, 0 3px 0 #2a1c33,
+          -2px -2px 0 #2a1c33, 2px -2px 0 #2a1c33, -2px 2px 0 #2a1c33, 2px 2px 0 #2a1c33,
+          0 7px 0 #ff5fa8, 0 11px 0 #d63d84, 0 15px 0 #2a1c33;
+      }
+
+      p {
+        margin-top: 34px;
+        font-size: 30px;
+        font-weight: 600;
+        color: #a3adbb;
+        max-width: 25ch;
+      }
+
+      /* The one claim worth leading on. */
+      .claim {
+        display: inline-block;
+        margin-top: 26px;
+        padding: 9px 22px 11px;
+        border-radius: 999px;
+        background: #e8a33d;
+        border: 3px solid #a86f18;
+        box-shadow: 0 5px 0 #a86f18;
+        color: #2a2110;
+        font-size: 23px;
+        font-weight: 800;
+      }
+
+      /* A fragment of the real board: tray, wells, glazed tiles. */
+      .tray {
+        width: 340px;
+        height: 340px;
+        flex: none;
+        padding: 22px;
+        border-radius: 34px;
+        background: #515f73;
+        box-shadow: 0 14px 0 #2b3342, 0 26px 44px rgba(0, 0, 0, 0.45);
+        transform: rotate(3deg);
+      }
+
+      .floor {
+        width: 100%;
+        height: 100%;
+        border-radius: 18px;
+        background: #161a26;
+        padding: 12px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .tile {
+        border-radius: 16px;
+        background: var(--c);
+        box-shadow:
+          0 9px 0 var(--d),
+          inset 0 7px 0 rgba(255, 255, 255, 0.34);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="words">
+      <h1>Colour&nbsp;Jam</h1>
+      <p>Slide every block out through a gate of its own colour.</p>
+      <span class="claim">No timers · No lives · Free hints</span>
+    </div>
+    <div class="tray">
+      <div class="floor">
+        <div class="tile" style="--c: #E69F00; --d: #8a6000"></div>
+        <div class="tile" style="--c: #56B4E9; --d: #2e7ba8"></div>
+        <div class="tile" style="--c: #009E73; --d: #006b4e"></div>
+        <div class="tile" style="--c: #CC79A7; --d: #8f4a73"></div>
+      </div>
+    </div>
+  </body>
+</html>
