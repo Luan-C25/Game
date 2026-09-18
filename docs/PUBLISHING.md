@@ -75,15 +75,24 @@ exactly what the account is for.
 This key proves future updates come from you. Lose it and you can recover via
 Play App Signing; leak it and someone else can impersonate your releases.
 
-From the project root:
+From the project root. macOS and Linux:
 
 ```bash
 keytool -genkey -v -keystore android/colourjam-upload.jks \
   -keyalg RSA -keysize 2048 -validity 10000 -alias colourjam
 ```
 
+Windows PowerShell, where a trailing `\` is not a line continuation and will
+truncate the command — keep it on one line:
+
+```powershell
+keytool -genkey -v -keystore android/colourjam-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias colourjam
+```
+
 It asks for a password and some name/organisation fields — the fields do not
-matter much, the password does.
+matter much, the password does. When it offers a separate key password, press
+Enter to reuse the keystore password; that is what the `keystore.properties`
+below assumes.
 
 Then create `android/keystore.properties`:
 
@@ -117,6 +126,10 @@ it from the command line:
 ```bash
 cd android && ./gradlew bundleRelease
 ```
+
+On Windows PowerShell that is `cd android` then `.\gradlew bundleRelease` —
+the leading `.\` is required, as PowerShell does not run executables from the
+current directory without it.
 
 The bundle lands at `android/app/build/outputs/bundle/release/app-release.aab`.
 
