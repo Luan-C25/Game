@@ -1,4 +1,4 @@
-# Status — 10 September 2026
+# Status — 18 September 2026
 
 Where the project stands at the end of the first working session, and what a
 cold start needs to know. Sessions run in an ephemeral container, so this file
@@ -40,30 +40,37 @@ The reasoning behind each design rule, and the player complaint it answers,
 is in [DESIGN.md](./DESIGN.md). The research that picked this game is in
 [MARKET-RESEARCH.md](./MARKET-RESEARCH.md).
 
-## Open decisions — these need the owner, not the code
+## Decisions now settled
 
-1. **App id** is still the placeholder `com.example.colourjam` in
-   `capacitor.config.json`. Needs a real one before any Play upload.
-2. **Project licence** not chosen. (The bundled font is settled: Baloo 2 under
-   SIL OFL 1.1, licence text shipped at `public/fonts/OFL.txt`.)
-3. **Google Play account type.** A personal account requires a closed test
-   with 12 testers for 14 days before public release; an organisation account
-   does not. This is a scheduling decision worth making early.
+- **App id:** `com.tilekiln.colourjam`. Permanent once anything is uploaded to
+  Play. Future games share the `com.tilekiln.` prefix.
+- **Target audience:** 13+. Deliberately *not* child-directed, which keeps the
+  app out of Families policy and keeps ad revenue per impression intact.
+- **Account type:** personal — so the 12-tester, 14-day closed test applies.
+- **Project licence:** still not chosen. (The bundled font is settled: Baloo 2
+  under SIL OFL 1.1, licence text shipped at `public/fonts/OFL.txt`.)
+
+## Android and store: done
+
+- `android/` holds the Capacitor 8 project, targeting **API 36** — mandatory
+  for new apps since 31 August 2026 — with the game's own launcher icons at
+  every density, an adaptive foreground, and the screen locked to portrait.
+- AdMob is wired through `src/game/ads-native.ts`, including the EEA/UK
+  consent flow, and defaults to Google's **test** ad units.
+- Release signing reads from `android/keystore.properties`, which is
+  git-ignored along with the keystore itself.
+- `store/` holds the listing copy, the privacy policy, the 512px icon, the
+  1024x500 feature graphic and six 1080x1920 screenshots — all regenerable.
 
 ## Next steps, roughly in order
 
-1. **Play it on a real handset.** Drag feel on physical hardware is the one
-   thing the headless checks cannot answer, and it is the mechanic the whole
+1. **Play it on a real handset.** Drag feel on physical hardware is still the
+   one thing no headless check can answer, and it is the mechanic the whole
    game rests on.
-2. **Wrap for Android** — `npx cap add android`, which needs the Android SDK.
-   The native project is deliberately not committed. See the README.
-3. **Wire ads and purchases.** Both are stubbed behind small interfaces in
-   `src/game/ads.ts` and the two Settings call sites; swapping in AdMob and
-   Play Billing should not touch game logic, and the ad policy travels with
-   the provider.
-4. **Store listing** — screenshots, description, and the honest hooks the
-   research pointed at: no timers, no lives, free hints, every level provably
-   solvable.
+2. **Work through [PUBLISHING.md](./PUBLISHING.md)** — account, AdMob ids,
+   signing key, bundle, listing, closed test.
+3. **Start the 14-day closed test early.** It is the long pole; everything
+   else can be finished while it runs.
 
 ## Worth knowing before changing things
 

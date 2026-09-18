@@ -15,7 +15,8 @@ import { Session } from './game/session.ts';
 import { blockCentre, computeViewport, render, type Viewport } from './game/render.ts';
 import { BLOCK_COLOURS, THEMES, themeById } from './game/theme.ts';
 import { Particles } from './game/particles.ts';
-import { AD_PROMISES, mayShowInterstitial, noopAdProvider } from './game/ads.ts';
+import { AD_PROMISES, mayShowInterstitial, noopAdProvider, type AdProvider } from './game/ads.ts';
+import { admobProvider, adsAvailable, initialiseAds } from './game/ads-native.ts';
 import { isMusicEnabled, setMusicEnabled, setSoundEnabled, sfx, unlockAudio } from './game/audio.ts';
 import * as store from './game/save.ts';
 
@@ -37,6 +38,8 @@ const particles = new Particles();
 let clock = 0;
 let lastFrameMs = 0;
 let screenStack: ScreenId[] = ['home'];
+/** AdMob on a device, a no-op stub on the web build and in tests. */
+const ads: AdProvider = adsAvailable() ? admobProvider : noopAdProvider;
 
 const canvas = $<HTMLCanvasElement>('board');
 const ctx = canvas.getContext('2d');
@@ -413,7 +416,7 @@ function leaveLevel(): void {
     saveData.levelsSinceLastAd = 0;
     saveData.lastAdAtMs = now;
     persist();
-    void noopAdProvider.showInterstitial();
+    void ads.showInterstitial();
   }
 
   session = null;
@@ -558,6 +561,10 @@ function boot(): void {
   renderPromises();
   renderHome();
   showScreen('home', { push: false });
+
+  // Consent and SDK start-up run in the background: nothing about the first
+  // puzzle should wait on an ad network.
+  void initialiseAds();
 
   drag.attach();
   window.addEventListener('resize', resizeCanvas);

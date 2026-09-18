@@ -539,7 +539,9 @@ hr {
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(22px + env(safe-area-inset-bottom));
+  /* Clears the control caps and their labels: a toast that covers the button
+     you just pressed hides the thing it is talking about. */
+  bottom: calc(136px + env(safe-area-inset-bottom));
   transform: translateX(-50%);
   background: var(--surface);
   border: 3px solid var(--surface-edge);

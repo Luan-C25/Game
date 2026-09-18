@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Colour Jam</string>
+    <string name="title_activity_main">Colour Jam</string>
+    <string name="package_name">com.tilekiln.colourjam</string>
+    <string name="custom_url_scheme">com.tilekiln.colourjam</string>
+</resources>

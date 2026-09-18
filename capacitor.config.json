@@ -1,5 +1,5 @@
 {
-  "appId": "com.example.colourjam",
+  "appId": "com.tilekiln.colourjam",
   "appName": "Colour Jam",
   "webDir": "dist",
   "android": {
