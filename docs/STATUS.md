@@ -1,8 +1,17 @@
-# Status — 18 September 2026
+# Status — 21 September 2026 — PAUSED
 
-Where the project stands at the end of the first working session, and what a
-cold start needs to know. Sessions run in an ephemeral container, so this file
-is the handover.
+Where the project stands, and what a cold start needs to know. Sessions run in
+an ephemeral container, so this file is the handover.
+
+## Why it is paused
+
+Google Play requires a personal developer account to run a closed test with
+**12 testers for 14 continuous days**, with genuine use checked. That is the
+blocker, and it is a recruiting problem rather than a technical one — nothing
+in the code is waiting on anything.
+
+Everything up to that point is finished. The work resumes exactly where it
+stopped; see "To pick this back up" at the end.
 
 ## Where things are
 
@@ -47,6 +56,7 @@ is in [DESIGN.md](./DESIGN.md). The research that picked this game is in
 - **Target audience:** 13+. Deliberately *not* child-directed, which keeps the
   app out of Families policy and keeps ad revenue per impression intact.
 - **Account type:** personal — so the 12-tester, 14-day closed test applies.
+  This is the reason the project is paused.
 - **Project licence:** still not chosen. (The bundled font is settled: Baloo 2
   under SIL OFL 1.1, licence text shipped at `public/fonts/OFL.txt`.)
 
@@ -56,21 +66,42 @@ is in [DESIGN.md](./DESIGN.md). The research that picked this game is in
   for new apps since 31 August 2026 — with the game's own launcher icons at
   every density, an adaptive foreground, and the screen locked to portrait.
 - AdMob is wired through `src/game/ads-native.ts`, including the EEA/UK
-  consent flow, and defaults to Google's **test** ad units.
+  consent flow. The real app id and both unit ids are configured; development
+  builds still serve Google's test units, enforced by `useTestAds()` rather
+  than by remembering to.
+- The **rewarded** unit exists but no placement calls `showRewarded()`, so it
+  will report zero impressions. That is expected, not a broken integration.
 - Release signing reads from `android/keystore.properties`, which is
   git-ignored along with the keystore itself.
 - `store/` holds the listing copy, the privacy policy, the 512px icon, the
   1024x500 feature graphic and six 1080x1920 screenshots — all regenerable.
 
-## Next steps, roughly in order
+## How far the laptop toolchain got
 
-1. **Play it on a real handset.** Drag feel on physical hardware is still the
-   one thing no headless check can answer, and it is the mechanic the whole
-   game rests on.
-2. **Work through [PUBLISHING.md](./PUBLISHING.md)** — account, AdMob ids,
-   signing key, bundle, listing, closed test.
-3. **Start the 14-day closed test early.** It is the long pole; everything
-   else can be finished while it runs.
+The repo was cloned on a Windows machine and `keytool` confirmed present, so
+the JDK is installed. The signing key had not been generated when work
+stopped. [PUBLISHING.md](./PUBLISHING.md) carries both bash and PowerShell
+forms of every command from that point on.
+
+**The Android project has never been compiled.** No Android SDK exists in the
+session container, so Gradle has never run against `android/`. The first
+`gradlew bundleRelease` is a genuine unknown, not a formality.
+
+## To pick this back up
+
+Two routes, and they are independent:
+
+1. **Ship it on the web instead.** The game is a browser app that already runs
+   on phones. `npm run build` produces a static `dist/` that any free host
+   serves. No store account, no $25, no testers, no review. This is the route
+   that needs nothing the project does not already have.
+2. **Resume the Play route.** Continue at Step 3 of PUBLISHING.md. The only
+   thing standing in the way is the 12 testers; every other step is either
+   done or written down.
+
+Either way, **play it on a real handset first**. Drag feel on physical
+hardware is the one thing no headless check can answer, and it is the mechanic
+the whole game rests on.
 
 ## Worth knowing before changing things
 
