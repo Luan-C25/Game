@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e0b1a">
+<title>Bad Decisions</title>
+<style>
+:root{--bg:#0e0b1a;--bg2:#1c1240;--panel:#1a1530;--panel2:#241d45;--fg:#f4f0ff;--mut:#9a92c4;--a:#35e0c2;--b:#7b5cff;--bad:#ff5470;--ok:#4ade80;--cardbg:#fffdf7}
+body.spicy{--bg:#16060d;--bg2:#3a0b21;--panel:#2a0d1a;--panel2:#3b1226;--mut:#d09aae;--a:#ff3d6e;--b:#ff9a3d}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:radial-gradient(1200px 600px at 50% -10%,var(--bg2),var(--bg));background-attachment:fixed;color:var(--fg);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+#hud{display:none;position:sticky;top:0;z-index:5;gap:8px;padding:8px 12px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid #ffffff14}
+#hud.on{display:flex}
+.chip{flex:1;display:flex;align-items:center;gap:8px;background:var(--panel2);color:var(--fg);border:1px solid #ffffff1a;border-radius:999px;padding:6px 12px;font:inherit;cursor:pointer;min-width:0}
+.chip .nm{flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.chip .ct{background:var(--a);color:#111;border-radius:999px;min-width:28px;padding:0 8px;text-align:center;font-weight:800}
+.chip em{display:none}
+.chip.menu{flex:0 0 auto;padding:6px 14px}
+#app{max-width:560px;margin:0 auto;padding:16px 16px 60px}
+h1{font-size:2.6rem;line-height:1;margin:.3em 0 .1em;letter-spacing:-1px;font-weight:900}
+h1 span{background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{margin:.2em 0;font-size:1.5rem}
+h3{margin:.2em 0 .4em}
+p{margin:.4em 0}
+.mut{color:var(--mut)}
+.center{text-align:center}
+.panel{background:var(--panel);border:1px solid #ffffff14;border-radius:18px;padding:14px;margin:12px 0}
+label{display:block;font-size:.8rem;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin:10px 0 6px}
+input[type=text]{width:100%;background:var(--panel2);border:1px solid #ffffff22;color:var(--fg);border-radius:12px;padding:10px 12px;font:inherit}
+.row{display:flex;gap:8px}
+.seg{display:flex;gap:8px}
+.seg button{flex:1}
+button.btn,.seg button{background:var(--panel2);color:var(--fg);border:1px solid #ffffff22;border-radius:14px;padding:12px 14px;font:inherit;font-weight:700;cursor:pointer;transition:transform .08s}
+button.btn:active,.seg button:active{transform:scale(.97)}
+.seg button.on{background:linear-gradient(135deg,var(--a),var(--b));color:#10101a;border-color:transparent}
+.btn.primary{background:linear-gradient(135deg,var(--a),var(--b));color:#10101a;border-color:transparent;font-size:1.05rem}
+.btn.bad{background:#3a1420;border-color:var(--bad);color:#ffc4cd}
+.btn.ghost{background:transparent}
+.btn.small{padding:8px 12px;font-size:.85rem;border-radius:12px}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.stack{display:flex;flex-direction:column;gap:10px;margin:14px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.game{display:block;width:100%;text-align:left;background:var(--panel);border:1px solid #ffffff1a;border-radius:18px;padding:14px;color:var(--fg);font:inherit;cursor:pointer;position:relative;overflow:hidden}
+.game:active{transform:scale(.99)}
+.game .em{font-size:2rem;float:right;margin-left:10px}
+.game b{font-size:1.2rem;display:block}
+.game span{color:var(--mut);font-size:.92rem}
+.game::after{content:"";position:absolute;inset:auto 0 0 0;height:3px;background:linear-gradient(90deg,var(--a),var(--b))}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;margin-top:10px;color:var(--fg);text-transform:none;letter-spacing:0}
+.check input{margin-top:3px;width:20px;height:20px}
+.foot{color:var(--mut);font-size:.8rem;margin-top:22px}
+.tag{display:inline-block;background:var(--panel2);border:1px solid #ffffff22;border-radius:999px;padding:2px 10px;font-size:.78rem;color:var(--mut);margin-right:6px}
+.big{font-size:4rem;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.cards{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.card{width:58px;height:84px;background:var(--cardbg);color:#15131f;border-radius:9px;position:relative;box-shadow:0 4px 12px #0007;font-weight:800;display:inline-block}
+.card.red{color:#d6204a}
+.card b{position:absolute;top:4px;left:7px;font-size:1.05rem}
+.card i{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:1.9rem}
+.card u{position:absolute;bottom:3px;right:7px;font-size:.9rem;text-decoration:none}
+.card.back{background:repeating-linear-gradient(45deg,var(--b),var(--b) 6px,var(--a) 6px,var(--a) 12px);border:3px solid var(--cardbg)}
+.card.lg{width:96px;height:138px;border-radius:13px}
+.card.lg b{font-size:1.5rem;top:7px;left:10px}
+.card.lg i{font-size:3.2rem}
+.card.flip{animation:flip .55s ease}
+@keyframes flip{0%{transform:rotateY(90deg) scale(.8)}100%{transform:rotateY(0) scale(1)}}
+.pips{display:flex;gap:6px;margin:8px 0}
+.pip{flex:1;height:34px;border-radius:10px;background:var(--panel2);display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--mut);border:1px solid #ffffff14}
+.pip.done{background:var(--ok);color:#0b2;color:#06200f}
+.pip.now{background:linear-gradient(135deg,var(--a),var(--b));color:#10101a;font-weight:800}
+.pip.cp{outline:2px dashed var(--a);outline-offset:1px}
+.banner{background:linear-gradient(135deg,#ffffff10,#ffffff06);border:1px solid var(--a);border-radius:14px;padding:10px 12px;margin:10px 0}
+.banner.bad{border-color:var(--bad)}
+.rulebox{background:var(--panel2);border-left:4px solid var(--b);border-radius:10px;padding:8px 10px;margin:6px 0;font-size:.92rem}
+.rulebox.new{border-color:var(--a);animation:flip .6s}
+.rulebox.hit{border-color:var(--bad);background:#3a1420}
+.total{font-size:1.6rem;font-weight:900}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--a);color:#10101a;padding:10px 16px;border-radius:999px;font-weight:800;z-index:20;box-shadow:0 8px 24px #0009;animation:pop .2s}
+@keyframes pop{from{transform:translateX(-50%) scale(.8);opacity:0}}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opts.four{grid-template-columns:1fr 1fr 1fr 1fr}
+.opts .btn{font-size:1.2rem;padding:16px 10px}
+.suitr{color:#ff6b8a}
+</style>
+</head>
+<body>
+<div id="hud"></div>
+<div id="app"></div>
+<script>
+'use strict';
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const rnd = n => Math.floor(Math.random() * n);
+const pick = a => a[rnd(a.length)];
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const run = x => typeof x === 'function' ? x() : x;
+
+const SUITS = ['♠','♥','♦','♣'];
+const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const isRed = c => c.s === 1 || c.s === 2;
+const newDeck = () => { const d = []; for (let s = 0; s < 4; s++) for (let r = 0; r < 13; r++) d.push({r, s}); return shuffle(d); };
+const draw = g => { if (!g.deck.length) g.deck = newDeck(); return g.deck.pop(); };
+function cardHtml(c, o = {}) {
+  if (o.back) return '<div class="card back"></div>';
+  return `<div class="card ${isRed(c) ? 'red' : ''} ${o.lg ? 'lg' : ''} ${o.flip ? 'flip' : ''}"><b>${RANKS[c.r]}</b><i>${SUITS[c.s]}</i><u>${SUITS[c.s]}</u></div>`;
+}
+
+/* ---------- state + shell ---------- */
+const G = { mode: 'chill', names: ['Player 1', 'Player 2'], sips: [0, 0], game: null, adult: false };
+const spicy = () => G.mode === 'spicy';
+const N = i => esc(G.names[i]);
+let A = {};
+
+function show(html, acts = {}) { A = acts; $('#app').innerHTML = html; window.scrollTo(0, 0); }
+function toast(msg) {
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), 1600);
+}
+function renderHud() {
+  const h = $('#hud');
+  h.className = 'on';
+  h.innerHTML = [0, 1].map(i => `<button class="chip" data-hud="${i}" title="Tap to add a sip"><span class="nm">${N(i)}</span><span class="ct" id="s${i}">${G.sips[i]}</span><em>+1</em></button>`).join('') +
+    '<button class="chip menu" data-menu="1">☰</button>';
+}
+function addSips(i, n) {
+  G.sips[i] += n;
+  const el = $('#s' + i); if (el) el.textContent = G.sips[i];
+}
+document.addEventListener('click', e => {
+  const hb = e.target.closest('[data-hud]'); if (hb) { addSips(+hb.dataset.hud, 1); toast(`+1 for ${G.names[+hb.dataset.hud]} 🍺`); return; }
+  if (e.target.closest('[data-menu]')) { home(); return; }
+  const b = e.target.closest('[data-act]');
+  if (!b || b.disabled) return;
+  const f = A[b.dataset.act]; if (f) f(b);
+});
+
+function gate(i, next, why = '') {
+  show(`<div class="center" style="margin-top:12vh"><div class="big">👀</div><h2>Pass the phone to<br>${N(i)}</h2><p class="mut">${why || 'Eyes off, everybody else. This screen has secrets.'}</p>
+  <div class="stack"><button class="btn primary" data-act="go">I'm ${N(i)} — show me</button></div></div>`, { go: next });
+}
+
+/* dare box: players = indexes who must do it */
+function dareHtml(players, text) {
+  return `<div class="banner bad" id="dareBox"><h3>${spicy() ? '🌶️' : '🎯'} Dare</h3><p>${esc(text)}</p>
+  <div class="stack"><button class="btn primary" data-act="dareDone">✅ Done</button>
+  ${players.map(p => `<button class="btn bad small" data-act="chicken" data-p="${p}">🐔 ${N(p)} chickens out (+3 sips)</button>`).join('')}</div></div>`;
+}
+const dareActs = {
+  dareDone: () => { $('#dareBox').innerHTML = '<p class="center">✅ Dare done. Respect.</p>'; },
+  chicken: b => { addSips(+b.dataset.p, 3); toast(`${G.names[+b.dataset.p]} chickened out: +3 🐔`); b.remove(); }
+};
+
+/* ---------- content ---------- */
+const DARES_CHILL = [
+  'Do your best impression of the other player. Keep going until they laugh or 20 seconds pass.',
+  'Speak in an accent of the other player\'s choice until the next round ends.',
+  'Show the last photo in your camera roll. No scrolling, no excuses.',
+  'Sing the chorus of a song the other player picks. Full commitment.',
+  'Give the other player a 20-second shoulder rub.',
+  'Narrate everything the other player does like a nature documentary for one minute.',
+  'Do a runway walk. The other player scores you out of 10 — below 7 means a sip.',
+  'Tell the story of your most embarrassing moment. Details required.',
+  'Hold your drink with your non-dominant hand until the next round.',
+  'Text a friend "I have a confession" and don\'t explain for 10 minutes (show the other player).',
+  'Do 10 squats while reciting the alphabet backwards. Mistakes restart the count.',
+  'Let the other player pick a nickname for you. You answer to it until the next round.',
+  'Pitch the other player a terrible startup idea for 30 seconds as if on Shark Tank.',
+  'Speak only in questions until your next turn.',
+];
+const DARES_SPICY = [
+  'Whisper the dirtiest thing you can think of into the other player\'s ear.',
+  'Give the other player a 30-second neck massage — or kiss, their choice.',
+  'Remove one item of clothing (socks don\'t count).',
+  'Describe, in detail, what first attracted you to the other player.',
+  'Slow dance with the other player for 30 seconds. No phone, no giggling.',
+  'Hold bedroom eyes for 10 seconds. If you laugh, drink.',
+  'Let the other player choose one spot on you to kiss.',
+  'Kiss the other player for 10 full seconds.',
+  'Do your sexiest dance for 20 seconds. They rate it 1-10.',
+  'Send the other player a flirty text right now and read it out loud.',
+  'Take a sip from a body part of the other player\'s choice (arm, hand, collarbone).',
+  'Tell the other player your idea of a perfect night in, with specifics.',
+  'Swap one clothing item with the other player and wear it until next round.',
+  'Share your most unexpected turn-on. Honesty or drink 3.',
+];
+const dare = () => pick(spicy() ? DARES_SPICY : DARES_CHILL);
+
+const QS_CHILL = [
+  'What\'s your most irrational fear?', 'What\'s the dumbest thing you\'ve been caught doing?',
+  'Which friend would survive longest in a zombie apocalypse?', 'What\'s a lie you told that got completely out of hand?',
+  'What\'s the worst gift you\'ve ever received?', 'What\'s a talent you have that nobody knows about?',
+  'What\'s your most-used emoji and what does it say about you?', 'What\'s the most embarrassing song on your playlist?',
+];
+const QS_SPICY = [
+  'What was your honest first impression of me?', 'What\'s the riskiest place you\'ve ever fooled around?',
+  'What\'s something you find attractive about me that you\'ve never said?', 'What\'s your biggest turn-off in bed?',
+  'Best kiss of your life — and how do I rank?', 'Who\'s your celebrity hall pass and why?',
+  'What\'s a fantasy you\'ve never told anyone?', 'What\'s the most memorable thing someone has whispered to you?',
+];
+const CATS_CHILL = ['pizza toppings', 'villains', 'things in a fridge', 'reasons to be late', 'Disney songs', 'things in a bathroom', 'celebrity couples', 'board games'];
+const CATS_SPICY = ['pet names', 'places to kiss someone', 'flirty pick-up lines', 'things in a bedroom', 'sexy movie scenes', 'date-night outfit pieces', 'ways to say "I\'m drunk"', 'reasons to text an ex'];
+const RHYMES = ['sip', 'night', 'shot', 'bar', 'kiss', 'wine', 'dance', 'heat'];
+
+/* rank prompts: index = card rank (A=0 ... Q=11). K (12) adds a rule */
+const RANK_CHILL = [
+  { t: 'Ace — Cheers!', x: 'Both of you drink 2. Clink first, eye contact, no cheating.' },
+  { t: 'Two Truths & a Lie', x: 'Drawer says three statements, one false. Other player guesses the lie. Wrong guess: they drink 2. Right guess: you drink 2.' },
+  { t: 'Three-Second Rule', x: () => `Name 3 ${pick(CATS_CHILL)} in 3 seconds. Fail and drink 3.` },
+  { t: 'Staredown', x: 'Stare at each other. First to blink, laugh or look away drinks 2.' },
+  { t: 'Hot Take', x: 'Drawer drops a spicy opinion. Other player accepts (no drinks) or challenges. If challenged, drawer defends it and the challenger judges: convincing = challenger drinks 2, weak = drawer drinks 2.' },
+  { t: 'Copycat', x: 'Drawer invents a weird gesture plus sound. Other player must copy it perfectly. Flop: they drink 2. Nail it: drawer drinks 1.' },
+  { t: 'Rhyme Time', x: () => `Starting word: "${pick(RHYMES)}". Take turns rhyming. First to freeze or repeat drinks 2.` },
+  { t: 'Drink Buddy', x: 'For the next 3 cards, whenever one of you drinks, the other drinks too. Solidarity.' },
+  { t: 'Question Duel', x: 'Rapid-fire questions only, no statements. First to answer a question (instead of asking one) drinks 2.' },
+  { t: 'RPS Showdown', x: 'Rock-paper-scissors, best of 3. Loser drinks 3.' },
+  { t: 'Dare Dealer', x: () => `Dare for the drawer: ${dare()} (or drink 3).` },
+  { t: 'Truth Queen', x: () => `Truth for the drawer: ${pick(QS_CHILL)} Answer honestly or drink 3.` },
+];
+const RANK_SPICY = [
+  { t: 'Ace — Wild Heat', x: 'Both drink 2, then pick: a slow kiss or 2 more sips each.' },
+  { t: 'Confession', x: 'Drawer confesses something they\'ve never told the other player. Skip it and drink 3.' },
+  { t: 'Three-Second Rule', x: () => `Name 3 ${pick(CATS_SPICY)} in 3 seconds. Fail and drink 3 (or lose a sock).` },
+  { t: 'Staredown', x: 'Hold eye contact for 30 seconds. First to look away drinks 2 and removes an accessory.' },
+  { t: 'Kiss Tax', x: 'Other player picks where the drawer kisses them (hand, neck, cheek...). Or the drawer drinks 3.' },
+  { t: 'Whisper Rating', x: 'Drawer whispers something dirty. Other player rates it 1-10. Under 6: drawer drinks 2. 9+: other player drinks 2.' },
+  { t: 'Rhyme Time', x: () => `Starting word: "${pick(RHYMES)}". Take turns rhyming, getting filthier each round. First to freeze drinks 2.` },
+  { t: 'Strip Check', x: 'Drawer removes one item of clothing or drinks 3.' },
+  { t: 'Spicy Question Duel', x: 'Rapid-fire questions only, getting more personal each time. First to answer instead of ask drinks 2 and loses a layer.' },
+  { t: 'RPS For Favours', x: 'Rock-paper-scissors, best of 3. Winner picks a forfeit from: massage, kiss, or 3 sips for the loser.' },
+  { t: 'Dare Dealer', x: () => `Dare for the drawer: ${dare()} (or drink 3).` },
+  { t: 'Truth Queen', x: () => `Truth for the drawer: ${pick(QS_SPICY)} Answer honestly or drink 3.` },
+];
+
+/* Rule Stack: persistent rules. test(card, history) */
+const val = c => c.r + 1;
+const RULES = [
+  { n: 'Red Alert', test: c => isRed(c), c: 'Red card: the drawer drinks 1.', s: 'Red card: the drawer drinks 1 and says one thing they like about the other player.' },
+  { n: 'Dark Side', test: c => !isRed(c), c: 'Black card: the OTHER player drinks 1.', s: 'Black card: the OTHER player drinks 1 or gives the drawer a compliment with eye contact.' },
+  { n: 'Even Steven', test: c => c.r !== 0 && val(c) % 2 === 0 && c.r < 10, c: 'Even number (2-10): drawer must talk in third person until the next card. Slip = sip.', s: 'Even number (2-10): drawer must whisper until the next card. Slip = sip.' },
+  { n: 'Heart Attack', test: c => c.s === 1, c: 'Hearts: drawer reveals a harmless secret or drinks 2.', s: 'Hearts: drawer kisses the other player\'s hand/neck or drinks 3.' },
+  { n: 'Spade Trade', test: c => c.s === 0, c: 'Spades: drawer gives the other player a toast that includes an insult-as-compliment.', s: 'Spades: drawer removes an accessory or clothing item, or drinks 3.' },
+  { n: 'Club Rules', test: c => c.s === 3, c: 'Clubs: drawer says a "Never have I ever". Other player drinks if guilty.', s: 'Clubs: drawer says a naughty "Never have I ever". Other player drinks if guilty.' },
+  { n: 'Diamond Dust', test: c => c.s === 2, c: 'Diamonds: both drink 1. Shine bright.', s: 'Diamonds: both drink 1, then a 5-second no-laughing eye lock.' },
+  { n: 'Royal Decree', test: c => c.r === 10 || c.r === 11, c: 'J or Q: drawer does a 10-second dance.', s: 'J or Q: drawer does a 10-second sexy dance. Rated by the other player.' },
+  { n: 'Snap!', test: (c, h) => h.length > 1 && h[h.length - 2].r === c.r, c: 'Same rank as the previous card: SNAP! Both drink 3. Last to slap the table drinks 2 more.', s: 'Same rank as the previous card: SNAP! Both drink 3. Last to slap the table loses a layer.' },
+  { n: 'Lucky Seven', test: c => c.r === 6, c: 'Seven: drawer gives out 3 sips.', s: 'Seven: drawer gives out 3 sips or picks a dare for the other player.' },
+  { n: 'Colour Streak', test: (c, h) => h.length >= 3 && h.slice(-3).every(x => isRed(x) === isRed(c)), c: 'Three of the same colour in a row: both drink 2.', s: 'Three of the same colour in a row: both drink 2 and kiss.' },
+  { n: 'High Roller', test: c => c.r === 8 || c.r === 9, c: '9 or 10: drawer picks one rule from the stack and the other player must obey it twice.', s: '9 or 10: drawer gives a command, other player obeys (within reason) or drinks 2.' },
+];
+const CHAOS_CHILL = [
+  'PHONES DOWN. Anyone who touches a phone before the next card drinks 3.',
+  'Swap seats. Then compliment each other. The weakest compliment drinks 1.',
+  'Cheers Chain: toast something absurd. Both drink 2.',
+  'Speak only in movie quotes until the next card. Fail: drink 1.',
+  'Mirror Mode: copy everything the other player does until the next card. First to break drinks 2.',
+];
+const CHAOS_SPICY = [
+  'LIGHTS DIM. Whisper only until the next card. Speak up and drink 2.',
+  'Swap one clothing item with each other.',
+  'Both drink 2, then each says one thing you want to do together this month.',
+  'Blindfold-ish: close your eyes. The other player picks a safe spot to touch your hand/arm. Guess where.',
+  'Eye lock for 20 seconds. First to look away does a dare.',
+];
+const LASTCALL_CHILL = 'LAST CALL! Rock-paper-scissors for the finale. Loser finishes their drink (or water, no shame) and does one dare.';
+const LASTCALL_SPICY = 'LAST CALL! Rock-paper-scissors for the finale. Winner decides how the night continues. Loser finishes their drink and does one dare.';
+
+/* ---------- home ---------- */
+function saveNames() {
+  const a = $('#n0'), b = $('#n1');
+  if (a) G.names[0] = a.value.trim() || 'Player 1';
+  if (b) G.names[1] = b.value.trim() || 'Player 2';
+}
+function home() {
+  G.game = null;
+  $('#hud').className = '';
+  document.body.classList.toggle('spicy', spicy());
+  show(`
+  <h1>BAD<br><span>DECISIONS</span></h1>
+  <p class="mut">Three two-player card games that definitely aren't a boring "pick a card, drink a sip" loop.</p>
+  <div class="panel">
+    <label>Players</label>
+    <div class="row"><input type="text" id="n0" maxlength="14" value="${N(0)}"><input type="text" id="n1" maxlength="14" value="${N(1)}"></div>
+    <label>Vibe</label>
+    <div class="seg"><button data-act="chill" class="${spicy() ? '' : 'on'}">🍹 Chill</button><button data-act="spicy" class="${spicy() ? 'on' : ''}">🌶️ Spicy 18+</button></div>
+    ${spicy() ? `<label class="check"><input type="checkbox" id="adult" ${G.adult ? 'checked' : ''}> We're both 18+, we both want to play, and anyone can skip a dare at any time.</label>` : ''}
+  </div>
+  <div class="stack">
+    <button class="game" data-act="g1"><span class="em">🃏</span><b>Cursed 21</b><span>Blackjack with no dealer, a random target number, a nasty curse on the card values, hidden hands and bluffing. Brag big or fold.</span></button>
+    <button class="game" data-act="g2"><span class="em">🚌</span><b>Night Bus</b><span>Ride the Bus with tolls, checkpoints, a roadside event, and a driver who can hex you. Reach the last stop and the bus swaps drivers.</span></button>
+    <button class="game" data-act="g3"><span class="em">📚</span><b>Rule Stack</b><span>Every card has a challenge and every King adds a permanent rule. The deck rewrites the game while you play. Fourth King is Last Call.</span></button>
+  </div>
+  <p class="foot">Tap a player's chip at the top during games to add a sip. Skip anything any time (the 🐔 costs 3). Please drink responsibly, and water counts as a drink. Playing dry? Swap sips for points or forfeits.<br><br><button class="btn small ghost" data-act="reset">Reset tallies</button></p>
+  `, {
+    chill: () => { saveNames(); G.mode = 'chill'; home(); },
+    spicy: () => { saveNames(); G.mode = 'spicy'; home(); },
+    reset: () => { G.sips = [0, 0]; toast('Tallies reset'); },
+    g1: () => begin(c21Intro), g2: () => begin(busIntro), g3: () => begin(stackIntro),
+  });
+  const ad = $('#adult'); if (ad) ad.onchange = () => { G.adult = ad.checked; };
+}
+function begin(fn) {
+  saveNames();
+  if (spicy() && !G.adult) { toast('Tick the 18+ box for Spicy mode'); return; }
+  renderHud(); fn();
+}
+
+/* ====================================================================
+   GAME 1: CURSED 21
+   ==================================================================== */
+const base10 = c => c.r === 0 ? 1 : Math.min(c.r + 1, 10);
+const CURSES = [
+  { n: 'Plain Pressure', t: 'No curse this round. Aces are 1 or 11, faces are 10.', v: base10 },
+  { n: 'Soft Faces', t: 'J, Q and K are only worth 5.', v: c => c.r === 0 ? 1 : c.r >= 10 ? 5 : c.r + 1 },
+  { n: 'Greedy Aces', t: 'Aces are ALWAYS 11. No take-backs.', v: c => c.r === 0 ? 11 : base10(c), noSoft: true },
+  { n: 'Red Tax', t: 'Every red card is worth +1.', v: c => base10(c) + (isRed(c) ? 1 : 0) },
+  { n: 'Dead Sevens', t: 'Sevens are worth 0. Spooky.', v: c => c.r === 6 ? 0 : base10(c) },
+  { n: 'Black Hole', t: 'Spades are NEGATIVE. Pray for spades.', v: c => base10(c) * (c.s === 0 ? -1 : 1) },
+  { n: 'Big Faces', t: 'J, Q and K are worth 12. Aim low.', v: c => c.r >= 10 ? 12 : base10(c) },
+  { n: 'Odd Job', t: 'Odd ranks (3,5,7,9) are worth double.', v: c => (c.r > 0 && c.r < 9 && val(c) % 2 === 1 ? 2 : 1) * base10(c) },
+];
+function c21Total(hand, g) {
+  const cu = g.curse; let t = 0, aces = 0;
+  for (const c of hand) { t += cu.v(c); if (c.r === 0 && !cu.noSoft) aces++; }
+  while (aces-- > 0) if (t + 10 <= g.target) t += 10;
+  return t;
+}
+function c21Intro() {
+  G.game = { round: 0, first: rnd(2) };
+  show(`<h2>🃏 Cursed 21</h2>
+  <div class="panel">
+  <p><b>The goal:</b> get closest to THE NUMBER without going over. The number changes every round, and so does the curse that rewrites card values.</p>
+  <p><b>Each round:</b> you both get 2 cards. One is face-up for your rival, one is secret. Take turns on the same phone (there's a pass screen so nobody peeks).</p>
+  <ul>
+  <li><b>Hit</b> for another card, or <b>Stand</b>.</li>
+  <li><b>Brag</b>: stand and raise the stakes by 3. Your rival either folds (drinks the base 2 sips) or plays on. Bragging while bust is a bluff.</li>
+  <li><b>Spy</b>: drink 1 to peek at your rival's hidden card (once a round).</li>
+  <li><b>Perfect hit</b> on the number: loser drinks 2 extra and does a dare. Five cards without busting is a <b>Charlie</b> and wins automatically.</li>
+  <li>Both bust: both drink and do a dare together. Tie: both sip 1.</li>
+  </ul></div>
+  <div class="stack"><button class="btn primary" data-act="go">Deal the first round</button></div>`, { go: c21Round });
+}
+function c21Round() {
+  const g = G.game; g.round++; g.first = 1 - g.first;
+  g.deck = newDeck(); g.curse = pick(CURSES); g.target = 15 + rnd(12);
+  g.hands = [[draw(g), draw(g)], [draw(g), draw(g)]];
+  g.step = 0; g.base = 2; g.bragged = [false, false]; g.spied = [false, false]; g.charlie = [false, false];
+  show(`<div class="center"><span class="tag">Round ${g.round}</span>
+  <p class="mut">THE NUMBER</p><div class="big">${g.target}</div>
+  <div class="banner"><h3>😈 ${esc(g.curse.n)}</h3><p>${esc(g.curse.t)}</p></div>
+  <p class="mut">${N(g.first)} goes first.</p>
+  <div class="stack"><button class="btn primary" data-act="go">Deal & pass the phone</button></div></div>`,
+    { go: () => gate(g.first, () => c21Turn(g.first)) });
+}
+function c21Turn(p) {
+  const g = G.game, o = 1 - p, hand = g.hands[p], t = c21Total(hand, g), bust = t > g.target;
+  const facing = g.step === 1 && g.bragged[o];
+  const oc = g.hands[o];
+  const rival = oc.map((c, i) => i === 0 || (g.spied[p] && i === 1) ? cardHtml(c) : cardHtml(c, { back: 1 })).join('');
+  show(`<div><span class="tag">Round ${g.round}</span><span class="tag">Number ${g.target}</span><span class="tag">${esc(g.curse.n)}</span>
+  <p class="mut">${esc(g.curse.t)}</p></div>
+  ${facing ? `<div class="banner bad"><b>${N(o)} BRAGGED!</b> Stakes are up by 3. Fold now and drink ${g.base}, or play on and risk it.</div>` : ''}
+  <div class="panel"><div class="mut">${N(o)}'s hand (${oc.length} cards${g.spied[p] ? ', you spied one' : ''})</div><div class="cards">${rival}</div></div>
+  <div class="panel"><div class="mut">Your hand, ${N(p)}</div><div class="cards">${hand.map(c => cardHtml(c)).join('')}</div>
+  <div class="total">${t} <span class="mut" style="font-size:1rem">/ ${g.target}</span> ${bust ? '💥 BUST (only you know)' : ''}</div></div>
+  <div class="stack">
+  ${bust ? '' : '<button class="btn primary" data-act="hit">Hit 🃏</button>'}
+  <button class="btn" data-act="stand">${bust ? 'Pass quietly (poker face)' : 'Stand'}</button>
+  ${g.bragged[o] || g.bragged[p] ? '' : `<button class="btn bad" data-act="brag">${bust ? 'Bluff-brag (+3 stakes)' : 'Stand & BRAG (+3 stakes)'}</button>`}
+  ${g.spied[p] ? '' : '<button class="btn small ghost" data-act="spy">🕵️ Spy on their hidden card (drink 1)</button>'}
+  ${facing ? `<button class="btn small ghost" data-act="fold">🐔 Fold (drink ${g.base})</button>` : ''}
+  </div>`, {
+    hit: () => {
+      hand.push(draw(g));
+      if (hand.length >= 5 && c21Total(hand, g) <= g.target) { g.charlie[p] = true; toast('Five-Card Charlie!'); c21End(p, false); } else c21Turn(p);
+    },
+    stand: () => c21End(p, false),
+    brag: () => c21End(p, true),
+    spy: () => { addSips(p, 1); g.spied[p] = true; c21Turn(p); },
+    fold: () => c21Resolve(p),
+  });
+}
+function c21End(p, brag) {
+  const g = G.game, o = 1 - p;
+  if (brag) g.bragged[p] = true;
+  if (g.step === 0) { g.step = 1; gate(o, () => c21Turn(o), `${G.names[p]} is done${brag ? ' and BRAGGED' : ''}. Your turn.`); return; }
+  if (g.bragged[p] && !g.bragged[o]) {
+    gate(o, () => c21Facing(o), `${G.names[p]} bragged after you stood. Call or fold?`); return;
+  }
+  c21Resolve(null);
+}
+function c21Facing(p) {
+  const g = G.game, hand = g.hands[p], t = c21Total(hand, g);
+  show(`<div class="banner bad"><h3>${N(1 - p)} BRAGGED!</h3><p>Stakes are up by 3. You can't change your hand. Call and risk the bigger bill, or fold and drink ${g.base}.</p></div>
+  <div class="panel"><div class="cards">${hand.map(c => cardHtml(c)).join('')}</div>
+  <div class="total">${t} <span class="mut" style="font-size:1rem">/ ${g.target}</span> ${t > g.target ? '💥 BUST' : ''}</div></div>
+  <div class="stack"><button class="btn primary" data-act="call">Call</button><button class="btn bad" data-act="fold">🐔 Fold (drink ${g.base})</button></div>`,
+    { call: () => c21Resolve(null), fold: () => c21Resolve(p) });
+}
+function c21Resolve(fold) {
+  const g = G.game;
+  const T = [0, 1].map(i => c21Total(g.hands[i], g)), B = T.map(t => t > g.target);
+  const stake = g.bragged[0] || g.bragged[1] ? g.base + 3 : g.base;
+  let head = '', detail = '', loser = null, drink = 0, dareFor = null;
+  if (fold !== null) {
+    loser = fold; drink = g.base; head = `${N(fold)} FOLDED 🐔`;
+    const br = 1 - fold;
+    detail = g.hands && B[br] ? `And ${N(br)} was bust the whole time. Bluff exposed!` : `${N(br)} had ${T[br]}.`;
+  } else if (g.charlie[0] !== g.charlie[1]) {
+    const w = g.charlie[0] ? 0 : 1; loser = 1 - w; drink = stake + 2; head = `${N(w)} hit a FIVE-CARD CHARLIE 🎰`;
+    detail = 'Automatic win. Loser drinks the stake plus 2.';
+  } else if (B[0] && B[1]) {
+    head = 'DOUBLE BUST 💥💥'; detail = `Both over ${g.target}. You both drink ${g.base} and do a dare together.`;
+    addSips(0, g.base); addSips(1, g.base); dareFor = [0, 1];
+  } else if (B[0] || B[1]) {
+    loser = B[0] ? 0 : 1; drink = stake; head = `${N(loser)} BUSTED 💥`; detail = `${N(1 - loser)} survives with ${T[1 - loser]}.`;
+  } else if (T[0] === T[1]) {
+    head = 'PUSH 🤝'; detail = 'Exact tie. Both sip 1.'; addSips(0, 1); addSips(1, 1);
+  } else {
+    loser = T[0] < T[1] ? 0 : 1; const w = 1 - loser; drink = stake;
+    head = `${N(w)} WINS`; detail = `${T[w]} beats ${T[loser]}.`;
+    if (T[w] === g.target) { head = `${N(w)} HIT IT PERFECT 🎯`; drink += 2; dareFor = [loser]; detail = `Exactly ${g.target}! ${N(loser)} drinks 2 extra and does a dare.`; }
+  }
+  if (loser !== null) addSips(loser, drink);
+  const pr = i => `<div class="panel"><div class="mut">${N(i)}${g.bragged[i] ? ' 🗣️ bragged' : ''}</div><div class="cards">${g.hands[i].map(c => cardHtml(c, { flip: 1 })).join('')}</div><div class="total">${T[i]} ${B[i] ? '💥' : ''}</div></div>`;
+  show(`<div class="center"><span class="tag">The number: ${g.target}</span><h2>${head}</h2>
+  <p>${detail}</p>${loser !== null ? `<p><b>${N(loser)} drinks ${drink}</b> 🍺</p>` : ''}</div>
+  ${pr(0)}${pr(1)}
+  ${dareFor ? dareHtml(dareFor, dare()) : ''}
+  <div class="stack"><button class="btn primary" data-act="next">Next round</button></div>`, { ...dareActs, next: c21Round });
+}
+
+/* ====================================================================
+   GAME 2: NIGHT BUS
+   ==================================================================== */
+const BUS = {
+  color: { q: 'Red or Black?', o: ['🔴 Red', '⚫ Black'], ok: (c, h, i) => (i === 0) === isRed(c) },
+  parity: { q: 'Odd or Even? (A=1 ... K=13)', o: ['Odd', 'Even'], ok: (c, h, i) => (val(c) % 2 === 1) === (i === 0) },
+  hilo: { q: 'Higher or lower than the last card? (A low, K high, ties lose)', o: ['⬆ Higher', '⬇ Lower'], ok: (c, h, i) => { const l = h[h.length - 1].r; return i === 0 ? c.r > l : c.r < l; } },
+  face: { q: 'Face card (J Q K) or number?', o: ['👑 Face', '🔢 Number'], ok: (c, h, i) => (c.r >= 10) === (i === 0) },
+  inout: { q: 'Inside or outside the last two cards? (On the line loses)', o: ['Inside', 'Outside'], ok: (c, h, i) => { const a = h[h.length - 1].r, b = h[h.length - 2].r, lo = Math.min(a, b), hi = Math.max(a, b); return i === 0 ? c.r > lo && c.r < hi : c.r < lo || c.r > hi; } },
+  suit: { q: 'Which suit?', o: SUITS, ok: (c, h, i) => c.s === i },
+  same: { q: 'Same suit as the last card?', o: ['Same', 'Different'], ok: (c, h, i) => (c.s === h[h.length - 1].s) === (i === 0) },
+};
+function busRoute() {
+  const t = [pick(['color', 'parity']), pick(['hilo', 'face', 'parity', 'color']), rnd(2) ? 'event' : pick(['inout', 'hilo', 'face', 'same']), pick(['inout', 'same', 'suit']), pick(['suit', 'suit', 'same'])];
+  return t.map((x, i) => ({ t: x, toll: [1, 1, 2, 2, 3][i] }));
+}
+function busIntro() {
+  G.game = { pas: rnd(2), rides: [0, 0] };
+  show(`<h2>🚌 Night Bus</h2><div class="panel">
+  <p>One of you is the <b>Passenger</b>, the other is the <b>Driver</b>. The Passenger must clear 5 stops. Every stop is a different question (colour, higher/lower, inside/outside, suit...) with a <b>toll</b> in sips.</p>
+  <ul>
+  <li>Wrong guess: Passenger drinks the toll and goes back to the last <b>checkpoint</b> (Stop 1, or Stop 3 once reached).</li>
+  <li>Stop 3 can be a <b>Roadside Event</b>: flip a card, red = Passenger takes a dare, black = Driver does.</li>
+  <li><b>Driver powers (2 per ride):</b> 😈 Hex (double the toll) or 🔄 Curveball (turn the question into a suit guess, +1 toll).</li>
+  <li><b>Passenger lifeline (1 per ride):</b> 👁 Peek at the card's colour for 1 sip.</li>
+  <li>Reach the end and the Driver drinks 3, then you swap seats.</li>
+  </ul></div>
+  <div class="stack"><button class="btn primary" data-act="go">All aboard</button></div>`, { go: busBegin });
+}
+function busBegin() {
+  const g = G.game;
+  g.deck = newDeck(); g.route = busRoute(); g.i = 0; g.cp = 0; g.cur = null; g.peek = null; g.powers = 2; g.lifeline = 1;
+  g.hist = [draw(g)];
+  const d = 1 - g.pas;
+  show(`<div class="center"><h2>🚌 ${N(g.pas)} is riding</h2><p class="mut">${N(d)} is driving and gets to sabotage.</p>
+  <p>Starting card on the dash:</p><div class="cards" style="justify-content:center">${cardHtml(g.hist[0], { lg: 1 })}</div>
+  <div class="stack"><button class="btn primary" data-act="go">Leave the depot</button></div></div>`, { go: busStop });
+}
+function busCp(g) { if (g.i >= 2) g.cp = g.route[2].t === 'event' ? 3 : 2; }
+function busPips(g) {
+  return `<div class="pips">${g.route.map((s, i) => `<div class="pip ${i < g.i ? 'done' : i === g.i ? 'now' : ''} ${i === g.cp && i > 0 ? 'cp' : ''}">${i + 1}${s.t === 'event' ? '🎲' : ''}</div>`).join('')}</div>`;
+}
+function busStop() {
+  const g = G.game, st = g.route[g.i];
+  if (st.t === 'event') { busEvent(); return; }
+  if (!g.cur) { g.cur = draw(g); g.peek = null; }
+  const T = BUS[st.t], toll = st.toll * (st.hex ? 2 : 1), d = 1 - g.pas, last = g.hist[g.hist.length - 1];
+  const showLast = ['hilo', 'same'].includes(st.t) ? [last] : st.t === 'inout' ? [g.hist[g.hist.length - 2], last] : [];
+  const opts = T.o.map((o, i) => `<button class="btn ${st.t === 'suit' && (i === 1 || i === 2) ? 'suitr' : ''}" data-act="guess" data-i="${i}">${o}</button>`).join('');
+  show(`${busPips(g)}
+  <div class="center"><span class="tag">Stop ${g.i + 1} of 5</span><span class="tag">Toll: ${toll} sip${toll > 1 ? 's' : ''}${st.hex ? ' 😈' : ''}</span></div>
+  ${showLast.length ? `<div class="cards" style="justify-content:center">${showLast.map(c => cardHtml(c, { lg: 1 })).join('')}</div>` : ''}
+  <div class="panel center"><h2>${T.q}</h2>${g.peek ? `<p class="banner">👁 Peek: the card is <b>${g.peek}</b></p>` : ''}</div>
+  <p class="mut center">${N(g.pas)}, choose:</p>
+  <div class="opts ${st.t === 'suit' ? 'four' : ''}">${opts}</div>
+  <div class="grid2" style="margin-top:14px">
+    <button class="btn small ghost" data-act="peek" ${g.lifeline && !g.peek ? '' : 'disabled'}>👁 Peek (${N(g.pas)} drinks 1)</button>
+    <button class="btn small ghost" data-act="hex" ${g.powers && !st.hex ? '' : 'disabled'}>😈 ${N(d)}: Hex</button>
+    <button class="btn small ghost" data-act="curve" ${g.powers && st.t !== 'suit' && st.t !== 'event' ? '' : 'disabled'}>🔄 ${N(d)}: Curveball</button>
+    <div class="mut center" style="align-self:center;font-size:.8rem">Driver powers: ${g.powers}</div>
+  </div>`, {
+    guess: b => busGuess(+b.dataset.i),
+    peek: () => { addSips(g.pas, 1); g.lifeline--; g.peek = isRed(g.cur) ? '🔴 RED' : '⚫ BLACK'; busStop(); },
+    hex: () => { st.hex = true; g.powers--; toast('😈 Hexed! Toll doubled'); busStop(); },
+    curve: () => { st.t = 'suit'; st.toll += 1; g.powers--; toast('🔄 Curveball! Guess the suit'); busStop(); },
+  });
+}
+function busGuess(i) {
+  const g = G.game, st = g.route[g.i], T = BUS[st.t], card = g.cur, toll = st.toll * (st.hex ? 2 : 1);
+  const ok = T.ok(card, g.hist, i);
+  g.hist.push(card); g.cur = null; st.hex = false;
+  let msg, after, extra = '';
+  if (ok) {
+    if (g.i === 4) { after = busArrive; msg = '🎉 Last stop cleared!'; }
+    else { g.i++; busCp(g); after = busStop; msg = `✅ Correct. On to stop ${g.i + 1}.`; }
+  } else {
+    addSips(g.pas, toll); g.i = g.cp; after = busStop;
+    msg = `❌ Wrong! ${esc(G.names[g.pas])} drinks ${toll}. Back to stop ${g.i + 1}.`;
+    if (toll >= 3) extra = dareHtml([g.pas], dare());
+  }
+  show(`<div class="center"><div class="cards" style="justify-content:center">${cardHtml(card, { lg: 1, flip: 1 })}</div>
+  <h2 class="${ok ? '' : 'shake'}">${msg}</h2></div>${extra}
+  <div class="stack"><button class="btn primary" data-act="next">Continue</button></div>`, { ...dareActs, next: after });
+}
+function busEvent() {
+  const g = G.game;
+  show(`${busPips(g)}<div class="panel center"><h2>🎲 Roadside Event</h2><p>The bus screeches to a halt. Flip a card.</p>
+  <p><b>Red:</b> ${N(g.pas)} takes a dare.<br><b>Black:</b> ${N(1 - g.pas)} takes a dare.</p></div>
+  <div class="stack"><button class="btn primary" data-act="flip">Flip the card</button></div>`, {
+    flip: () => {
+      const c = draw(g), who = isRed(c) ? g.pas : 1 - g.pas;
+      g.hist.push(c); g.i++; busCp(g);
+      show(`<div class="center"><div class="cards" style="justify-content:center">${cardHtml(c, { lg: 1, flip: 1 })}</div>
+      <h2>${isRed(c) ? '🔴' : '⚫'} ${N(who)} takes the hit</h2></div>${dareHtml([who], dare())}
+      <div class="stack"><button class="btn primary" data-act="next">Back on the bus</button></div>`, { ...dareActs, next: busStop });
+    }
+  });
+}
+function busArrive() {
+  const g = G.game, d = 1 - g.pas;
+  g.rides[g.pas]++; addSips(d, 3);
+  show(`<div class="center"><div class="big">🏁</div><h2>${N(g.pas)} ARRIVED!</h2>
+  <p>${N(d)} drinks 3 for being a rubbish driver.</p><p class="mut">Rides completed: ${N(0)} ${g.rides[0]} / ${N(1)} ${g.rides[1]}</p>
+  <div class="stack"><button class="btn primary" data-act="next">Swap seats: ${N(d)} rides next</button></div></div>`,
+    { next: () => { g.pas = d; busBegin(); } });
+}
+
+/* ====================================================================
+   GAME 3: RULE STACK
+   ==================================================================== */
+function stackIntro() {
+  show(`<h2>📚 Rule Stack</h2><div class="panel">
+  <p>Take turns drawing a card. Every <b>rank</b> is a mini-challenge (truths, duels, dares).</p>
+  <ul>
+  <li>Every <b>King</b> adds a permanent rule to the stack. Max 3 rules, and the oldest gets bumped when a 4th arrives.</li>
+  <li>After <b>every</b> card, check the rules. If the card matches a rule, its penalty fires on top of the challenge.</li>
+  <li>Every 7th card is a <b>Chaos Event</b>.</li>
+  <li>The <b>4th King</b> triggers LAST CALL and ends the game.</li>
+  </ul></div>
+  <div class="stack"><button class="btn primary" data-act="go">Start stacking</button></div>`, { go: () => { G.game = { deck: newDeck(), turn: rnd(2), rules: [], kings: 0, hist: [], count: 0 }; stackTurn(); } });
+}
+function rulesHtml(g, hl = [], nw = null) {
+  if (!g.rules.length) return '<p class="mut">No rules yet. Find the Kings.</p>';
+  return g.rules.map(r => `<div class="rulebox ${r === nw ? 'new' : ''} ${hl.includes(r) ? 'hit' : ''}"><b>${esc(r.n)}</b><br>${esc(spicy() ? r.s : r.c)}</div>`).join('');
+}
+function stackTurn() {
+  const g = G.game;
+  show(`<div class="center"><span class="tag">Card ${g.count + 1}</span><span class="tag">Kings: ${g.kings}/4</span>
+  <h2>${N(g.turn)}'s draw</h2></div>
+  <div class="panel"><h3>📚 Active rules</h3>${rulesHtml(g)}</div>
+  <div class="stack"><button class="btn primary" data-act="draw">Draw a card 🂠</button></div>`, { draw: stackDraw });
+}
+function stackDraw() {
+  const g = G.game, p = g.turn, o = 1 - p, c = draw(g);
+  g.count++; g.hist.push(c);
+  const isKing = c.r === 12;
+  let title, text, nw = null, drop = null, hits = [];
+  if (isKing) {
+    g.kings++;
+    if (g.kings >= 4) { stackEnd(c); return; }
+    const pool = RULES.filter(r => !g.rules.includes(r)); nw = pick(pool); g.rules.push(nw);
+    if (g.rules.length > 3) drop = g.rules.shift();
+    title = `👑 King ${g.kings} — new rule!`; text = `${nw.n} is now in play.`;
+  } else {
+    const pr = (spicy() ? RANK_SPICY : RANK_CHILL)[c.r]; title = pr.t; text = run(pr.x);
+    hits = g.rules.filter(r => r.test(c, g.hist));
+  }
+  const chaos = g.count % 7 === 0 ? pick(spicy() ? CHAOS_SPICY : CHAOS_CHILL) : null;
+  g.turn = o;
+  show(`<div class="center"><div class="cards" style="justify-content:center">${cardHtml(c, { lg: 1, flip: 1 })}</div>
+  <span class="tag">${N(p)} drew</span><h2>${esc(title)}</h2></div>
+  <div class="panel"><p>${esc(text)}</p></div>
+  ${hits.length ? `<div class="panel"><h3>⚡ Rules triggered</h3>${rulesHtml({ rules: hits }, hits)}</div>` : ''}
+  ${isKing ? `<div class="panel"><h3>📚 Rule stack</h3>${rulesHtml(g, [], nw)}${drop ? `<p class="mut">Bumped out: ${esc(drop.n)}</p>` : ''}</div>` : ''}
+  ${chaos ? `<div class="banner bad"><h3>🌪️ Chaos Event</h3><p>${esc(chaos)}</p></div>` : ''}
+  <div class="grid2"><button class="btn bad small" data-act="chk" data-p="${p}">🐔 ${N(p)} chickens out (+3)</button><button class="btn bad small" data-act="chk" data-p="${o}">🐔 ${N(o)} chickens out (+3)</button></div>
+  <div class="stack"><button class="btn primary" data-act="next">${N(o)}'s turn</button></div>`, {
+    chk: b => { addSips(+b.dataset.p, 3); toast(`${G.names[+b.dataset.p]} chickened out +3 🐔`); b.remove(); },
+    next: stackTurn,
+  });
+}
+function stackEnd(c) {
+  const g = G.game;
+  show(`<div class="center"><div class="cards" style="justify-content:center">${cardHtml(c, { lg: 1, flip: 1 })}</div>
+  <div class="big">🔔</div><h2>KING 4 — LAST CALL</h2></div>
+  <div class="banner bad"><p>${esc(spicy() ? LASTCALL_SPICY : LASTCALL_CHILL)}</p></div>
+  <div class="panel"><h3>Final stack</h3>${rulesHtml(g)}<p class="mut">${g.count} cards drawn. Sips so far: ${N(0)} ${G.sips[0]}, ${N(1)} ${G.sips[1]}.</p></div>
+  <div class="stack"><button class="btn primary" data-act="again">Another game of Rule Stack</button><button class="btn" data-act="menu">Back to the menu</button></div>`,
+    { again: stackIntro, menu: home });
+}
+
+home();
+</script>
+</body>
+</html>
