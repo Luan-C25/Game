@@ -7,6 +7,7 @@ import * as api from "./api.ts";
 import { NotFound } from "./db.ts";
 import * as stripe from "./stripe.ts";
 import { handleReminder, runDailyJobs } from "./reminders.ts";
+import * as money from "./money.ts";
 
 export type { Env };
 
@@ -14,7 +15,7 @@ type Handler = (request: Request, env: Env, ctx: ExecutionContext, params: Recor
 
 const routes: [string, RegExp, Handler][] = [];
 function route(method: string, pattern: string, handler: Handler): void {
-  routes.push([method, new RegExp(`^${pattern.replace(/:(\w+)/g, "(?<$1>[\\w-]+)")}$`), handler]);
+  routes.push([method, new RegExp(`^${pattern.replace(/\./g, "\\.").replace(/:(\w+)/g, "(?<$1>[\\w-]+)")}$`), handler]);
 }
 
 route("GET", "/api/health", async (_req, env) => {
@@ -60,6 +61,9 @@ route("POST", "/api/invoices/:id/status", api.setInvoiceStatus);
 route("POST", "/api/invoices/:id/repeat", api.repeatInvoice);
 route("GET", "/api/abn/:abn", api.abnLookup);
 route("POST", "/api/invoices/:id/reminder", handleReminder);
+route("GET", "/api/money", money.moneySummary);
+route("GET", "/api/export/invoices.csv", money.exportInvoices);
+route("GET", "/api/export/shifts.csv", money.exportShifts);
 
 /** D1 returns these when the free plan's daily read or write allowance is used up. */
 export function isCapacityError(err: unknown): boolean {
