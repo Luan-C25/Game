@@ -1,0 +1,30 @@
+{
+  "name": "shiftbill",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Invoicing and shift log for independent NDIS support workers in Australia.",
+  "engines": {
+    "node": ">=22.6"
+  },
+  "scripts": {
+    "build": "node --experimental-strip-types --no-warnings scripts/build.ts",
+    "dev": "npm run build && wrangler dev",
+    "test": "node --experimental-strip-types --no-warnings --test 'test/**/*.test.ts'",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.worker.json",
+    "check": "npm run typecheck && npm test && npm run build && node --experimental-strip-types --no-warnings scripts/check-budget.ts",
+    "db:migrate:local": "wrangler d1 migrations apply shiftbill --local",
+    "db:migrate:remote": "wrangler d1 migrations apply shiftbill --remote",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "dependencies": {
+    "qrcode-generator": "2.0.4"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20261006.1",
+    "@types/node": "22.15.0",
+    "esbuild": "0.28.2",
+    "typescript": "6.0.3",
+    "wrangler": "4.149.0"
+  }
+}
