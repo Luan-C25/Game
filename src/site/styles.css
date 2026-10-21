@@ -81,6 +81,13 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
 table.compare { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
 table.compare th, table.compare td { border-bottom: 1px solid var(--line); padding: 8px 6px; text-align: left; vertical-align: top; }
 .table-scroll { overflow-x: auto; }
+@media (max-width: 719px) {
+  table.stack thead { display: none; }
+  table.stack tr { display: block; border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 12px; }
+  table.stack th, table.stack td { display: block; border: 0; padding: 4px 0; }
+  table.stack th { font-size: 1.05rem; }
+  table.stack td::before { content: attr(data-label) ": "; font-weight: 600; }
+}
 .faq details { border-bottom: 1px solid var(--line); padding: 10px 0; }
 .faq summary { cursor: pointer; font-weight: 600; min-height: 32px; }
 .faq details p { margin: 8px 0 0; }

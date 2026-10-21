@@ -1,0 +1,24 @@
+# Local development secrets for `wrangler dev`. Copy to .dev.vars (never commit .dev.vars).
+# In production, set each of these with: npx wrangler secret put NAME
+# Generate random values with: node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+
+DATA_KEY=REPLACE_WITH_32_RANDOM_BYTES_BASE64
+PASSWORD_PEPPER=REPLACE_WITH_A_LONG_RANDOM_STRING
+SIGNING_KEY=REPLACE_WITH_A_LONG_RANDOM_STRING
+ADMIN_TOKEN=REPLACE_WITH_A_LONG_RANDOM_STRING
+
+SITE_URL=http://localhost:8787
+
+# Stripe TEST mode keys (sk_test_..., whsec_...). Leave blank to disable billing locally.
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_PRICE_MONTHLY=
+STRIPE_PRICE_YEARLY=
+STRIPE_PRICE_PACK=
+
+# Email is off until a domain is bought. Set EMAIL_PROVIDER=resend to switch on.
+RESEND_API_KEY=
+EMAIL_FROM=
+
+# Optional: ABN Lookup web services GUID from abr.business.gov.au
+ABR_GUID=

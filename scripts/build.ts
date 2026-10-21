@@ -1,6 +1,6 @@
 // Static site build: bundles the browser scripts with esbuild, renders every page
 // to HTML, and writes sitemap, robots, llms.txt and security headers into dist/.
-// Run with: npm run build (env: SITE_URL, SUPPORT_EMAIL, CF_BEACON_TOKEN).
+// Run with: npm run build (env: SITE_URL, SUPPORT_EMAIL, CF_BEACON_TOKEN, OPERATOR_NAME, OPERATOR_ABN).
 
 import { build, transform } from "esbuild";
 import { createHash } from "node:crypto";
@@ -16,6 +16,8 @@ const dist = join(root, "dist");
 const siteUrl = (process.env.SITE_URL || "http://localhost:8787").replace(/\/$/, "");
 const supportEmail = process.env.SUPPORT_EMAIL || "hello@shiftbill.example";
 const beaconToken = process.env.CF_BEACON_TOKEN || "";
+const operatorName = process.env.OPERATOR_NAME || "[operator name to be added before launch]";
+const operatorAbn = process.env.OPERATOR_ABN || "";
 
 rmSync(dist, { recursive: true, force: true });
 mkdirSync(join(dist, "assets"), { recursive: true });
@@ -51,7 +53,7 @@ writeFileSync(join(dist, "assets", cssName), css);
 assets["styles.css"] = `/assets/${cssName}`;
 
 // 3. Pages.
-const ctx: SiteContext = { siteUrl, supportEmail, beaconToken, assets };
+const ctx: SiteContext = { siteUrl, supportEmail, beaconToken, operatorName, operatorAbn, assets };
 const pages = allPages(ctx);
 for (const page of pages) {
   const file = page.path.endsWith(".html") ? join(dist, page.path) : join(dist, page.path, "index.html");

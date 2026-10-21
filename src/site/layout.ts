@@ -4,6 +4,8 @@ export interface SiteContext {
   siteUrl: string;
   supportEmail: string;
   beaconToken: string;
+  operatorName: string;
+  operatorAbn: string;
   assets: Record<string, string>; // logical name -> hashed file path
 }
 
