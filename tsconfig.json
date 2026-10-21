@@ -1,0 +1,20 @@
+{
+  // Browser code, shared code, site build and scripts. The Worker has its own
+  // config (tsconfig.worker.json) because Workers types clash with the DOM types.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["node"],
+    "strict": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/client", "src/shared", "src/site", "scripts"]
+}
