@@ -271,3 +271,49 @@ export function appPage(): Page {
 <noscript><div class="wrap narrow"><p class="warn">ShiftBill needs JavaScript turned on.</p></div></noscript>`,
   };
 }
+
+export function templatesPage(ctx: SiteContext): Page {
+  const f = faq([
+    ["What format are the templates?", "Word documents (.docx) in a zip file. They open in Microsoft Word, Google Docs, Apple Pages and LibreOffice, and you can edit everything."],
+    ["Is the service agreement legally checked?", "No. It is a plain-English starting point written for independent support workers. Adapt it to your situation, and have a lawyer check it if anything is unusual."],
+    ["How do I get the files?", "Straight after payment you get a download link, which works for 7 days. Stripe also emails you a receipt."],
+    ["Can I get a refund?", "If the pack does not work as described, email us and we will fix it or refund you. Your rights under the Australian Consumer Law always apply."],
+  ]);
+  return {
+    path: "/templates/",
+    title: `NDIS support worker template pack: service agreement, shift notes, checklist | ShiftBill`,
+    description: `Editable templates for independent NDIS support workers: a service agreement, a shift note and an onboarding checklist. A$${PRICES.packAud}, one-off.`,
+    priority: 0.6,
+    scripts: ["pack"],
+    jsonLd: [f.jsonLd, breadcrumbs(ctx, [["Home", "/"], ["Template pack", "/templates/"]]), { "@context": "https://schema.org", "@type": "Product", name: "ShiftBill template pack", description: "Service agreement, shift note and onboarding checklist templates for independent NDIS support workers.", offers: { "@type": "Offer", price: String(PRICES.packAud), priceCurrency: "AUD", availability: "https://schema.org/InStock" } }],
+    body: `<div class="wrap narrow">
+  <h1>Template pack for independent support workers</h1>
+  <p class="lead">Three editable Word documents that cover the paperwork around your invoices. A$${PRICES.packAud}, one-off. No account needed.</p>
+  <div class="cards two">
+    <div class="card"><h2>Service agreement</h2><p>Parties, supports with item numbers and rates, travel, cancellations, invoicing and payment terms, privacy consent, complaints, and how to end the agreement. Written in plain English with every blank marked.</p></div>
+    <div class="card"><h2>Shift note</h2><p>A one-page note for each shift: times, supports, goals, observations and incidents, with guidance on writing factual, respectful notes.</p></div>
+    <div class="card"><h2>Onboarding checklist</h2><p>What to sort out before you start as a sole trader, with each new participant, every fortnight and each July.</p></div>
+    <div class="card"><h2>What it is not</h2><p>Not legal advice and not an NDIS registration kit. NDIS rules and price limits change, usually each July, so check the current versions.</p></div>
+  </div>
+  <div class="btn-row"><button type="button" id="buy-pack">Buy for A$${PRICES.packAud}</button><span id="pack-status" class="small" aria-live="polite"></span></div>
+  <p class="small">Secure payment by Stripe. No GST is charged.</p>
+  ${f.html}
+</div>`,
+  };
+}
+
+export function templatesThanksPage(): Page {
+  return {
+    path: "/templates/thanks/",
+    title: "Thank you | ShiftBill template pack",
+    description: "Download your template pack.",
+    noindex: true,
+    scripts: ["pack"],
+    body: `<div class="wrap narrow">
+  <h1>Thank you</h1>
+  <p>Your payment went through. Your download is below.</p>
+  <div id="pack-claim" aria-live="polite"><p>Getting your download link...</p></div>
+  <p>When you are ready to invoice, the <a href="/ndis-invoice-template/">free NDIS invoice template</a> is here too.</p>
+</div>`,
+  };
+}

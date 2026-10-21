@@ -15,7 +15,10 @@
     "check": "npm run typecheck && npm test && npm run build && node --experimental-strip-types --no-warnings scripts/check-budget.ts",
     "db:migrate:local": "wrangler d1 migrations apply shiftbill --local",
     "db:migrate:remote": "wrangler d1 migrations apply shiftbill --remote",
-    "deploy": "npm run build && wrangler deploy"
+    "deploy": "npm run build && wrangler deploy",
+    "gen": "node --experimental-strip-types --no-warnings scripts/gen-pack.ts",
+    "pretest": "npm run gen",
+    "pretypecheck": "npm run gen"
   },
   "dependencies": {
     "qrcode-generator": "2.0.4"

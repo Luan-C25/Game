@@ -1,7 +1,7 @@
 import type { Page, SiteContext } from "../layout.ts";
 import { homePage, ndisTemplatePage, generalTemplatePage, notFoundPage } from "./core.ts";
 import { guidePages } from "./guides.ts";
-import { pricingPage, comparePage, privacyPage, termsPage, capacityPage, adminPage, appPage } from "./marketing.ts";
+import { pricingPage, comparePage, privacyPage, termsPage, capacityPage, adminPage, appPage, templatesPage, templatesThanksPage } from "./marketing.ts";
 
 export function allPages(ctx: SiteContext): Page[] {
   const legal = { operatorName: ctx.operatorName, operatorAbn: ctx.operatorAbn };
@@ -17,6 +17,8 @@ export function allPages(ctx: SiteContext): Page[] {
     capacityPage(),
     adminPage(),
     appPage(),
+    templatesPage(ctx),
+    templatesThanksPage(),
     notFoundPage(),
   ];
 }

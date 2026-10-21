@@ -8,6 +8,7 @@ import { NotFound } from "./db.ts";
 import * as stripe from "./stripe.ts";
 import { handleReminder, runDailyJobs } from "./reminders.ts";
 import * as money from "./money.ts";
+import { claimPack, downloadPack } from "./pack.ts";
 
 export type { Env };
 
@@ -42,6 +43,8 @@ route("POST", "/api/billing/checkout", (req, env) => stripe.createCheckout(req, 
 route("POST", "/api/billing/portal", (req, env) => stripe.createPortal(req, env));
 route("POST", "/api/stripe/webhook", (req, env) => stripe.handleWebhook(req, env));
 route("POST", "/api/pack/checkout", (req, env) => stripe.createPackCheckout(req, env));
+route("POST", "/api/pack/claim", (req, env) => claimPack(req, env));
+route("GET", "/api/pack/download", (req, env) => downloadPack(req, env));
 
 route("GET", "/api/me", api.getMe);
 route("PUT", "/api/settings", api.putSettings);
