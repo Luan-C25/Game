@@ -6,6 +6,7 @@ export interface SiteContext {
   beaconToken: string;
   operatorName: string;
   operatorAbn: string;
+  googleVerification: string;
   assets: Record<string, string>; // logical name -> hashed file path
 }
 
@@ -49,6 +50,7 @@ export function renderPage(page: Page, ctx: SiteContext): string {
 <meta name="description" content="${esc(page.description)}">
 <link rel="canonical" href="${esc(canonical)}">
 ${page.noindex ? '<meta name="robots" content="noindex">' : ""}
+${ctx.googleVerification && page.path === "/" ? `<meta name="google-site-verification" content="${esc(ctx.googleVerification)}">` : ""}
 <meta property="og:title" content="${esc(page.title)}">
 <meta property="og:description" content="${esc(page.description)}">
 <meta property="og:url" content="${esc(canonical)}">

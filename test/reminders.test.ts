@@ -142,6 +142,6 @@ test("reminder wording and mailto link", () => {
   assert.match(msg.body, /was due on 8 Oct 2026/);
   assert.match(msg.body, /BSB 062-000, account 1234 \(Sam Nguyen\)/);
   assert.ok(!msg.body.includes("431234567"), "NDIS number is not repeated in emails");
-  assert.ok(!/—/.test(msg.body), "no em dashes");
+  assert.ok(!/\u2014/.test(msg.body), "no em dashes");
   assert.match(mailtoLink("pm@example.com", "a b", "c&d"), /^mailto:pm%40example\.com\?subject=a%20b&body=c%26d$/);
 });

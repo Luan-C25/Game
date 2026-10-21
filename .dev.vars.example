@@ -1,8 +1,9 @@
 # Local development secrets for `wrangler dev`. Copy to .dev.vars (never commit .dev.vars).
 # In production, set each of these with: npx wrangler secret put NAME
-# Generate random values with: node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+# Use long random strings (40+ characters) from a password manager.
 
-DATA_KEY=REPLACE_WITH_32_RANDOM_BYTES_BASE64
+APP_ENV=development
+DATA_KEY=REPLACE_WITH_A_LONG_RANDOM_STRING
 PASSWORD_PEPPER=REPLACE_WITH_A_LONG_RANDOM_STRING
 SIGNING_KEY=REPLACE_WITH_A_LONG_RANDOM_STRING
 ADMIN_TOKEN=REPLACE_WITH_A_LONG_RANDOM_STRING
@@ -17,6 +18,7 @@ STRIPE_PRICE_YEARLY=
 STRIPE_PRICE_PACK=
 
 # Email is off until a domain is bought. Set EMAIL_PROVIDER=resend to switch on.
+EMAIL_PROVIDER=none
 RESEND_API_KEY=
 EMAIL_FROM=
 

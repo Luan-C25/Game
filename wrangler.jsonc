@@ -30,11 +30,10 @@
   // Daily at 21:30 UTC, which is 7:30 or 8:30 am on the east coast. One of the 5 free cron slots.
   "triggers": { "crons": ["30 21 * * *"] },
   "observability": { "enabled": true },
+  // Only non-secret settings live here. Everything else is a Worker secret, synced
+  // from GitHub repository secrets by .github/workflows/deploy.yml.
   "vars": {
-    "APP_ENV": "development",
-    "EMAIL_PROVIDER": "none",
-    "EMAIL_DAILY_CAP": "90",
-    "EMAIL_MONTHLY_CAP": "2900",
+    "APP_ENV": "production",
     "PBKDF2_ITERATIONS": "10000"
   }
 }

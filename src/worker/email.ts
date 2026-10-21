@@ -37,8 +37,8 @@ export async function sendEmail(env: Env, msg: EmailMessage, now: Date = new Dat
   if (!emailEnabled(env)) return { sent: false, reason: "off" };
   const day = `d:${now.toISOString().slice(0, 10)}`;
   const month = `m:${now.toISOString().slice(0, 7)}`;
-  const dailyCap = Number(env.EMAIL_DAILY_CAP) || 0;
-  const monthlyCap = Number(env.EMAIL_MONTHLY_CAP) || 0;
+  const dailyCap = Number(env.EMAIL_DAILY_CAP ?? 90);
+  const monthlyCap = Number(env.EMAIL_MONTHLY_CAP ?? 2900);
   if (!(await reserve(env, day, dailyCap))) {
     log("warn", "email_cap", { period: "day" });
     return { sent: false, reason: "cap_reached" };

@@ -113,3 +113,20 @@ Sources:
 - **D1 has no row level security.** Every query goes through `src/worker/db.ts`, where each function takes the signed-in user's id and includes it in the `WHERE` clause. Tests check that one user cannot read or change another user's rows. See `SECURITY.md`.
 - **NDIS numbers are encrypted** with AES-GCM using a key held in a Worker secret before they are written to D1 (D1 also encrypts at rest). Invoice snapshots, which contain the NDIS number, are encrypted the same way.
 - **Attribution:** first-touch UTM parameters are kept in the visitor's browser and sent only with funnel events (template completed, sign-up). Paid conversions inherit the sign-up's source. No cookies, no third-party trackers.
+- **Secrets live in GitHub, not on Luan's laptop.** The deploy workflow syncs GitHub repository secrets into Cloudflare Worker secrets on every deploy, so Luan never needs a terminal. `DATA_KEY` is hashed with SHA-256 into the AES key, so any long random string from a password manager works.
+- **D1 is created in the Oceania location** so Australian users' data sits as close as Cloudflare allows. The privacy policy still discloses that Cloudflare and Stripe may process data overseas.
+- **Template pack format:** Word documents (.docx), generated at build time by a small writer in `scripts/docx.ts` and checked by opening them with python-docx and converting them with LibreOffice.
+
+## 6. Marketing decisions
+
+- **TikTok first, Reddit second, search in the background.** A new `workers.dev` site will not rank quickly against established free templates, so early traffic has to come from social. See `content/WEEK_ONE.md` for the plan and the stop or double-down thresholds.
+- **r/NDIS does not allow advertising.** A moderator post has historically said "No advertising", with bans. The r/NDIS posts are therefore pure help with no link. The product post goes to r/NDIS_Providers, which allows providers to post about their services under a self-promotion flair. Reddit could not be reached from the build environment, so Luan checks each sidebar before posting.
+- **Every content claim is checked against what is true for Luan.** He is not a support worker and did not hand-write the code, so scripts never say "I log my shifts" or imply he is a developer.
+
+## 7. What I could not do or verify from the build environment
+
+- **Deploy.** There is no Cloudflare account yet, and the build environment cannot reach Cloudflare's API. Everything is ready to deploy from GitHub Actions once Part 2 to Part 5 of `LAUNCH_CHECKLIST.md` are done. The full app was run and tested locally in the real Workers runtime (`wrangler dev`) and in Chromium at phone width.
+- **Stripe end to end.** Without a Stripe account, Checkout, the portal and webhooks were tested with signed test events and a mocked Stripe API. Part 6 of the checklist is the real test-mode run.
+- **Cloudflare's commercial-use terms page** could not be loaded directly. Cloudflare's free plans are used commercially and no personal-use restriction appeared in its documentation, but Luan should confirm when signing up.
+- **ndis.gov.au** could not be fetched directly; its content was read through search results. Sources are listed in section 3.
+- **Competitor prices** come from vendor pages and reviews seen in search results on 21 October 2026, not from signing up to each product.

@@ -16,10 +16,6 @@ export function fromB64url(value: string): Uint8Array {
   return Uint8Array.from(bin, (c) => c.charCodeAt(0));
 }
 
-function fromB64(value: string): Uint8Array {
-  return Uint8Array.from(atob(value), (c) => c.charCodeAt(0));
-}
-
 function hex(bytes: ArrayBuffer | Uint8Array): string {
   return [...new Uint8Array(bytes)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
@@ -60,36 +56,36 @@ export function timingSafeEqualStr(a: string, b: string): boolean {
 
 const keyCache = new Map<string, Promise<CryptoKey>>();
 
-function dataKey(secretB64: string): Promise<CryptoKey> {
-  let key = keyCache.get(secretB64);
+/** The AES-256 key is the SHA-256 of DATA_KEY, so any long random string works as the secret. */
+function dataKey(secret: string): Promise<CryptoKey> {
+  let key = keyCache.get(secret);
   if (!key) {
-    const raw = fromB64(secretB64);
-    if (raw.length !== 32) throw new Error("DATA_KEY must be 32 bytes, base64 encoded");
-    key = crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["encrypt", "decrypt"]);
-    keyCache.set(secretB64, key);
+    if (!secret || secret.length < 32) throw new Error("DATA_KEY must be a random string of at least 32 characters");
+    key = crypto.subtle.digest("SHA-256", enc.encode(secret)).then((raw) => crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["encrypt", "decrypt"]));
+    keyCache.set(secret, key);
   }
   return key;
 }
 
-export async function encryptText(secretB64: string, plaintext: string): Promise<string> {
+export async function encryptText(secret: string, plaintext: string): Promise<string> {
   const iv = randomBytes(12);
-  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await dataKey(secretB64), enc.encode(plaintext));
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await dataKey(secret), enc.encode(plaintext));
   return `v1.${b64url(iv)}.${b64url(new Uint8Array(ct))}`;
 }
 
-export async function decryptText(secretB64: string, value: string): Promise<string> {
+export async function decryptText(secret: string, value: string): Promise<string> {
   const [version, iv, ct] = value.split(".");
   if (version !== "v1" || !iv || !ct) throw new Error("Unknown ciphertext format");
-  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: fromB64url(iv) }, await dataKey(secretB64), fromB64url(ct));
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: fromB64url(iv) }, await dataKey(secret), fromB64url(ct));
   return dec.decode(pt);
 }
 
-export async function encryptJson(secretB64: string, value: unknown): Promise<string> {
-  return encryptText(secretB64, JSON.stringify(value));
+export async function encryptJson(secret: string, value: unknown): Promise<string> {
+  return encryptText(secret, JSON.stringify(value));
 }
 
-export async function decryptJson<T>(secretB64: string, value: string): Promise<T> {
-  return JSON.parse(await decryptText(secretB64, value)) as T;
+export async function decryptJson<T>(secret: string, value: string): Promise<T> {
+  return JSON.parse(await decryptText(secret, value)) as T;
 }
 
 // ---- Passwords ----
