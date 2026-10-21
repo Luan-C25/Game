@@ -9,8 +9,8 @@ CREATE TABLE users (
   pw_salt TEXT NOT NULL,
   pw_iterations INTEGER NOT NULL,
   recovery_hash TEXT NOT NULL,
-  -- Business details, invoice defaults and preferences (JSON, no NDIS numbers).
-  settings TEXT NOT NULL DEFAULT '{}',
+  -- Business details, bank details and preferences as encrypted JSON (AES-GCM).
+  settings_enc TEXT NOT NULL DEFAULT '',
   next_invoice_seq INTEGER NOT NULL DEFAULT 1,
   -- First-touch attribution copied from the browser at sign-up.
   utm_source TEXT, utm_medium TEXT, utm_campaign TEXT, utm_content TEXT, utm_term TEXT,

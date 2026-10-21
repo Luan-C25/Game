@@ -131,8 +131,8 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; accent-
 .total-value { font-size: 1.35rem; font-weight: 700; }
 
 /* App */
-.app-tabs { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--line); margin: 8px 0 16px; }
-.app-tabs a { padding: 10px 12px; text-decoration: none; color: var(--ink); white-space: nowrap; border-bottom: 3px solid transparent; }
+.app-tabs { display: flex; justify-content: space-between; gap: 0; overflow-x: auto; border-bottom: 1px solid var(--line); margin: 8px 0 16px; }
+.app-tabs a { padding: 10px 6px; font-size: 0.95rem; text-decoration: none; color: var(--ink); white-space: nowrap; border-bottom: 3px solid transparent; }
 .app-tabs a[aria-current="page"] { border-color: var(--brand); font-weight: 600; }
 .list { list-style: none; padding: 0; margin: 0; }
 .list li { border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; flex-wrap: wrap; }

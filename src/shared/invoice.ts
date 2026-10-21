@@ -75,6 +75,12 @@ export interface InvoiceTotals {
   totalCents: Cents;
 }
 
+export const PLAN_LABELS: Record<PlanType, string> = {
+  self: "Self-managed",
+  plan: "Plan-managed",
+  ndia: "NDIA-managed",
+};
+
 export const GST_RATE_DENOMINATOR = 10; // GST is 1/10 of the GST-exclusive price.
 export const MAX_LINES = 100;
 

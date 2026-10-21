@@ -29,7 +29,7 @@ const NAV = [
   ["/ndis-invoice-template/", "Invoice template"],
   ["/guides/", "Guides"],
   ["/pricing/", "Pricing"],
-  ["/app/", "Log in"],
+  ["/app/", "Your account"],
 ] as const;
 
 export function renderPage(page: Page, ctx: SiteContext): string {

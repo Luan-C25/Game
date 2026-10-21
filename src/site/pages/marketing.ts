@@ -259,3 +259,15 @@ export function adminPage(): Page {
 </div>`,
   };
 }
+
+export function appPage(): Page {
+  return {
+    path: "/app/",
+    title: "ShiftBill",
+    description: "Your ShiftBill shift log and invoices.",
+    noindex: true,
+    scripts: ["app"],
+    body: `<div id="app" aria-live="polite"><div class="wrap narrow"><p>Loading...</p></div></div>
+<noscript><div class="wrap narrow"><p class="warn">ShiftBill needs JavaScript turned on.</p></div></noscript>`,
+  };
+}

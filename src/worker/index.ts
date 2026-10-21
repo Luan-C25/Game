@@ -2,6 +2,9 @@ import type { Env } from "./env.ts";
 import { HttpError, errorResponse, json } from "./http.ts";
 import { log, errorFields } from "./log.ts";
 import { handlePublicEvent, handleAdminStats } from "./events.ts";
+import * as auth from "./auth.ts";
+import * as api from "./api.ts";
+import { NotFound } from "./db.ts";
 
 export type { Env };
 
@@ -24,6 +27,32 @@ route("GET", "/api/health", async (_req, env) => {
 });
 route("POST", "/api/event", (req, env) => handlePublicEvent(req, env));
 route("GET", "/api/admin/stats", (req, env) => handleAdminStats(req, env));
+
+route("POST", "/api/auth/signup", (req, env) => auth.signup(req, env));
+route("POST", "/api/auth/login", (req, env) => auth.login(req, env));
+route("POST", "/api/auth/logout", (req, env) => auth.logout(req, env));
+route("POST", "/api/auth/recover", (req, env) => auth.recover(req, env));
+route("POST", "/api/account/password", (req, env) => auth.changePassword(req, env));
+route("POST", "/api/account/recovery-code", (req, env) => auth.newRecovery(req, env));
+route("DELETE", "/api/account", (req, env) => auth.deleteAccount(req, env, async () => {}));
+
+route("GET", "/api/me", api.getMe);
+route("PUT", "/api/settings", api.putSettings);
+route("GET", "/api/participants", api.listParticipants);
+route("POST", "/api/participants", api.createParticipant);
+route("PUT", "/api/participants/:id", api.updateParticipant);
+route("DELETE", "/api/participants/:id", api.deleteParticipant);
+route("GET", "/api/shifts", api.listShifts);
+route("POST", "/api/shifts", api.createShift);
+route("PUT", "/api/shifts/:id", api.updateShift);
+route("DELETE", "/api/shifts/:id", api.deleteShift);
+route("GET", "/api/invoices", api.listInvoices);
+route("POST", "/api/invoices", api.createInvoice);
+route("GET", "/api/invoices/:id", api.getInvoice);
+route("DELETE", "/api/invoices/:id", api.deleteInvoice);
+route("POST", "/api/invoices/:id/status", api.setInvoiceStatus);
+route("POST", "/api/invoices/:id/repeat", api.repeatInvoice);
+route("GET", "/api/abn/:abn", api.abnLookup);
 
 /** D1 returns these when the free plan's daily read or write allowance is used up. */
 export function isCapacityError(err: unknown): boolean {
@@ -51,7 +80,13 @@ export async function handleApi(request: Request, env: Env, ctx: ExecutionContex
   } catch (err) {
     if (err instanceof HttpError) {
       status = err.status;
+      const fields = (err as HttpError & { fields?: Record<string, string> }).fields;
+      if (fields) return json({ error: { code: err.code, message: err.message, fields } }, err.status);
       return errorResponse(err.status, err.code, err.message, err.status === 429 ? { "retry-after": "60" } : {});
+    }
+    if (err instanceof NotFound) {
+      status = 404;
+      return errorResponse(404, "not_found", err.message);
     }
     if (isCapacityError(err)) {
       status = 503;

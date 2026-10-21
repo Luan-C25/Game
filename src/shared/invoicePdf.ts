@@ -1,5 +1,5 @@
 import { PdfDocument, type PdfPage, type Rgb, wrapText, textWidth } from "./pdf.ts";
-import { computeTotals, documentTitle, servicePeriod, type InvoiceInput, type PlanType } from "./invoice.ts";
+import { computeTotals, documentTitle, servicePeriod, PLAN_LABELS, type InvoiceInput } from "./invoice.ts";
 import { formatAud, formatQuantity } from "./money.ts";
 import { formatDate } from "./dates.ts";
 import { formatAbn, formatBsb } from "./validate.ts";
@@ -11,11 +11,6 @@ const MUTED: Rgb = [0.38, 0.42, 0.48];
 const RULE: Rgb = [0.82, 0.84, 0.87];
 const BAND: Rgb = [0.95, 0.96, 0.97];
 
-export const PLAN_LABELS: Record<PlanType, string> = {
-  self: "Self-managed",
-  plan: "Plan-managed",
-  ndia: "NDIA-managed",
-};
 
 export interface PdfOptions {
   /** Small footer credit on free invoices. */
