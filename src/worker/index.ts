@@ -6,6 +6,7 @@ import * as auth from "./auth.ts";
 import * as api from "./api.ts";
 import { NotFound } from "./db.ts";
 import * as stripe from "./stripe.ts";
+import { handleReminder, runDailyJobs } from "./reminders.ts";
 
 export type { Env };
 
@@ -58,6 +59,7 @@ route("DELETE", "/api/invoices/:id", api.deleteInvoice);
 route("POST", "/api/invoices/:id/status", api.setInvoiceStatus);
 route("POST", "/api/invoices/:id/repeat", api.repeatInvoice);
 route("GET", "/api/abn/:abn", api.abnLookup);
+route("POST", "/api/invoices/:id/reminder", handleReminder);
 
 /** D1 returns these when the free plan's daily read or write allowance is used up. */
 export function isCapacityError(err: unknown): boolean {
@@ -111,5 +113,13 @@ export default {
     const url = new URL(request.url);
     if (url.pathname.startsWith("/api/")) return handleApi(request, env, ctx);
     return env.ASSETS.fetch(request);
+  },
+  async scheduled(_controller, env, ctx): Promise<void> {
+    ctx.waitUntil(
+      runDailyJobs(env).catch((err) => {
+        if (isCapacityError(err)) log("warn", "cron_capacity", {});
+        else log("error", "cron_failed", errorFields(err));
+      }),
+    );
   },
 } satisfies ExportedHandler<Env>;

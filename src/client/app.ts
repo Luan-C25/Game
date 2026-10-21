@@ -714,6 +714,7 @@ function settingsView(welcome: boolean): void {
   const terms = select("termsDays", [["7", "7 days"], ["14", "14 days"], ["30", "30 days"], ["0", "Due on receipt"]], String(s.termsDays));
   const tz = select("timeZone", AU_TIME_ZONES.map((z) => [z, z.replace("Australia/", "")]), s.timeZone);
   const notes = h("textarea", { name: "invoiceNotes", maxlength: 600 }, s.invoiceNotes);
+  const remindersOn = h("input", { type: "checkbox", name: "remindersEnabled", id: "reminders-on", checked: s.reminders.enabled });
   const out = h("div", { "aria-live": "polite" });
   const save = h("button", { type: "submit" }, "Save settings");
 
@@ -731,7 +732,7 @@ function settingsView(welcome: boolean): void {
           termsDays: Number(f.termsDays),
           taxPercent: Number(f.taxPercent),
           timeZone: f.timeZone ?? "Australia/Sydney",
-          reminders: s.reminders,
+          reminders: { enabled: f.remindersEnabled === "yes" },
           invoiceNotes: f.invoiceNotes ?? "",
         };
         try {
@@ -764,6 +765,7 @@ function settingsView(welcome: boolean): void {
       h("legend", {}, "Invoices"),
       h("div", { class: "grid-2" }, field("Invoice number prefix", fields.invoicePrefix, `Next: ${me!.nextInvoiceNumber}`), field("Payment terms", terms), field("Tax set-aside (%)", fields.taxPercent, "An estimate to budget with, not tax advice."), field("Time zone", tz)),
       field("Note on every invoice (optional)", notes),
+      h("div", { class: "field" }, h("label", { class: "inline-choices", for: "reminders-on" }, remindersOn, h("span", {}, "Send overdue reminders automatically (paid plan, when email is switched on)"))),
     ),
     out,
     h("div", { class: "btn-row" }, save),
