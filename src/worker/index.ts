@@ -5,6 +5,7 @@ import { handlePublicEvent, handleAdminStats } from "./events.ts";
 import * as auth from "./auth.ts";
 import * as api from "./api.ts";
 import { NotFound } from "./db.ts";
+import * as stripe from "./stripe.ts";
 
 export type { Env };
 
@@ -34,7 +35,11 @@ route("POST", "/api/auth/logout", (req, env) => auth.logout(req, env));
 route("POST", "/api/auth/recover", (req, env) => auth.recover(req, env));
 route("POST", "/api/account/password", (req, env) => auth.changePassword(req, env));
 route("POST", "/api/account/recovery-code", (req, env) => auth.newRecovery(req, env));
-route("DELETE", "/api/account", (req, env) => auth.deleteAccount(req, env, async () => {}));
+route("DELETE", "/api/account", (req, env) => auth.deleteAccount(req, env, (customerId) => stripe.cancelCustomerSubscriptions(env, customerId)));
+route("POST", "/api/billing/checkout", (req, env) => stripe.createCheckout(req, env));
+route("POST", "/api/billing/portal", (req, env) => stripe.createPortal(req, env));
+route("POST", "/api/stripe/webhook", (req, env) => stripe.handleWebhook(req, env));
+route("POST", "/api/pack/checkout", (req, env) => stripe.createPackCheckout(req, env));
 
 route("GET", "/api/me", api.getMe);
 route("PUT", "/api/settings", api.putSettings);

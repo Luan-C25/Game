@@ -21,6 +21,8 @@ export interface Env {
   STRIPE_PRICE_MONTHLY?: string;
   STRIPE_PRICE_YEARLY?: string;
   STRIPE_PRICE_PACK?: string;
+  /** Must be "yes" before an sk_live_ key is accepted. Test mode until Luan confirms go-live. */
+  ALLOW_LIVE_PAYMENTS?: string;
 
   EMAIL_PROVIDER: string; // "none" | "resend"
   RESEND_API_KEY?: string;
