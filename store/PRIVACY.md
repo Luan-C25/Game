@@ -60,7 +60,4 @@ with a new date at the top.
 
 ## Contact
 
-Questions about this policy: **<YOUR-CONTACT-EMAIL>**
-
-*Replace the address above before publishing — Play requires a working contact
-route.*
+Questions about this policy: **luanchild15@gmail.com**

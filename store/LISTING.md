@@ -101,8 +101,9 @@ lives anywhere. Undo, hints and restarts are free and unlimited.
 
 ## Contact details
 
-- **Email:** required and shown publicly on your listing — consider a dedicated
-  address rather than your personal one
+- **Email:** `luanchild15@gmail.com` (shown publicly on the listing; also the
+  privacy policy's contact)
+- **Privacy policy:** `https://luan-c25.github.io/glazeway-privacy/`
 - **Website:** optional
 - **Phone:** optional, leave blank
 
