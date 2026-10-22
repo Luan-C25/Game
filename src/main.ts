@@ -14,7 +14,14 @@ import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 import { DragController } from './game/input.ts';
 import { LEVEL_COUNT, getLevel } from './game/levels.ts';
 import { Session } from './game/session.ts';
-import { blockCentre, computeViewport, invalidateStaticLayer, render, type Viewport } from './game/render.ts';
+import {
+  blockCentre,
+  canvasScale,
+  computeViewport,
+  invalidateStaticLayer,
+  render,
+  type Viewport,
+} from './game/render.ts';
 import { BLOCK_COLOURS, THEMES, themeById } from './game/theme.ts';
 import { Particles } from './game/particles.ts';
 import { AD_PROMISES, mayShowInterstitial, noopAdProvider, type AdProvider } from './game/ads.ts';
@@ -264,7 +271,7 @@ function resizeCanvas(): void {
   const rect = wrap.getBoundingClientRect();
   if (rect.width === 0 || rect.height === 0) return;
 
-  const dpr = window.devicePixelRatio || 1;
+  const dpr = canvasScale();
   canvas.width = Math.round(rect.width * dpr);
   canvas.height = Math.round(rect.height * dpr);
   canvas.style.width = `${rect.width}px`;
@@ -382,7 +389,7 @@ function checkComplete(): void {
   sfx.win();
   buzz('win');
   if (!saveData.settings.reduceMotion) {
-    particles.celebrate(canvas.width / (window.devicePixelRatio || 1), BLOCK_COLOURS);
+    particles.celebrate(canvas.width / canvasScale(), BLOCK_COLOURS);
     requestDraw();
   }
 

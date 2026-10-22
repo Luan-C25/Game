@@ -42,6 +42,14 @@ export interface RenderOptions {
   particles?: Particles;
 }
 
+/**
+ * Backing-store pixels per CSS pixel. Capped at 2: a 3.5x phone would push
+ * about three times the pixels of the cap for no difference anyone can see.
+ */
+export function canvasScale(): number {
+  return Math.min(2, window.devicePixelRatio || 1);
+}
+
 const WALL_RATIO = 0.36;
 const MAX_CELL = 88;
 /** Tile thickness, as a fraction of a cell. */
@@ -673,7 +681,7 @@ export function render(
   vp: Viewport,
   options: RenderOptions,
 ): void {
-  const dpr = window.devicePixelRatio || 1;
+  const dpr = canvasScale();
   const cssWidth = ctx.canvas.width / dpr;
   const cssHeight = ctx.canvas.height / dpr;
   ctx.clearRect(0, 0, cssWidth, cssHeight);
