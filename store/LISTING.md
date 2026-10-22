@@ -8,9 +8,11 @@ counts below are current; if you edit the text, re-check them.
 ## App name (30 characters max)
 
 ```
-Colour Jam
+Glazeway: Colour Block Puzzle
 ```
-*10 characters.*
+*29 characters. "Glazeway" is the brand; the rest is what people search for.
+Checked on Google Play (Australia) on 22 October 2026: no app called
+Glazeway.*
 
 ## Short description (80 characters max)
 

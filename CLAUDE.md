@@ -1,4 +1,8 @@
-# Colour Jam
+# Glazeway
+
+Formerly "Colour Jam" (renamed 22 October 2026: the old name collided on Play).
+The repo folder and the save key `colourjam.save.v1` keep the old name; both
+are internal and renaming the save key would orphan saves.
 
 A colour-sorting sliding-block puzzle (a Color Block Jam remake) for Android
 first, then the web. TypeScript + Vite, Canvas rendering, wrapped for Android
@@ -43,7 +47,9 @@ Run `npm test` and `npm run typecheck` before every commit.
   policy and keeps ad revenue up. COPPA / under-age ad flags stay off.
 - **Personal Play developer account**, so the 12-tester / 14-day closed test
   applies.
-- **Package id `com.tilekiln.colourjam`**: no personal name, and `com.tilekiln.`
+- **Name: Glazeway**, store title "Glazeway: Colour Block Puzzle". Chosen by
+  the owner on 22 October 2026 after a Play search found no app by that name.
+- **Package id `com.tilekiln.glazeway`**: no personal name, and `com.tilekiln.`
   is the namespace for future games. Permanent after the first upload.
 - **Monetisation**: interstitials under the strict `AD_POLICY` in
   `src/game/ads.ts`, plus opt-in rewarded ads. No timers, lives, energy or
@@ -91,9 +97,7 @@ messages, and push when a step is complete.
 
 ## Open decisions (ask the owner)
 
-1. **The name.** "Color Jam" and "Color Jam Block Puzzle" (the same mechanic)
-   already exist on Play. Settle it before the first upload.
-2. **Project licence**: not chosen yet.
+1. **Project licence**: not chosen yet.
 
 ## Parked ideas (not started)
 

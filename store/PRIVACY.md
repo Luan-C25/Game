@@ -1,13 +1,13 @@
-# Privacy Policy for Colour Jam
+# Privacy Policy for Glazeway
 
 **Last updated: 18 September 2026**
 
-This policy explains what Colour Jam does with your information. It is short
+This policy explains what Glazeway does with your information. It is short
 because the game does very little.
 
 ## What the game stores
 
-Colour Jam saves your progress — which levels you have finished, your best
+Glazeway saves your progress — which levels you have finished, your best
 move counts, your coins, your unlocked themes, and your settings — in local
 storage **on your own device**.
 
@@ -22,7 +22,7 @@ play, and it works with no network connection at all.
 
 ## Advertising
 
-Colour Jam shows occasional full-screen ads supplied by **Google AdMob**.
+Glazeway shows occasional full-screen ads supplied by **Google AdMob**.
 
 To serve those ads, Google may collect and process data, including your
 device's advertising identifier. This processing is done by Google, not by us
@@ -43,7 +43,7 @@ settings, under **Settings → Google → Ads**.
 
 ## Children
 
-Colour Jam is rated for players aged 13 and over and is not directed at
+Glazeway is rated for players aged 13 and over and is not directed at
 children. We do not knowingly collect any information from anyone, including
 children.
 

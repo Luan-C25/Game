@@ -1,6 +1,6 @@
 {
-  "name": "Colour Jam",
-  "short_name": "Colour Jam",
+  "name": "Glazeway",
+  "short_name": "Glazeway",
   "description": "A colour-sorting sliding block puzzle. No timers, no lives, free hints.",
   "start_url": "./",
   "scope": "./",

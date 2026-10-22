@@ -14,8 +14,8 @@ admin, one build, and a two-week wait.
 
 | Thing | Value |
 | --- | --- |
-| App id (permanent once uploaded) | `com.tilekiln.colourjam` |
-| App name | Colour Jam |
+| App id (permanent once uploaded) | `com.tilekiln.glazeway` |
+| App name | Glazeway: Colour Block Puzzle |
 | Target audience | 13 and over |
 | Account type | Personal |
 
@@ -78,15 +78,15 @@ Play App Signing; leak it and someone else can impersonate your releases.
 From the project root. macOS and Linux:
 
 ```bash
-keytool -genkey -v -keystore android/colourjam-upload.jks \
-  -keyalg RSA -keysize 2048 -validity 10000 -alias colourjam
+keytool -genkey -v -keystore android/glazeway-upload.jks \
+  -keyalg RSA -keysize 2048 -validity 10000 -alias glazeway
 ```
 
 Windows PowerShell, where a trailing `\` is not a line continuation and will
 truncate the command — keep it on one line:
 
 ```powershell
-keytool -genkey -v -keystore android/colourjam-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias colourjam
+keytool -genkey -v -keystore android/glazeway-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias glazeway
 ```
 
 It asks for a password and some name/organisation fields — the fields do not
@@ -97,9 +97,9 @@ below assumes.
 Then create `android/keystore.properties`:
 
 ```properties
-storeFile=colourjam-upload.jks
+storeFile=glazeway-upload.jks
 storePassword=<the password you just set>
-keyAlias=colourjam
+keyAlias=glazeway
 keyPassword=<the same password, unless you set a different key password>
 ```
 
@@ -163,7 +163,7 @@ a real address first. The easiest free host is GitHub Pages:
 
 ## Step 7 — Create the app in Play Console
 
-**All apps → Create app.** Name it Colour Jam, pick English, choose **Game**
+**All apps → Create app.** Name it Glazeway: Colour Block Puzzle, pick English, choose **Game**
 and **Free**.
 
 Then work through the **Dashboard** tasks. The answers you need:
@@ -266,6 +266,6 @@ is the single most common upload error.
 - **API level.** Google required API 36 from 31 August 2026 and this project
   targets it. The requirement moves roughly every August; when it does, the
   fix is normally upgrading Capacitor.
-- **The app id is permanent.** `com.tilekiln.colourjam` cannot be changed once
+- **The app id is permanent.** `com.tilekiln.glazeway` cannot be changed once
   anything is uploaded. Future games go under the same `com.tilekiln.` prefix.
 - **Keep the keystore.** Backed up, private, and not in git.

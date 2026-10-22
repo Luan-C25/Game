@@ -39,6 +39,11 @@ a low-end Android phone. Checking this codebase against it found:
 - **4 was a misreading, no change.** `getBoundingClientRect()` runs only in
   `toCell()`, which only `onPointerDown` calls; moves work from pointer
   deltas. That is already once per gesture, as the playbook asks.
+- **5 settled: the game is now Glazeway**, package id
+  `com.tilekiln.glazeway`, store title "Glazeway: Colour Block Puzzle". A Play
+  search on 22 October found no app by that name. Menu, manifest, Android
+  strings, listing, privacy policy and feature graphic are renamed; the
+  internal save key keeps the old name so saves survive.
 
 ## Where things are
 
@@ -79,7 +84,8 @@ is in [DESIGN.md](./DESIGN.md). The research that picked this game is in
 
 ## Decisions now settled
 
-- **App id:** `com.tilekiln.colourjam`. Permanent once anything is uploaded to
+- **Name:** Glazeway (was Colour Jam).
+- **App id:** `com.tilekiln.glazeway`. Permanent once anything is uploaded to
   Play. Future games share the `com.tilekiln.` prefix.
 - **Target audience:** 13+. Deliberately *not* child-directed, which keeps the
   app out of Families policy and keeps ad revenue per impression intact.
@@ -123,7 +129,7 @@ session container, so Gradle has never run against `android/`. The first
 ## Next steps
 
 1. ~~Fix findings 1–4 above.~~ Done 22 October, see the follow-up.
-2. Settle the name (finding 5) **before** the first upload.
+2. ~~Settle the name (finding 5).~~ Glazeway, 22 October.
 3. Build on the laptop (PUBLISHING.md Step 3 onward) and check findings 6–7
    on a real phone.
 4. Start the 14-day closed test as early as possible; it is the long pole.

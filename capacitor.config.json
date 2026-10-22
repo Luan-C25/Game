@@ -1,6 +1,6 @@
 {
-  "appId": "com.tilekiln.colourjam",
-  "appName": "Colour Jam",
+  "appId": "com.tilekiln.glazeway",
+  "appName": "Glazeway",
   "webDir": "dist",
   "android": {
     "backgroundColor": "#f4f1ea"

@@ -1,4 +1,4 @@
-package com.tilekiln.colourjam;
+package com.tilekiln.glazeway;
 
 import com.getcapacitor.BridgeActivity;
 

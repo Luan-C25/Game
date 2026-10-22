@@ -1,4 +1,4 @@
-# Colour Jam
+# Glazeway
 
 A colour-sorting sliding block puzzle for phones and the web. Slide every
 block out through a gate of its own colour.
