@@ -122,9 +122,12 @@ and `JAVA_HOME` must point at it for builds. The signing key had not been
 generated when work stopped. [PUBLISHING.md](./PUBLISHING.md) carries both bash and PowerShell
 forms of every command from that point on.
 
-**The Android project has never been compiled.** No Android SDK exists in the
-session container, so Gradle has never run against `android/`. The first
-`gradlew bundleRelease` is a genuine unknown, not a formality.
+**First builds done 22 October.** `assembleDebug` and `bundleRelease` both
+pass on the laptop with `JAVA_HOME` set to JDK 21 (Gradle fetched platform 36
+and build-tools 35 itself). The upload key is `android/glazeway-upload.jks`,
+alias `glazeway`; the signed `app-release.aab` is about 6.6 MB, and
+`jarsigner -verify` confirms the signature. The merged manifest has the
+`VIBRATE` permission. Nothing has been uploaded to Play yet.
 
 ## Next steps
 
