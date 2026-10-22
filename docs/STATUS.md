@@ -1,17 +1,31 @@
-# Status — 21 September 2026 — PAUSED
+# Status — 22 October 2026 — RESUMED, Play route
 
 Where the project stands, and what a cold start needs to know. Sessions run in
 an ephemeral container, so this file is the handover.
 
-## Why it is paused
+## Why it was paused, and why it is back
 
-Google Play requires a personal developer account to run a closed test with
-**12 testers for 14 continuous days**, with genuine use checked. That is the
-blocker, and it is a recruiting problem rather than a technical one — nothing
-in the code is waiting on anything.
+It was paused on 21 September over Play's closed-test rule for personal
+accounts: **12 testers for 14 continuous days**, genuine use checked. The
+developer account was already paid for, so the Play route is back on, with
+testers to be recruited on Reddit. The rule itself is unchanged since it
+dropped from 20 to 12 in December 2024.
 
-Everything up to that point is finished. The work resumes exactly where it
-stopped; see "To pick this back up" at the end.
+## Audit against the mobile-game playbook (22 October)
+
+`.claude/skills/mobile-game-dev/` now carries an MIT-licensed playbook from
+someone who shipped seven Canvas-in-Capacitor games, including a Block Jam, on
+a low-end Android phone. Checking this codebase against it found:
+
+| # | Finding | Severity |
+| --- | --- | --- |
+| 1 | **Haptics never fire on Android.** `navigator.vibrate` needs the `VIBRATE` permission, which the manifest does not declare, so the setting defaults on and does nothing. `@capacitor/haptics` declares it and gives proper impact styles. | Bug |
+| 2 | **The board redraws every frame, forever**, including `shadowBlur` inner shadows on the tray and every gate slot. On a weak GPU that is the jank, heat and battery drain the playbook measured. Static layers belong in a cached offscreen canvas, with redraws only while something moves. | Performance |
+| 3 | **`devicePixelRatio` is uncapped.** A 3.5x phone pushes about 3x the pixels of a 2x cap for no visible gain. | Performance |
+| 4 | **`getBoundingClientRect()` runs on every pointer event** in `input.ts`. Cache it per gesture. | Minor |
+| 5 | **The name collides.** "Color Jam" (`com.mobsmile.colorjam`) and "Color Jam Block Puzzle" — the same mechanic — are already on Play. The display name can change later; the package id `com.tilekiln.colourjam` cannot once uploaded. | Decision |
+| 6 | **Edge-to-edge is unverified.** `targetSdk 36` enforces it, and the playbook found Capacitor 8 reporting a 0 px bottom inset on Android 10, putting buttons under the navigation bar. Needs a real-device check. | Risk |
+| 7 | **System text size untested.** WebView scales CSS text with the phone's font setting; the menu has not been checked at 1.15x or 1.3x. | Risk |
 
 ## Where things are
 
@@ -56,7 +70,7 @@ is in [DESIGN.md](./DESIGN.md). The research that picked this game is in
 - **Target audience:** 13+. Deliberately *not* child-directed, which keeps the
   app out of Families policy and keeps ad revenue per impression intact.
 - **Account type:** personal — so the 12-tester, 14-day closed test applies.
-  This is the reason the project is paused.
+  Testers are being recruited on Reddit.
 - **Project licence:** still not chosen. (The bundled font is settled: Baloo 2
   under SIL OFL 1.1, licence text shipped at `public/fonts/OFL.txt`.)
 
@@ -87,21 +101,13 @@ forms of every command from that point on.
 session container, so Gradle has never run against `android/`. The first
 `gradlew bundleRelease` is a genuine unknown, not a formality.
 
-## To pick this back up
+## Next steps
 
-Two routes, and they are independent:
-
-1. **Ship it on the web instead.** The game is a browser app that already runs
-   on phones. `npm run build` produces a static `dist/` that any free host
-   serves. No store account, no $25, no testers, no review. This is the route
-   that needs nothing the project does not already have.
-2. **Resume the Play route.** Continue at Step 3 of PUBLISHING.md. The only
-   thing standing in the way is the 12 testers; every other step is either
-   done or written down.
-
-Either way, **play it on a real handset first**. Drag feel on physical
-hardware is the one thing no headless check can answer, and it is the mechanic
-the whole game rests on.
+1. Fix findings 1–4 above. They are code-only and need no device.
+2. Settle the name (finding 5) **before** the first upload.
+3. Build on the laptop (PUBLISHING.md Step 3 onward) and check findings 6–7
+   on a real phone.
+4. Start the 14-day closed test as early as possible; it is the long pole.
 
 ## Worth knowing before changing things
 
