@@ -131,6 +131,25 @@ On Windows PowerShell that is `cd android` then `.\gradlew bundleRelease` —
 the leading `.\` is required, as PowerShell does not run executables from the
 current directory without it.
 
+Gradle must run on **JDK 21**: Capacitor 8 compiles for Java 21, and this
+Gradle version cannot run on Java 25 (Android Studio's bundled JDK). In each
+new PowerShell window, before `.\gradlew`:
+
+```powershell
+$env:JAVA_HOME = 'C:\Program Files\Java\jdk-21'
+```
+
+Gradle also needs to know where the Android SDK is. Android Studio writes
+`android/local.properties` the first time it opens the project; without it,
+create that file with this one line:
+
+```properties
+sdk.dir=C:/Users/<you>/AppData/Local/Android/Sdk
+```
+
+Use forward slashes: in a `.properties` file a single backslash is an escape
+character, so `C:\Users\...` silently becomes a broken path.
+
 The bundle lands at `android/app/build/outputs/bundle/release/app-release.aab`.
 
 > First build downloads a lot of Gradle and SDK components. Expect it to take
