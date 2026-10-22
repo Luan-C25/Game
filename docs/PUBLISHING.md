@@ -201,22 +201,34 @@ Then work through the **Dashboard** tasks. The answers you need:
 
 ### Data safety answers
 
-These must be truthful, and for this app they are unusually simple because the
-game itself collects nothing. The only data collected is by the AdMob SDK.
+These must be truthful. The game itself collects nothing; everything declared
+here is collected by the AdMob SDK, per Google's
+[Play data disclosure for the Mobile Ads SDK](https://developers.google.com/admob/android/privacy/play-data-disclosure).
+Submitted this way on 23 October 2026.
 
 - **Does your app collect or share any of the required user data types?** Yes
-- **Data type:** Device or other IDs → *Advertising ID*
-- **Collected or shared?** Both collected and shared
-- **Processed ephemerally?** No
-- **Required or optional?** Required
-- **Purpose:** Advertising or marketing
-- **Is data encrypted in transit?** Yes
-- **Can users request deletion?** Yes — via device advertising ID reset
+- **Is all collected data encrypted in transit?** Yes (AdMob uses TLS)
+- **Account creation:** my app does not allow users to create an account;
+  no login with outside accounts
+- **Can users request deletion?** Left blank (optional). The developer never
+  holds the data; do not pick "deleted within 90 days", which is Google's
+  retention to promise, not ours.
 
-Everything else — name, email, location, photos, files, contacts, app
-activity, crash logs — is **not collected**. The game stores progress only in
-local storage on the device, and Play does not count on-device-only storage as
-collection.
+Four data types, each **collected and shared**, **not ephemeral**,
+**required**, for **Advertising or marketing, Analytics, and Fraud
+prevention, security and compliance**:
+
+| Play category | Data type | What AdMob collects |
+| --- | --- | --- |
+| Location | Approximate location | Estimated from the IP address |
+| App activity | App interactions | App launches, ad taps, video views |
+| App info and performance | Diagnostics | App and SDK performance, launch time |
+| Device or other IDs | Device or other IDs | Advertising ID, app set ID |
+
+Everything else (name, email, precise location, photos, files, contacts,
+crash logs) is **not collected**. The game stores progress only in local
+storage on the device, and Play does not count on-device-only storage as
+collection. Update this if an SDK is added or AdMob's disclosure changes.
 
 ## Step 8 — Fill in the store listing
 
