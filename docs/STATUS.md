@@ -30,8 +30,9 @@ a low-end Android phone. Checking this codebase against it found:
 ## Where things are
 
 Branch `claude/game-research-replication-s2an9t`, open as draft **PR #1**
-(clean, mergeable, no CI configured). Six commits: market research, the game,
-then three presentation passes.
+(no CI configured). It holds everything so far: market research, the game,
+three presentation passes, the Android project, store assets and the AdMob
+ids. `main` has none of it yet.
 
 The game is **playable and verified**. Levels 1–3 have been solved end to end
 through real drag gestures in a headless browser at phone size, 20 tests pass,
@@ -92,8 +93,9 @@ is in [DESIGN.md](./DESIGN.md). The research that picked this game is in
 
 ## How far the laptop toolchain got
 
-The repo was cloned on a Windows machine and `keytool` confirmed present, so
-the JDK is installed. The signing key had not been generated when work
+The repo is cloned on the owner's Windows laptop at
+`C:\Users\TEST\colourjam`, on this branch, and `keytool` is confirmed
+present, so the JDK is installed. The signing key had not been generated when work
 stopped. [PUBLISHING.md](./PUBLISHING.md) carries both bash and PowerShell
 forms of every command from that point on.
 
