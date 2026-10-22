@@ -32,7 +32,8 @@ Run `npm test` and `npm run typecheck` before every commit.
   and explain errors plainly.
 - Works on **Windows in PowerShell**: commands go on one line (a trailing `\`
   is not a line continuation), and Gradle is `.\gradlew`, not `./gradlew`.
-- Repo is at `C:\Users\TEST\colourjam`; Android Studio and the JDK are installed.
+- Repo is at `C:\Users\TEST\Documents\LuanOS\Projects\colourjam`; Android
+  Studio and the SDK are installed. Builds need JDK 21 (see STATUS.md).
 - Will recruit the 12 closed-test testers on Reddit. Their
   `writing-reddit-launch-posts` skill is for those posts.
 

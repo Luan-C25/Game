@@ -27,6 +27,19 @@ a low-end Android phone. Checking this codebase against it found:
 | 6 | **Edge-to-edge is unverified.** `targetSdk 36` enforces it, and the playbook found Capacitor 8 reporting a 0 px bottom inset on Android 10, putting buttons under the navigation bar. Needs a real-device check. | Risk |
 | 7 | **System text size untested.** WebView scales CSS text with the phone's font setting; the menu has not been checked at 1.15x or 1.3x. | Risk |
 
+### Follow-up on the laptop (22 October)
+
+- **1 fixed.** `@capacitor/haptics` replaces `navigator.vibrate`: a light
+  impact when a block exits, a success notification on a win.
+- **2 fixed.** Tray, floor and gates paint once per level into a cached
+  layer; frames are requested only on change and keep running only while
+  sparks, confetti or the hint pulse move. Measured at phone size: zero
+  frames while idle, and the cached board is pixel-identical to before.
+- **3 fixed.** `canvasScale()` in `render.ts` caps the ratio at 2.
+- **4 was a misreading, no change.** `getBoundingClientRect()` runs only in
+  `toCell()`, which only `onPointerDown` calls; moves work from pointer
+  deltas. That is already once per gesture, as the playbook asks.
+
 ## Where things are
 
 Branch `claude/game-research-replication-s2an9t`, open as draft **PR #1**
@@ -94,9 +107,13 @@ is in [DESIGN.md](./DESIGN.md). The research that picked this game is in
 ## How far the laptop toolchain got
 
 The repo is cloned on the owner's Windows laptop at
-`C:\Users\TEST\colourjam`, on this branch, and `keytool` is confirmed
-present, so the JDK is installed. The signing key had not been generated when work
-stopped. [PUBLISHING.md](./PUBLISHING.md) carries both bash and PowerShell
+`C:\Users\TEST\Documents\LuanOS\Projects\colourjam`, on this branch. Checked
+22 October: Node 25, npm 11, Git 2.49, and the Android SDK at
+`%LOCALAPPDATA%\Android\Sdk` (platform 37 only; Gradle fetches 36 itself).
+**Capacitor 8 needs JDK 21.** The JDK on `PATH` is 17 (too old) and Android
+Studio's bundled one is 25 (too new for Gradle 8.14), so Temurin 21 is needed
+and `JAVA_HOME` must point at it for builds. The signing key had not been
+generated when work stopped. [PUBLISHING.md](./PUBLISHING.md) carries both bash and PowerShell
 forms of every command from that point on.
 
 **The Android project has never been compiled.** No Android SDK exists in the
@@ -105,7 +122,7 @@ session container, so Gradle has never run against `android/`. The first
 
 ## Next steps
 
-1. Fix findings 1–4 above. They are code-only and need no device.
+1. ~~Fix findings 1–4 above.~~ Done 22 October, see the follow-up.
 2. Settle the name (finding 5) **before** the first upload.
 3. Build on the laptop (PUBLISHING.md Step 3 onward) and check findings 6–7
    on a real phone.
