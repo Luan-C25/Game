@@ -129,6 +129,10 @@ await shot('4-free-hint');
 
 await page.click('#btn-game-back');
 await page.click('#btn-promises');
+// The hint's toast outlives the level it came from; it would sit over the list.
+await page.evaluate(() => {
+  document.getElementById('toast').hidden = true;
+});
 await shot('5-promises');
 
 await seed({ ...progressed, settings: { ...progressed.settings, theme: 'clay' } });

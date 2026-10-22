@@ -48,8 +48,8 @@ nothing is ever locked behind a purchase.
 NO PRESSURE MECHANICS
 
 No countdown timers. No lives or energy to refill. No "you failed" screen. A
-puzzle waits exactly as long as you do, and you can put it down mid-level and
-come back next week.
+puzzle waits exactly as long as you do, and every level you clear is saved, so
+you can stop whenever you like.
 
 ABOUT ADS — OUR PROMISES, IN THE APP
 
@@ -63,7 +63,7 @@ Every promise below is written into the game itself, on the Promises screen:
 • Hints, undo and restart are always free
 • Coins buy themes and nothing else
 
-200 HAND-VERIFIED LEVELS
+200 SOLVER-CHECKED LEVELS
 
 The difficulty curve climbs and then deliberately levels off. Later puzzles
 stay hard, but they never tip over into the unbeatable walls that make people
@@ -71,8 +71,8 @@ delete this kind of game.
 
 PLAYS ANYWHERE
 
-Works completely offline. No account, no sign-in, nothing uploaded. Four
-themes to unlock with the coins you earn by playing.
+Works completely offline. No account, no sign-in, nothing uploaded. Three
+extra themes to unlock with the coins you earn by playing.
 
 BUILT TO BE READABLE
 
@@ -80,7 +80,8 @@ Block colours come from a colour-blind-safe palette, and you can turn on
 shapes so colour is never the only thing telling you where a block goes. A
 reduce-motion setting stops every animation.
 ```
-*About 2,050 characters.*
+*About 2,160 characters. Every claim here was checked against the code on 23
+October 2026; re-check when a feature changes.*
 
 ---
 

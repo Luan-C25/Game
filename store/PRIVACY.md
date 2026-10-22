@@ -1,6 +1,6 @@
 # Privacy Policy for Glazeway
 
-**Last updated: 18 September 2026**
+**Last updated: 23 October 2026**
 
 This policy explains what Glazeway does with your information. It is short
 because the game does very little.
@@ -46,12 +46,6 @@ settings, under **Settings → Google → Ads**.
 Glazeway is rated for players aged 13 and over and is not directed at
 children. We do not knowingly collect any information from anyone, including
 children.
-
-## Purchases
-
-If you buy "Remove Ads", the transaction is handled entirely by Google Play.
-We never see your payment details. The only thing stored is a flag on your own
-device recording that the purchase was made.
 
 ## Your rights
 

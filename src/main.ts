@@ -153,7 +153,7 @@ function renderHome(): void {
   const cleared = Object.keys(saveData.bestMoves).length;
   $('home-progress').textContent =
     cleared === 0
-      ? `${LEVEL_COUNT} hand-verified levels. No timers, no lives.`
+      ? `${LEVEL_COUNT} solver-checked levels. No timers, no lives.`
       : `${cleared} of ${LEVEL_COUNT} levels cleared · ${saveData.coins} coins`;
   const sub = document.getElementById('home-continue-sub');
   if (sub) sub.textContent = saveData.highestUnlocked > 1 ? `Level ${saveData.highestUnlocked}` : '';
@@ -534,16 +534,6 @@ function bindSettings(): void {
   bind('set-haptics', 'haptics');
   bind('set-glyphs', 'colourBlindGlyphs');
   bind('set-motion', 'reduceMotion', () => applyTheme());
-
-  $('btn-remove-ads').addEventListener('click', () => {
-    toast('Remove Ads is a store purchase, available in the Android build.');
-  });
-
-  $('btn-restore').addEventListener('click', () => {
-    // On the web build there is nothing to restore; the native build asks the
-    // store. Either way a purchase is never lost silently.
-    toast(saveData.adsRemoved ? 'Remove Ads is already active.' : 'No purchases found on this device.');
-  });
 
   $('btn-reset').addEventListener('click', () => {
     confirmAction('Reset progress?', 'This clears every level, star and coin on this device. It cannot be undone.', () => {

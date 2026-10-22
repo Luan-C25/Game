@@ -29,16 +29,18 @@ export const AD_POLICY = {
   everyHelpFreeOfCharge: true,
 } as const;
 
-/** Plain-language version of the above, rendered on the Promises screen. */
+/**
+ * Plain-language version of the above, rendered on the Promises screen.
+ * Every line must be true of the shipped build. Promises about opt-in
+ * rewarded ads and a Remove Ads purchase come back when those exist.
+ */
 export const AD_PROMISES: string[] = [
   'No ad will ever interrupt a puzzle you are solving.',
   'No ad will ever play when you finish a level.',
   'No ads at all until after level 10.',
   'After that, at most one ad per four levels, and never twice within three minutes.',
   'Hints, undo and restart are free, unlimited, and never cost coins.',
-  'Watching an ad is always your choice, and saying no costs you nothing.',
   'Coins buy themes. They are never required to finish a level.',
-  'Remove Ads is a one-off purchase and is restored whenever you reinstall.',
 ];
 
 export interface AdState {

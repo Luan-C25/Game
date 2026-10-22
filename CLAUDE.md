@@ -106,7 +106,13 @@ messages, and push when a step is complete.
   synthesised ones, colour-blind shapes on by default, a shareable image of
   each cleared level.
 - A rewarded-ad placement: the unit is configured, but nothing calls
-  `showRewarded()` yet.
+  `showRewarded()` yet. Its promise ("watching an ad is always your choice")
+  was taken off the Promises screen until it exists.
+- **Remove Ads purchase**: hidden for the first release (owner's decision,
+  23 October 2026) because no Play Billing exists. The buttons, the promise
+  line and the privacy-policy section all come back with real billing, which
+  also needs a Play payments profile and a product in Play Console.
+  `adsRemoved` stays in the save data and the ad gate.
 - A parallel web release: CrazyGames (non-exclusive, Basic Launch needs no
   SDK) and self-hosting with AdSense H5 Games Ads. Needs a desktop/landscape
   layout first.
