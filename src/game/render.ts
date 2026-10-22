@@ -602,6 +602,69 @@ function drawBlock(
   }
 }
 
+/* ----------------------------------------------------------- static layer */
+
+/**
+ * The tray, floor and gates never change during a level, and they carry
+ * every `shadowBlur` on the board - the costliest thing to paint on a weak
+ * GPU. They are painted once into an offscreen layer and copied in on each
+ * frame; only the tiles and the effects are drawn live.
+ */
+interface StaticLayer {
+  key: string;
+  level: Level;
+  canvas: HTMLCanvasElement;
+  bitmap: ImageBitmap | null;
+}
+
+let staticLayer: StaticLayer | null = null;
+
+/** Forces the next frame to repaint the static layer, e.g. after the app resumes. */
+export function invalidateStaticLayer(): void {
+  staticLayer?.bitmap?.close();
+  staticLayer = null;
+}
+
+function staticLayerFor(
+  ctx: CanvasRenderingContext2D,
+  level: Level,
+  vp: Viewport,
+  options: RenderOptions,
+  dpr: number,
+): CanvasImageSource {
+  const { width, height } = ctx.canvas;
+  const key = [width, height, dpr, vp.cell, vp.wall, vp.originX, vp.originY, options.theme.id, options.glyphs].join('|');
+  if (staticLayer && staticLayer.level === level && staticLayer.key === key) {
+    return staticLayer.bitmap ?? staticLayer.canvas;
+  }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const layer = canvas.getContext('2d');
+  if (!layer) throw new Error('canvas 2d context unavailable');
+  layer.setTransform(dpr, 0, 0, dpr, 0, 0);
+  drawTray(layer, level, vp, options.theme);
+  drawFloor(layer, level, vp, options.theme);
+  drawGates(layer, level, vp, options);
+
+  invalidateStaticLayer();
+  const entry: StaticLayer = { key, level, canvas, bitmap: null };
+  staticLayer = entry;
+
+  // A canvas used as an image source may be uploaded to the GPU again on
+  // every draw; an ImageBitmap stays put. The canvas stands in until it is ready.
+  if (typeof createImageBitmap === 'function') {
+    createImageBitmap(canvas)
+      .then((bitmap) => {
+        if (staticLayer === entry) entry.bitmap = bitmap;
+        else bitmap.close();
+      })
+      .catch(() => {});
+  }
+  return canvas;
+}
+
 /* ------------------------------------------------------------------ frame */
 
 export function render(
@@ -611,11 +674,10 @@ export function render(
   options: RenderOptions,
 ): void {
   const dpr = window.devicePixelRatio || 1;
-  ctx.clearRect(0, 0, ctx.canvas.width / dpr, ctx.canvas.height / dpr);
-
-  drawTray(ctx, level, vp, options.theme);
-  drawFloor(ctx, level, vp, options.theme);
-  drawGates(ctx, level, vp, options);
+  const cssWidth = ctx.canvas.width / dpr;
+  const cssHeight = ctx.canvas.height / dpr;
+  ctx.clearRect(0, 0, cssWidth, cssHeight);
+  ctx.drawImage(staticLayerFor(ctx, level, vp, options, dpr), 0, 0, cssWidth, cssHeight);
 
   // Tiles nearer the bottom draw later, so their thickness overlaps correctly.
   const ordered = level.blocks

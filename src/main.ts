@@ -14,7 +14,7 @@ import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 import { DragController } from './game/input.ts';
 import { LEVEL_COUNT, getLevel } from './game/levels.ts';
 import { Session } from './game/session.ts';
-import { blockCentre, computeViewport, render, type Viewport } from './game/render.ts';
+import { blockCentre, computeViewport, invalidateStaticLayer, render, type Viewport } from './game/render.ts';
 import { BLOCK_COLOURS, THEMES, themeById } from './game/theme.ts';
 import { Particles } from './game/particles.ts';
 import { AD_PROMISES, mayShowInterstitial, noopAdProvider, type AdProvider } from './game/ads.ts';
@@ -36,9 +36,10 @@ let currentLevelId = 1;
 let viewport: Viewport = { cell: 40, originX: 0, originY: 0, wall: 12 };
 let hintedBlocks: number[] = [];
 const particles = new Particles();
-/** Seconds since boot, used by the background drift and the gate pulse. */
+/** Seconds of animated time, used by the hint pulse. */
 let clock = 0;
 let lastFrameMs = 0;
+let framePending = false;
 let screenStack: ScreenId[] = ['home'];
 /** AdMob on a device, a no-op stub on the web build and in tests. */
 const ads: AdProvider = adsAvailable() ? admobProvider : noopAdProvider;
@@ -271,6 +272,7 @@ function resizeCanvas(): void {
   ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   viewport = computeViewport(session.level, rect.width, rect.height);
+  requestDraw();
 }
 
 function updateHud(): void {
@@ -282,32 +284,48 @@ function updateHud(): void {
   $<HTMLButtonElement>('btn-undo').disabled = !session.canUndo();
 }
 
+/**
+ * Asks for one frame. There is no permanent loop: the board is repainted when
+ * something on it changes, and keeps animating only while something moves.
+ */
+function requestDraw(): void {
+  if (framePending) return;
+  framePending = true;
+  requestAnimationFrame(frame);
+}
+
 function frame(nowMs: number): void {
+  framePending = false;
+  if (!session || $('screen-game').hidden) {
+    lastFrameMs = 0;
+    return;
+  }
+
   const dt = lastFrameMs === 0 ? 0 : Math.min(0.05, (nowMs - lastFrameMs) / 1000);
   lastFrameMs = nowMs;
 
-  if (session && !$('screen-game').hidden) {
-    // Motion is a setting, not a given: with it off the clock stops, which
-    // freezes the background drift, the gate pulse and the hint glow.
-    if (!saveData.settings.reduceMotion) {
-      clock += dt;
-      particles.update(dt);
-    } else {
-      particles.clear();
-    }
-
-    render(ctx!, session.level, viewport, {
-      theme: themeById(saveData.settings.theme),
-      glyphs: saveData.settings.colourBlindGlyphs,
-      time: clock,
-      reduceMotion: saveData.settings.reduceMotion,
-      drag: drag.visual,
-      highlight: hintedBlocks,
-      particles,
-    });
+  // Motion is a setting, not a given: with it off the clock stops, which
+  // freezes the hint glow, and no effects run.
+  if (!saveData.settings.reduceMotion) {
+    clock += dt;
+    particles.update(dt);
+  } else {
+    particles.clear();
   }
 
-  requestAnimationFrame(frame);
+  render(ctx!, session.level, viewport, {
+    theme: themeById(saveData.settings.theme),
+    glyphs: saveData.settings.colourBlindGlyphs,
+    time: clock,
+    reduceMotion: saveData.settings.reduceMotion,
+    drag: drag.visual,
+    highlight: hintedBlocks,
+    particles,
+  });
+
+  const moving = !saveData.settings.reduceMotion && (particles.count > 0 || hintedBlocks.length > 0);
+  if (moving) requestDraw();
+  else lastFrameMs = 0;
 }
 
 const drag = new DragController(
@@ -315,7 +333,10 @@ const drag = new DragController(
   () => session!,
   () => viewport,
   {
-    onChange: updateHud,
+    onChange: () => {
+      updateHud();
+      requestDraw();
+    },
     onPickUp: () => {
       hintedBlocks = [];
       sfx.pick();
@@ -362,6 +383,7 @@ function checkComplete(): void {
   buzz('win');
   if (!saveData.settings.reduceMotion) {
     particles.celebrate(canvas.width / (window.devicePixelRatio || 1), BLOCK_COLOURS);
+    requestDraw();
   }
 
   $('win-title').textContent = currentLevelId >= LEVEL_COUNT ? 'Final level complete' : 'Level complete';
@@ -453,6 +475,7 @@ function showHint(): void {
   }
 
   hintedBlocks = [outcome.move.blockId];
+  requestDraw();
   const arrows = { up: 'up', down: 'down', left: 'left', right: 'right' } as const;
   toast(`Try sliding the highlighted block ${arrows[outcome.move.dir]}.`);
   sfx.tap();
@@ -514,6 +537,7 @@ function bindNavigation(): void {
     if (session?.undo()) {
       hintedBlocks = [];
       updateHud();
+      requestDraw();
       sfx.tap();
     }
   });
@@ -524,6 +548,7 @@ function bindNavigation(): void {
     hintedBlocks = [];
     particles.clear();
     updateHud();
+    requestDraw();
   });
 
   $('btn-next').addEventListener('click', () => {
@@ -582,9 +607,15 @@ function boot(): void {
   window.addEventListener('resize', resizeCanvas);
   window.addEventListener('orientationchange', () => window.setTimeout(resizeCanvas, 120));
   document.addEventListener('pointerdown', unlockAudio, { once: true });
+  // Nothing redraws on its own any more, so repaint on return in case the
+  // system dropped the canvas contents while the app was in the background.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible') return;
+    invalidateStaticLayer();
+    requestDraw();
+  });
 
   exposeTestHook();
-  requestAnimationFrame(frame);
 }
 
 /** Block hue lookup, kept here so the effects layer stays theme-agnostic. */
