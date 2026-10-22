@@ -115,7 +115,10 @@ function showScreen(id: ScreenId, { push = true } = {}): void {
   if (push && screenStack[screenStack.length - 1] !== id) screenStack.push(id);
   if (id === 'levels') renderLevelGrid();
   if (id === 'themes') renderThemes();
-  if (id === 'home') renderHome();
+  if (id === 'home') {
+    renderHome();
+    fitTitle();
+  }
   if (id === 'game') resizeCanvas();
 }
 
@@ -154,6 +157,31 @@ function renderHome(): void {
       : `${cleared} of ${LEVEL_COUNT} levels cleared · ${saveData.coins} coins`;
   const sub = document.getElementById('home-continue-sub');
   if (sub) sub.textContent = saveData.highestUnlocked > 1 ? `Level ${saveData.highestUnlocked}` : '';
+}
+
+/**
+ * Shrinks the wordmark to fit when the phone's text size is turned up:
+ * WebView scales CSS text with the system font setting, and one word cannot
+ * wrap, so at the largest setting it ran off the screen. The size is set in
+ * em because WebView would scale a px size a second time.
+ */
+function fitTitle(): void {
+  const title = document.querySelector<HTMLElement>('.brand h1');
+  const word = title?.querySelector('span');
+  const box = title?.parentElement;
+  if (!title || !word || !box || box.clientWidth === 0) return;
+
+  title.style.fontSize = '';
+  // Room for the outline and the slight tilt.
+  const room = box.clientWidth - 12;
+  const inherited = parseFloat(getComputedStyle(box).fontSize);
+
+  // Glyph widths do not scale exactly with size, so a second pass trims the
+  // last few pixels the first one leaves.
+  for (let pass = 0; pass < 2 && word.offsetWidth > room; pass++) {
+    const own = parseFloat(getComputedStyle(title).fontSize);
+    title.style.fontSize = `${((own * room) / word.offsetWidth / inherited).toFixed(3)}em`;
+  }
 }
 
 function renderLevelGrid(): void {
@@ -612,6 +640,9 @@ function boot(): void {
 
   drag.attach();
   window.addEventListener('resize', resizeCanvas);
+  window.addEventListener('resize', fitTitle);
+  // The display font changes the word's width, so measure again once it loads.
+  void document.fonts.ready.then(fitTitle);
   window.addEventListener('orientationchange', () => window.setTimeout(resizeCanvas, 120));
   document.addEventListener('pointerdown', unlockAudio, { once: true });
   // Nothing redraws on its own any more, so repaint on return in case the

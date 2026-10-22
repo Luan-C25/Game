@@ -45,6 +45,24 @@ a low-end Android phone. Checking this codebase against it found:
   strings, listing, privacy policy and feature graphic are renamed; the
   internal save key keeps the old name so saves survive.
 
+### On the owner's phone (22 October)
+
+Galaxy S26 Ultra (SM-S948B), Android 17, gesture navigation, debug build over
+USB. Samsung's Auto Blocker blocks USB debugging and has to be switched off
+first.
+
+- **Drag feel: good.** The owner played levels 1–9: blocks follow the thumb
+  smoothly and go where intended, and the exit and win haptics both fire.
+- **6 passed.** Read over DevTools, the WebView gets real insets (40 px top,
+  15 px bottom), so Capacitor 8's 0 px bug does not occur here; the controls
+  clear the gesture bar. Android 10 itself is still untested. The 2x
+  resolution cap holds on the 2.81x screen.
+- **7 found a bug, fixed.** At the largest system text (font scale 2.0) the
+  one-word "Glazeway" title ran off the screen. `fitTitle()` in `main.ts`
+  shrinks it in em to fit; re-measured on the phone at 2.0 it fits exactly,
+  and the menu's last line ends above the gesture bar. The game, Settings
+  and Promises screens were already fine at 2.0 (the long ones scroll).
+
 ## Where things are
 
 Branch `claude/game-research-replication-s2an9t`, open as draft **PR #1**
@@ -133,8 +151,8 @@ alias `glazeway`; the signed `app-release.aab` is about 6.6 MB, and
 
 1. ~~Fix findings 1–4 above.~~ Done 22 October, see the follow-up.
 2. ~~Settle the name (finding 5).~~ Glazeway, 22 October.
-3. Build on the laptop (PUBLISHING.md Step 3 onward) and check findings 6–7
-   on a real phone.
+3. ~~Build on the laptop and check findings 6–7 on a real phone.~~ Done 22
+   October; signed `app-release.aab` built (rebuild it after any code change).
 4. Start the 14-day closed test as early as possible; it is the long pole.
 
 ## Worth knowing before changing things
