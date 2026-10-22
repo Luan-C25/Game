@@ -9,6 +9,8 @@
 
 import './styles.css';
 
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+
 import { DragController } from './game/input.ts';
 import { LEVEL_COUNT, getLevel } from './game/levels.ts';
 import { Session } from './game/session.ts';
@@ -61,9 +63,19 @@ function toast(message: string, ms = 2200): void {
   }, ms);
 }
 
-function buzz(pattern: number | number[]): void {
+/**
+ * The plugin declares Android's VIBRATE permission, which a bare
+ * `navigator.vibrate` silently lacks, and uses the system's own feedback
+ * styles. On the web it falls back to `navigator.vibrate` itself.
+ */
+function buzz(kind: 'exit' | 'win'): void {
   if (!saveData.settings.haptics) return;
-  navigator.vibrate?.(pattern);
+  const feedback =
+    kind === 'win'
+      ? Haptics.notification({ type: NotificationType.Success })
+      : Haptics.impact({ style: ImpactStyle.Light });
+  // A device without a vibrator is not an error worth surfacing.
+  feedback.catch(() => {});
 }
 
 /**
@@ -319,7 +331,7 @@ const drag = new DragController(
     onBlocked: () => sfx.blocked(),
     onBlockExited: () => {
       sfx.exit();
-      buzz(18);
+      buzz('exit');
       window.setTimeout(checkComplete, 0);
     },
   },
@@ -347,7 +359,7 @@ function checkComplete(): void {
   persist();
 
   sfx.win();
-  buzz([12, 40, 18]);
+  buzz('win');
   if (!saveData.settings.reduceMotion) {
     particles.celebrate(canvas.width / (window.devicePixelRatio || 1), BLOCK_COLOURS);
   }
