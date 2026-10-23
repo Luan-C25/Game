@@ -145,7 +145,39 @@ pass on the laptop with `JAVA_HOME` set to JDK 21 (Gradle fetched platform 36
 and build-tools 35 itself). The upload key is `android/glazeway-upload.jks`,
 alias `glazeway`; the signed `app-release.aab` is about 6.6 MB, and
 `jarsigner -verify` confirms the signature. The merged manifest has the
-`VIBRATE` permission. Nothing has been uploaded to Play yet.
+`VIBRATE` permission.
+
+## Play Console (23 October)
+
+Done by the owner in Play Console, step by step:
+
+- **App created**: "Glazeway: Colour Block Puzzle", `com.tilekiln.glazeway`,
+  English (Australia), Game, Free, Play App Signing accepted (Google holds the
+  app signing key; `glazeway-upload.jks` is the upload key).
+- **Privacy policy** live at https://luan-c25.github.io/glazeway-privacy/ (repo
+  `Luan-C25/glazeway-privacy`, a copy of `store/PRIVACY.md`; keep them in step).
+  Contact email: luanchild15@gmail.com.
+- **App content**: no restricted access; contains ads; content rating
+  questionnaire all No; target audience 13–15, 16–17, 18+ only; Data safety as
+  in PUBLISHING.md (four AdMob data types); advertising ID used for
+  advertising, analytics and fraud prevention; government, financial, health
+  and news all No.
+- **Store settings**: Puzzle; tags Block puzzle, Sliding puzzle, Logic puzzle,
+  Brain teaser, Casual; external marketing on.
+- **Main store listing**: text from `store/LISTING.md`, icon, feature graphic
+  and six screenshots. No AI translations (the game is English only). Icon and
+  feature graphic were labelled AI-generated; screenshots are real captures.
+- **Closed testing**: all countries; testers are the Google Groups
+  `glazeway-testers@googlegroups.com` (anyone can join, members private) and
+  `testers-community@googlegroups.com` (r/TestersCommunity's shared group);
+  feedback to luanchild15@gmail.com. Release `1 (1.0)` created from the 23
+  October bundle, waiting on Google's review.
+- **Not yet asked:** EU trader status. When Play Console asks, check what it
+  will display before answering; leaving EU countries out is the fallback if
+  it wants the home address shown.
+
+Recruitment posts are drafted in `marketing/reddit-post-v1.0-closed-test.md`,
+to go up once the release is approved.
 
 ## Next steps
 
@@ -154,6 +186,10 @@ alias `glazeway`; the signed `app-release.aab` is about 6.6 MB, and
 3. ~~Build on the laptop and check findings 6–7 on a real phone.~~ Done 22
    October; signed `app-release.aab` built (rebuild it after any code change).
 4. Start the 14-day closed test as early as possible; it is the long pole.
+   Set up 23 October; once Google approves release 1, post the Reddit drafts
+   and keep 12+ testers opted in for 14 days, then apply for production.
+5. Before installing the Play build on the owner's phone, register it as an
+   AdMob test device. Rename the AdMob app from Colour Jam to Glazeway.
 
 ## Worth knowing before changing things
 
