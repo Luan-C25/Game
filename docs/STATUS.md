@@ -188,8 +188,10 @@ to go up once the release is approved.
 4. Start the 14-day closed test as early as possible; it is the long pole.
    Set up 23 October; once Google approves release 1, post the Reddit drafts
    and keep 12+ testers opted in for 14 days, then apply for production.
-5. Before installing the Play build on the owner's phone, register it as an
-   AdMob test device. Rename the AdMob app from Colour Jam to Glazeway.
+5. ~~Register the owner's phone as an AdMob test device.~~ Done 23 October.
+   Debug APKs also serve test ads now (`Capacitor.DEBUG`, confirmed true on
+   the phone). Still optional: rename the AdMob app and units from Colour Jam
+   to Glazeway.
 
 ## Worth knowing before changing things
 
