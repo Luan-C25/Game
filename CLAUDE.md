@@ -78,9 +78,11 @@ Run `npm test` and `npm run typecheck` before every commit.
   They are git-ignored; keep it that way. Losing the upload key is recoverable
   through Play App Signing, but leaking it is not.
 - **Never request live ads in development.** `useTestAds()` in
-  `src/game/ad-units.ts` serves Google's test units outside production builds.
-  Don't weaken it. Before sideloading a *release* build, the owner's phone must
-  be registered as an AdMob test device.
+  `src/game/ad-units.ts` serves Google's test units in `npm run dev` and in
+  debug APKs (`Capacitor.DEBUG`, from Android's debuggable flag; every Android
+  build bundles the production web build, so `PROD` alone did not cover them).
+  Don't weaken it. A *release* build, from Play or sideloaded, requests live
+  ads: the owner's phone must be registered as an AdMob test device first.
 - **Don't hand-edit `src/game/levels.json`.** Regenerate it with
   `npm run levels -- 200`. Once shipped, saves point at level numbers, so the
   pack is append-only.

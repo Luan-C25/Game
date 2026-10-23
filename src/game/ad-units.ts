@@ -1,17 +1,19 @@
 /**
  * AdMob unit ids.
  *
- * Development always serves Google's own public test units. Serving *real* ad
- * units during development generates invalid traffic, which is the fastest way
- * to get an AdMob account suspended, so useTestAds() makes that impossible
- * rather than merely discouraged.
+ * Development and debug builds always serve Google's own public test units.
+ * Serving *real* ad units while testing generates invalid traffic, which is
+ * the fastest way to get an AdMob account suspended, so useTestAds() makes
+ * that impossible rather than merely discouraged.
  *
- * Note that a release build you install on your own handset by hand is still a
- * release build, and will request live ads. Register that handset under AdMob
- * -> Settings -> Test devices so it is served test ads anyway.
+ * A release build on your own handset, whether installed from a Play test
+ * track or by hand, still requests live ads. Register that handset under
+ * AdMob -> Settings -> Test devices so it is served test ads anyway.
  *
  * @see https://developers.google.com/admob/android/test-ads
  */
+
+import { Capacitor } from '@capacitor/core';
 
 export interface AdUnits {
   interstitial: string;
@@ -37,12 +39,16 @@ export const LIVE_UNITS: AdUnits = {
 };
 
 /**
- * Test ads everywhere except a production build with real ids configured.
- * `import.meta.env.PROD` is false for `npm run dev`, so a development session
- * can never accidentally request a live ad.
+ * Test ads everywhere except a release build with real ids configured.
+ *
+ * `import.meta.env.PROD` is false for `npm run dev`, but every Android build,
+ * debug included, bundles the production web build. `Capacitor.DEBUG` is set
+ * by Android from the APK's debuggable flag, so the debug builds installed
+ * over USB for testing also get test units; only a release build from Play
+ * (or a sideloaded release) requests live ads.
  */
 export function useTestAds(): boolean {
-  return !import.meta.env.PROD || !LIVE_UNITS.interstitial;
+  return !import.meta.env.PROD || Capacitor.DEBUG === true || !LIVE_UNITS.interstitial;
 }
 
 export function adUnits(): AdUnits {
