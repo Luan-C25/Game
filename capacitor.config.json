@@ -1,0 +1,11 @@
+{
+  "appId": "com.tilekiln.glazeway",
+  "appName": "Glazeway",
+  "webDir": "dist",
+  "android": {
+    "backgroundColor": "#f4f1ea"
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}
