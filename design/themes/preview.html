@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<title>Glazeway: new theme previews</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Open this file straight from disk. Each phone is 375 by 812 CSS pixels.
+     The board is drawn by a line-for-line port of src/game/render.ts, so the
+     colours land where the real renderer puts them. */
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 28px 32px 36px;
+    background: #ecebe7;
+    color: #26262a;
+    font-family: 'Baloo 2', 'Trebuchet MS', sans-serif;
+  }
+  h1 { margin: 0 0 2px; font-size: 26px; font-weight: 800; }
+  .lede { margin: 0 0 22px; font-size: 15px; font-weight: 500; color: #5c5c63; }
+  .row { display: flex; gap: 32px; align-items: flex-start; width: max-content; }
+  .col { width: 375px; }
+
+  .phone {
+    position: relative;
+    width: 375px;
+    height: 812px;
+    overflow: hidden;
+    border-radius: 26px;
+    outline: 2px solid rgba(0, 0, 0, 0.18);
+    color: var(--text);
+    /* Same backdrop rule as body in src/styles.css. */
+    background: radial-gradient(120% 70% at 50% -10%, var(--backdrop-lift), var(--backdrop) 70%);
+  }
+  .phone canvas { position: absolute; left: 0; top: 150px; width: 375px; height: 350px; }
+
+  .chip {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    border: 3px solid var(--surface-edge);
+    box-shadow: 0 6px 0 var(--surface-edge);
+    font-weight: 800;
+  }
+  .back { left: 16px; top: 16px; width: 46px; height: 46px; border-radius: 13px; }
+  .level { left: 108px; top: 20px; width: 100px; height: 40px; border-radius: 20px; gap: 9px; font-size: 21px; }
+  .level small { font-size: 10px; letter-spacing: 0.16em; color: var(--muted); font-weight: 700; }
+  .coins { left: 251px; top: 20px; width: 108px; height: 40px; border-radius: 20px; gap: 9px; font-size: 21px; }
+  .coin { width: 21px; height: 21px; border-radius: 50%; background: #f2b632; border: 3px solid #b97a12; box-shadow: inset 0 -3px 0 #d9951c; }
+  .moves {
+    position: absolute; left: 121px; top: 75px; width: 133px; height: 31px; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface-edge); color: var(--muted-on-edge); font-weight: 700; font-size: 14px;
+  }
+
+  .btn { top: 547px; width: 86px; height: 54px; border-radius: 16px; }
+  .undo { left: 18px; }
+  .restart { left: 271px; }
+  .hint {
+    left: 121px; top: 538px; width: 133px; height: 68px; border-radius: 34px;
+    background: var(--accent); border-color: var(--accent-edge); color: var(--accent-ink);
+    box-shadow: 0 8px 0 var(--accent-edge);
+  }
+  .label { position: absolute; top: 620px; width: 86px; text-align: center; font-weight: 700; font-size: 13px; color: var(--muted); }
+  .label.undo { left: 18px; } .label.restart { left: 271px; }
+  .label.hint { left: 121px; width: 133px; color: var(--text); background: none; border: 0; box-shadow: none; height: auto; }
+  .foot { position: absolute; left: 0; right: 0; top: 650px; text-align: center; font-size: 13px; font-weight: 500; color: var(--muted); }
+  svg { display: block; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+  .cap { margin-top: 14px; }
+  .cap h2 { margin: 0; font-size: 22px; font-weight: 800; line-height: 1.1; }
+  .cap h2 span { font-size: 14px; font-weight: 700; color: #6a6a72; margin-left: 8px; }
+  .tiles { display: flex; gap: 8px; margin-top: 10px; padding: 10px 10px 14px; border-radius: 12px; width: max-content; }
+  .tiles i { width: 34px; height: 34px; border-radius: 8px; }
+  .sw { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .sw b { font-size: 11px; font-weight: 700; padding: 3px 7px; border-radius: 6px; outline: 1px solid rgba(0,0,0,0.15); }
+</style>
+</head>
+<body>
+<h1>Glazeway: five new themes</h1>
+<p class="lede">Each phone is 375 by 812. Tile colours are the fixed six. Under each phone: all six tiles on that theme's floor, then the picker swatches.</p>
+<div class="row" id="row"></div>
+
+<script>
+const THEMES = [
+  {
+    "id": "citrus",
+    "name": "Citrus",
+    "price": 100,
+    "dark": false,
+    "backdrop": "#ffe9a3",
+    "backdropLift": "#fff5cf",
+    "tray": "#b2df55",
+    "trayEdge": "#6f9f28",
+    "trayLip": "#d3f097",
+    "floor": "#fffbe8",
+    "channel": "#3c5a14",
+    "rim": "#eaf7c4",
+    "crate": "#b3ad96",
+    "surface": "#fffdf2",
+    "surfaceEdge": "#e0c877",
+    "line": "#f1e3b0",
+    "text": "#3a3210",
+    "muted": "#6e6130",
+    "accent": "#35d0a5",
+    "accentEdge": "#1b9474",
+    "accentInk": "#05301f"
+  },
+  {
+    "id": "bubblegum",
+    "name": "Bubblegum",
+    "price": 150,
+    "dark": false,
+    "backdrop": "#ffcfe0",
+    "backdropLift": "#ffe6ee",
+    "tray": "#6a45c2",
+    "trayEdge": "#432a85",
+    "trayLip": "#9273e0",
+    "floor": "#fff3f7",
+    "channel": "#24134f",
+    "rim": "#e6dcff",
+    "crate": "#b9a9b8",
+    "surface": "#fffafc",
+    "surfaceEdge": "#eba6c0",
+    "line": "#ffdbe7",
+    "text": "#45193a",
+    "muted": "#7d4a69",
+    "accent": "#ff5fa2",
+    "accentEdge": "#c9306f",
+    "accentInk": "#4a0826"
+  },
+  {
+    "id": "seaside",
+    "name": "Seaside",
+    "price": 150,
+    "dark": false,
+    "backdrop": "#93d3ec",
+    "backdropLift": "#c2e8f6",
+    "tray": "#fbecc8",
+    "trayEdge": "#c9a868",
+    "trayLip": "#fff8e3",
+    "floor": "#12304d",
+    "channel": "#0a1c2e",
+    "rim": "#fff6dc",
+    "crate": "#6f8296",
+    "surface": "#fbfeff",
+    "surfaceEdge": "#5fa9c6",
+    "line": "#cfeaf4",
+    "text": "#12304d",
+    "muted": "#2f5068",
+    "accent": "#ff7059",
+    "accentEdge": "#c9442f",
+    "accentInk": "#4a0f06"
+  },
+  {
+    "id": "meadow",
+    "name": "Meadow",
+    "price": 100,
+    "dark": false,
+    "backdrop": "#d3eab0",
+    "backdropLift": "#e8f5cf",
+    "tray": "#2f6a24",
+    "trayEdge": "#1b4514",
+    "trayLip": "#57994a",
+    "floor": "#f8fcea",
+    "channel": "#11300b",
+    "rim": "#cfe8b0",
+    "crate": "#a7ab98",
+    "surface": "#fcfff4",
+    "surfaceEdge": "#a5c97c",
+    "line": "#dcedc0",
+    "text": "#1f3314",
+    "muted": "#506540",
+    "accent": "#ffc83a",
+    "accentEdge": "#c9951a",
+    "accentInk": "#3b2a00"
+  },
+  {
+    "id": "lantern",
+    "name": "Lantern",
+    "price": 200,
+    "dark": true,
+    "backdrop": "#241829",
+    "backdropLift": "#35233a",
+    "tray": "#71468a",
+    "trayEdge": "#3d2350",
+    "trayLip": "#9a6fb5",
+    "floor": "#1b111e",
+    "channel": "#0d070f",
+    "rim": "#e3b877",
+    "crate": "#7d6a7c",
+    "surface": "#3f2b42",
+    "surfaceEdge": "#1c121f",
+    "line": "#573d59",
+    "text": "#fbeedd",
+    "muted": "#c2a8b8",
+    "accent": "#ffb14a",
+    "accentEdge": "#c57a1c",
+    "accentInk": "#33200a"
+  }
+];
+const TILES = ['#E69F00', '#56B4E9', '#009E73', '#CC79A7', '#0072B2', '#D55E00'];
+
+/* ---- colour helpers, copied from src/game/theme.ts ---- */
+const channels = (hex) => { const v = parseInt(hex.slice(1), 16); return [(v >> 16) & 255, (v >> 8) & 255, v & 255]; };
+const toHex = (r, g, b) => { const c = (v) => Math.max(0, Math.min(255, Math.round(v))); return '#' + ((c(r) << 16) | (c(g) << 8) | c(b)).toString(16).padStart(6, '0'); };
+const shade = (hex, a) => { const [r, g, b] = channels(hex); return toHex(r * (1 - a), g * (1 - a), b * (1 - a)); };
+const tint = (hex, a) => { const [r, g, b] = channels(hex); return toHex(r + (255 - r) * a, g + (255 - g) * a, b + (255 - b) * a); };
+const withAlpha = (hex, a) => { const [r, g, b] = channels(hex); return `rgba(${r}, ${g}, ${b}, ${a})`; };
+
+/* ---- the sample level ---- */
+const LEVEL = {
+  width: 5, height: 5,
+  gates: [
+    { side: 'right', start: 3, length: 1, color: 0 },
+    { side: 'bottom', start: 1, length: 2, color: 4 },
+  ],
+  blocks: [
+    { color: 3, cells: [[4, 0], [4, 1]] },
+    { color: 0, cells: [[0, 1]] },
+    { crate: true, cells: [[2, 2]] },
+    { color: 4, cells: [[0, 4], [1, 4]] },
+  ],
+};
+const VP = { cell: 55, wall: 20, originX: 50, originY: 33 };
+
+/* ---- renderer, ported from src/game/render.ts ---- */
+function roundRectPath(ctx, x, y, w, h, c) {
+  const cap = Math.min(w, h) / 2;
+  const f = (v) => Math.max(0, Math.min(v, cap));
+  const tl = f(c.tl), tr = f(c.tr), br = f(c.br), bl = f(c.bl);
+  ctx.moveTo(x + tl, y);
+  ctx.lineTo(x + w - tr, y); ctx.arcTo(x + w, y, x + w, y + tr, tr);
+  ctx.lineTo(x + w, y + h - br); ctx.arcTo(x + w, y + h, x + w - br, y + h, br);
+  ctx.lineTo(x + bl, y + h); ctx.arcTo(x, y + h, x, y + h - bl, bl);
+  ctx.lineTo(x, y + tl); ctx.arcTo(x, y, x + tl, y, tl);
+}
+function box(ctx, x, y, w, h, r) { ctx.beginPath(); roundRectPath(ctx, x, y, w, h, { tl: r, tr: r, br: r, bl: r }); }
+function innerShadow(ctx, append, blur, offsetY, colour) {
+  ctx.save(); ctx.beginPath(); append(); ctx.clip();
+  ctx.beginPath(); ctx.rect(-2000, -2000, 6000, 6000); append();
+  ctx.shadowColor = colour; ctx.shadowBlur = blur; ctx.shadowOffsetY = offsetY;
+  ctx.fillStyle = 'rgba(0,0,0,1)'; ctx.fill('evenodd'); ctx.restore();
+}
+
+function drawTray(ctx, level, vp, theme) {
+  const { cell, wall, originX, originY } = vp;
+  const W = level.width * cell, H = level.height * cell;
+  const outer = Math.round(wall * 0.72), slab = Math.max(5, Math.round(wall * 0.38));
+  ctx.fillStyle = theme.trayEdge; box(ctx, originX - wall, originY - wall + slab, W + wall * 2, H + wall * 2, outer); ctx.fill();
+  ctx.fillStyle = theme.tray; box(ctx, originX - wall, originY - wall, W + wall * 2, H + wall * 2, outer); ctx.fill();
+  ctx.save(); box(ctx, originX - wall, originY - wall, W + wall * 2, H + wall * 2, outer); ctx.clip();
+  ctx.strokeStyle = theme.trayLip; ctx.lineWidth = Math.max(2, wall * 0.14);
+  box(ctx, originX - wall + 1, originY - wall + 1, W + wall * 2 - 2, H + wall * 2 - 2, outer); ctx.stroke(); ctx.restore();
+}
+
+function drawFloor(ctx, level, vp, theme) {
+  const { cell, wall, originX, originY } = vp;
+  const W = level.width * cell, H = level.height * cell, radius = Math.round(cell * 0.14);
+  const plate = () => roundRectPath(ctx, originX, originY, W, H, { tl: radius, tr: radius, br: radius, bl: radius });
+  ctx.fillStyle = theme.floor; ctx.beginPath(); plate(); ctx.fill();
+  const grooveInk = shade(theme.floor, 0.36), grooveLip = tint(theme.floor, 0.18);
+  const groove = Math.max(3, Math.round(cell * 0.075)), half = groove / 2;
+  ctx.save(); ctx.beginPath(); plate(); ctx.clip();
+  for (let x = 1; x < level.width; x++) {
+    const gx = originX + x * cell - half;
+    ctx.fillStyle = grooveInk; box(ctx, gx, originY, groove, H, half); ctx.fill();
+    ctx.fillStyle = withAlpha(grooveLip, 0.6); box(ctx, gx + groove - 1.2, originY, 1.2, H, 0.6); ctx.fill();
+  }
+  for (let y = 1; y < level.height; y++) {
+    const gy = originY + y * cell - half;
+    ctx.fillStyle = grooveInk; box(ctx, originX, gy, W, groove, half); ctx.fill();
+    ctx.fillStyle = withAlpha(grooveLip, 0.6); box(ctx, originX, gy + groove - 1.2, W, 1.2, 0.6); ctx.fill();
+  }
+  ctx.restore();
+  innerShadow(ctx, plate, wall * 0.8, wall * 0.2, 'rgba(0,0,0,0.55)');
+  ctx.save(); ctx.beginPath(); plate(); ctx.clip();
+  ctx.strokeStyle = withAlpha(theme.trayEdge, 0.9); ctx.lineWidth = 2; ctx.beginPath(); plate(); ctx.stroke(); ctx.restore();
+}
+
+function mouldedArrow(ctx, cx, cy, size, side, face, lip, ink) {
+  const w = size, h = size * 0.78;
+  // One arrow pointing up, rotated to the side it sits on.
+  const turn = { top: 0, right: Math.PI / 2, bottom: Math.PI, left: -Math.PI / 2 }[side];
+  const trace = (dy) => {
+    ctx.save(); ctx.translate(cx, cy + dy); ctx.rotate(turn);
+    ctx.beginPath();
+    ctx.moveTo(0, -h * 0.62); ctx.lineTo(w * 0.62, h * 0.3); ctx.lineTo(w * 0.24, h * 0.3); ctx.lineTo(w * 0.24, h * 0.62);
+    ctx.lineTo(-w * 0.24, h * 0.62); ctx.lineTo(-w * 0.24, h * 0.3); ctx.lineTo(-w * 0.62, h * 0.3); ctx.closePath();
+    ctx.restore();
+  };
+  const rise = Math.max(1.5, size * 0.1);
+  ctx.fillStyle = lip; trace(rise); ctx.fill();
+  ctx.fillStyle = face; trace(0); ctx.fill();
+  ctx.save(); trace(0); ctx.clip(); ctx.strokeStyle = ink; ctx.lineWidth = Math.max(1, size * 0.08); trace(0); ctx.stroke(); ctx.restore();
+}
+
+function drawGates(ctx, level, vp, theme) {
+  const { cell, wall, originX, originY } = vp;
+  const W = level.width * cell, H = level.height * cell;
+  for (const gate of level.gates) {
+    const colour = TILES[gate.color];
+    const horizontal = gate.side === 'top' || gate.side === 'bottom';
+    const span = gate.length * cell, inset = Math.max(2, cell * 0.05);
+    let sx, sy, sw, sh;
+    if (gate.side === 'top') { sx = originX + gate.start * cell + inset; sy = originY - wall; sw = span - inset * 2; sh = wall + 1; }
+    else if (gate.side === 'bottom') { sx = originX + gate.start * cell + inset; sy = originY + H - 1; sw = span - inset * 2; sh = wall + 1; }
+    else if (gate.side === 'left') { sx = originX - wall; sy = originY + gate.start * cell + inset; sw = wall + 1; sh = span - inset * 2; }
+    else { sx = originX + W - 1; sy = originY + gate.start * cell + inset; sw = wall + 1; sh = span - inset * 2; }
+    const slotRadius = Math.max(3, wall * 0.24);
+    const slot = () => roundRectPath(ctx, sx, sy, sw, sh, { tl: slotRadius, tr: slotRadius, br: slotRadius, bl: slotRadius });
+    ctx.fillStyle = theme.channel; ctx.beginPath(); slot(); ctx.fill();
+    innerShadow(ctx, slot, wall * 0.45, wall * 0.12, 'rgba(0,0,0,0.7)');
+    const pad = Math.max(2, wall * 0.2);
+    const bx = sx + (horizontal ? 0 : pad), by = sy + (horizontal ? pad : 0);
+    const bw = sw - (horizontal ? 0 : pad * 2), bh = sh - (horizontal ? pad * 2 : 0);
+    const barRadius = Math.max(2, slotRadius * 0.65);
+    ctx.fillStyle = shade(colour, 0.3); box(ctx, bx, by, bw, bh, barRadius); ctx.fill();
+    ctx.fillStyle = colour; box(ctx, bx, by, bw - (horizontal ? 0 : 1.5), bh - (horizontal ? 1.5 : 0), barRadius); ctx.fill();
+    mouldedArrow(ctx, bx + bw / 2, by + bh / 2, Math.min(bw, bh) * 0.8, gate.side, shade(colour, 0.42), tint(colour, 0.5), shade(colour, 0.6));
+  }
+}
+
+function blockPath(ctx, block, vp, dx, dy, inset) {
+  const { cell, originX, originY } = vp;
+  const has = (x, y) => block.cells.some(([cx, cy]) => cx === x && cy === y);
+  const radius = cell * 0.2;
+  ctx.beginPath();
+  for (const [cx, cy] of block.cells) {
+    const left = has(cx - 1, cy), right = has(cx + 1, cy), up = has(cx, cy - 1), down = has(cx, cy + 1);
+    const x = originX + cx * cell + (left ? -1 : inset) + dx;
+    const y = originY + cy * cell + (up ? -1 : inset) + dy;
+    const w = cell - (left ? -1 : inset) - (right ? -1 : inset);
+    const h = cell - (up ? -1 : inset) - (down ? -1 : inset);
+    roundRectPath(ctx, x, y, w, h, {
+      tl: !left && !up ? radius : 0, tr: !right && !up ? radius : 0,
+      br: !right && !down ? radius : 0, bl: !left && !down ? radius : 0,
+    });
+  }
+}
+
+function drawBlock(ctx, block, vp, theme) {
+  const { cell, originX, originY } = vp;
+  const base = block.crate ? theme.crate : TILES[block.color];
+  const inset = Math.max(2, Math.round(cell * 0.06)), depth = Math.max(3, Math.round(cell * 0.13));
+  const xs = block.cells.map((c) => c[0]), ys = block.cells.map((c) => c[1]);
+  const b = {
+    x: originX + Math.min(...xs) * cell, y: originY + Math.min(...ys) * cell,
+    w: (Math.max(...xs) - Math.min(...xs) + 1) * cell, h: (Math.max(...ys) - Math.min(...ys) + 1) * cell,
+  };
+  const face = () => blockPath(ctx, block, vp, 0, 0, inset);
+
+  ctx.save(); ctx.globalAlpha = 0.34; ctx.fillStyle = '#000000';
+  blockPath(ctx, block, vp, depth * 0.3, depth * 1.25, inset); ctx.fill(); ctx.restore();
+
+  ctx.fillStyle = shade(base, 0.44); blockPath(ctx, block, vp, 0, depth, inset); ctx.fill();
+  ctx.fillStyle = base; face(); ctx.fill();
+
+  // The renderer's own satin sheen on the tile face (render.ts, drawBlock).
+  ctx.save(); face(); ctx.clip();
+  const sheen = ctx.createLinearGradient(b.x, b.y, b.x, b.y + b.h * 0.62);
+  sheen.addColorStop(0, 'rgba(255,255,255,0.24)'); sheen.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = sheen; ctx.fillRect(b.x, b.y, b.w, b.h * 0.62); ctx.restore();
+
+  if (block.crate) {
+    ctx.save(); face(); ctx.clip();
+    const step = Math.max(8, cell * 0.28), rib = Math.max(2.5, cell * 0.09);
+    for (let i = -b.h; i < b.w + b.h; i += step) {
+      ctx.lineWidth = rib; ctx.strokeStyle = withAlpha(tint(base, 0.4), 0.55);
+      ctx.beginPath(); ctx.moveTo(b.x + i, b.y); ctx.lineTo(b.x + i + b.h, b.y + b.h); ctx.stroke();
+      ctx.lineWidth = rib * 0.7; ctx.strokeStyle = withAlpha(shade(base, 0.45), 0.6);
+      ctx.beginPath(); ctx.moveTo(b.x + i + rib * 0.8, b.y); ctx.lineTo(b.x + i + rib * 0.8 + b.h, b.y + b.h); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  ctx.save(); face(); ctx.clip();
+  ctx.strokeStyle = withAlpha(shade(base, 0.32), 0.5); ctx.lineWidth = Math.max(1, cell * 0.02); ctx.beginPath();
+  for (const [cx, cy] of block.cells) {
+    if (block.cells.some(([ox, oy]) => ox === cx + 1 && oy === cy)) {
+      const sx = originX + (cx + 1) * cell; ctx.moveTo(sx, originY + cy * cell + inset); ctx.lineTo(sx, originY + (cy + 1) * cell - inset);
+    }
+    if (block.cells.some(([ox, oy]) => ox === cx && oy === cy + 1)) {
+      const sy = originY + (cy + 1) * cell; ctx.moveTo(originX + cx * cell + inset, sy); ctx.lineTo(originX + (cx + 1) * cell - inset, sy);
+    }
+  }
+  ctx.stroke(); ctx.restore();
+
+  ctx.save(); face(); ctx.clip();
+  ctx.strokeStyle = withAlpha(tint(base, 0.5), 0.85); ctx.lineWidth = 1;
+  blockPath(ctx, block, vp, 1.5, 1.5, inset + 1.5); ctx.stroke(); ctx.restore();
+
+  face(); ctx.strokeStyle = withAlpha(shade(base, 0.58), 0.9); ctx.lineWidth = Math.max(1.2, cell * 0.025); ctx.stroke();
+}
+
+/* ---- page ---- */
+const ICON = {
+  back: '<svg width="24" height="24" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>',
+  undo: '<svg width="26" height="26" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/></svg>',
+  hint: '<svg width="30" height="30" viewBox="0 0 24 24"><path d="M9 17h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V17h5v-1.100c0-.8.4-1.500 1-2A6 6 0 0 0 12 3z"/></svg>',
+  restart: '<svg width="26" height="26" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.300-5.700M20 4v5h-5"/></svg>',
+};
+
+const lum = (hex) => { const [r, g, b] = channels(hex).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+
+for (const t of THEMES) {
+  const col = document.createElement('div');
+  col.className = 'col';
+  const onEdge = lum(t.surfaceEdge) > 0.3 ? t.text : t.muted;
+  col.innerHTML = `
+    <div class="phone" style="--backdrop:${t.backdrop};--backdrop-lift:${t.backdropLift};--surface:${t.surface};--surface-edge:${t.surfaceEdge};--line:${t.line};--text:${t.text};--muted:${t.muted};--accent:${t.accent};--accent-edge:${t.accentEdge};--accent-ink:${t.accentInk};--muted-on-edge:${onEdge}">
+      <div class="chip back">${ICON.back}</div>
+      <div class="chip level"><small>LEVEL</small>24</div>
+      <div class="chip coins"><span class="coin"></span>640</div>
+      <div class="moves">3 moves · par 6</div>
+      <canvas></canvas>
+      <div class="chip btn undo">${ICON.undo}</div>
+      <div class="chip hint">${ICON.hint}</div>
+      <div class="chip btn restart">${ICON.restart}</div>
+      <div class="label undo">Undo</div><div class="label hint">Hint</div><div class="label restart">Restart</div>
+      <div class="foot">Undo, hints and restarts are free and unlimited.</div>
+    </div>
+    <div class="cap">
+      <h2>${t.name}<span>${t.price} coins · ${t.dark ? 'dark' : 'light'}</span></h2>
+      <div class="tiles" style="background:${t.floor};outline:3px solid ${t.tray}">
+        ${TILES.map((c) => `<i style="background:${c};box-shadow:0 4px 0 ${shade(c, 0.44)}"></i>`).join('')}
+      </div>
+      <div class="sw">
+        ${['backdrop', 'tray', 'floor', 'rim', 'surface', 'accent'].map((k) => `<b style="background:${t[k]};color:${lum(t[k]) > 0.35 ? '#1c1c1c' : '#ffffff'}">${k} ${t[k]}</b>`).join('')}
+      </div>
+    </div>`;
+  document.getElementById('row').appendChild(col);
+
+  const canvas = col.querySelector('canvas');
+  const dpr = 2;
+  canvas.width = 375 * dpr; canvas.height = 350 * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  drawTray(ctx, LEVEL, VP, t);
+  drawFloor(ctx, LEVEL, VP, t);
+  drawGates(ctx, LEVEL, VP, t);
+  for (const block of LEVEL.blocks) drawBlock(ctx, block, VP, t);
+}
+</script>
+</body>
+</html>
