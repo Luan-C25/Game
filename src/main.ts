@@ -184,12 +184,61 @@ function fitTitle(): void {
   }
 }
 
+/**
+ * Levels per chapter in the level select. A tester found 200 numbered tiles
+ * "an endless grid of squares"; chapters break it into milestones. They are
+ * headings only: nothing is locked behind them.
+ */
+const CHAPTER_SIZE = 20;
+
+function chapterHeader(firstId: number): HTMLElement {
+  const lastId = Math.min(LEVEL_COUNT, firstId + CHAPTER_SIZE - 1);
+  const chapter = Math.floor((firstId - 1) / CHAPTER_SIZE) + 1;
+  const total = lastId - firstId + 1;
+
+  let cleared = 0;
+  let stars = 0;
+  for (let id = firstId; id <= lastId; id++) {
+    const best = saveData.bestMoves[id];
+    if (best === undefined) continue;
+    cleared++;
+    const level = getLevel(id);
+    stars += level ? starsFor(best, level.minMoves) : 1;
+  }
+
+  const header = document.createElement('div');
+  header.className = 'chapter';
+  if (firstId > saveData.highestUnlocked) header.classList.add('locked');
+  if (cleared === total) header.classList.add('complete');
+
+  const title = document.createElement('h3');
+  title.textContent = `Chapter ${chapter}`;
+  const range = document.createElement('span');
+  range.className = 'chapter-range';
+  range.textContent = `Levels ${firstId} to ${lastId}`;
+  const tally = document.createElement('span');
+  tally.className = 'chapter-stars';
+  tally.textContent = `★ ${stars} / ${total * 3}`;
+
+  // A recessed groove that fills as the chapter is cleared.
+  const groove = document.createElement('div');
+  groove.className = 'chapter-groove';
+  const fill = document.createElement('div');
+  fill.style.width = `${(cleared / total) * 100}%`;
+  groove.append(fill);
+
+  header.append(title, range, tally, groove);
+  return header;
+}
+
 function renderLevelGrid(): void {
   const grid = $('level-grid');
   grid.textContent = '';
   $('levels-coins').textContent = `${saveData.coins} coins`;
 
   for (let id = 1; id <= LEVEL_COUNT; id++) {
+    if ((id - 1) % CHAPTER_SIZE === 0) grid.append(chapterHeader(id));
+
     const button = document.createElement('button');
     button.className = 'level-cell';
     const unlocked = id <= saveData.highestUnlocked;
@@ -350,7 +399,7 @@ function frame(nowMs: number): void {
 
   render(ctx!, session.level, viewport, {
     theme: themeById(saveData.settings.theme),
-    glyphs: saveData.settings.colourBlindGlyphs,
+    glyphs: saveData.settings.colourBlindShapes,
     time: clock,
     reduceMotion: saveData.settings.reduceMotion,
     drag: drag.visual,
@@ -385,6 +434,7 @@ const drag = new DragController(
       particles.burst(centre.x, centre.y, blockColourFor(block.color), 0, 0);
     },
     onBlocked: () => sfx.blocked(),
+    reduceMotion: () => saveData.settings.reduceMotion,
     onBlockExited: () => {
       sfx.exit();
       buzz('exit');
@@ -444,7 +494,9 @@ function checkComplete(): void {
   // A short beat so the confetti and the cleared board are visible before the
   // card covers them. Deliberately no ad here - see AD_POLICY.neverAfterWin.
   const wonLevel = currentLevelId;
-  const reveal = saveData.settings.reduceMotion ? 0 : 620;
+  // 620 ms read as rushed to a tester ("let me look at my clean board for a
+  // split second"), so the board now stays clear for just over a second.
+  const reveal = saveData.settings.reduceMotion ? 0 : 1100;
   window.setTimeout(() => {
     // The player may have left in the meantime; do not yank them back.
     if (session?.isComplete() && currentLevelId === wonLevel) $('overlay-win').hidden = false;
@@ -532,7 +584,7 @@ function bindSettings(): void {
   bind('set-sound', 'sound', setSoundEnabled);
   bind('set-music', 'music', setMusicEnabled);
   bind('set-haptics', 'haptics');
-  bind('set-glyphs', 'colourBlindGlyphs');
+  bind('set-glyphs', 'colourBlindShapes');
   bind('set-motion', 'reduceMotion', () => applyTheme());
 
   $('btn-reset').addEventListener('click', () => {

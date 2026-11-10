@@ -78,7 +78,8 @@ export const THEMES: Theme[] = [
   {
     id: 'clay',
     name: 'Warm Clay',
-    price: 250,
+    // Was 250; a tester said it "took me ages just to unlock".
+    price: 150,
     dark: false,
     backdrop: '#ddcdba',
     backdropLift: '#efe4d5',
@@ -156,8 +157,13 @@ export const BLOCK_COLOURS: string[] = [
   '#D55E00',
 ];
 
-/** One glyph per colour, drawn when the accessibility option is on. */
-export const BLOCK_GLYPHS: string[] = ['●', '▲', '■', '◆', '★', '✚'];
+/**
+ * One shape per colour, drawn on blocks and their gates when the
+ * accessibility option is on. They are drawn as paths, not text characters,
+ * because symbol glyphs differ by phone maker and Android version.
+ */
+export type GlyphShape = 'circle' | 'triangle' | 'square' | 'diamond' | 'star' | 'cross';
+export const BLOCK_GLYPHS: GlyphShape[] = ['circle', 'triangle', 'square', 'diamond', 'star', 'cross'];
 
 export function themeById(id: string): Theme {
   return THEMES.find((t) => t.id === id) ?? THEMES[0];
@@ -171,7 +177,7 @@ export function blockColour(index: number): string {
   return BLOCK_COLOURS[wrap(index, BLOCK_COLOURS.length)];
 }
 
-export function blockGlyph(index: number): string {
+export function blockGlyph(index: number): GlyphShape {
   return BLOCK_GLYPHS[wrap(index, BLOCK_GLYPHS.length)];
 }
 

@@ -16,7 +16,7 @@
 
 import { blockCells, type Block, type Level } from '../engine/types.ts';
 import type { Particles } from './particles.ts';
-import { blockColour, blockGlyph, shade, tint, withAlpha, type Theme } from './theme.ts';
+import { blockColour, blockGlyph, shade, tint, withAlpha, type GlyphShape, type Theme } from './theme.ts';
 
 export interface Viewport {
   cell: number;
@@ -249,6 +249,59 @@ function drawFloor(ctx: CanvasRenderingContext2D, level: Level, vp: Viewport, th
   ctx.restore();
 }
 
+/* ----------------------------------------------------------------- glyphs */
+
+/** Fills one colour-blind shape, `size` across, centred on (cx, cy). */
+function drawGlyph(
+  ctx: CanvasRenderingContext2D,
+  shape: GlyphShape,
+  cx: number,
+  cy: number,
+  size: number,
+  fill: string,
+): void {
+  const r = size / 2;
+  ctx.fillStyle = fill;
+  ctx.beginPath();
+  switch (shape) {
+    case 'circle':
+      ctx.arc(cx, cy, r * 0.82, 0, Math.PI * 2);
+      break;
+    case 'triangle':
+      ctx.moveTo(cx, cy - r * 0.92);
+      ctx.lineTo(cx + r, cy + r * 0.78);
+      ctx.lineTo(cx - r, cy + r * 0.78);
+      break;
+    case 'square':
+      ctx.rect(cx - r * 0.74, cy - r * 0.74, r * 1.48, r * 1.48);
+      break;
+    case 'diamond':
+      ctx.moveTo(cx, cy - r);
+      ctx.lineTo(cx + r * 0.8, cy);
+      ctx.lineTo(cx, cy + r);
+      ctx.lineTo(cx - r * 0.8, cy);
+      break;
+    case 'star':
+      for (let i = 0; i < 10; i++) {
+        const radius = i % 2 === 0 ? r : r * 0.45;
+        const angle = -Math.PI / 2 + (i * Math.PI) / 5;
+        const x = cx + Math.cos(angle) * radius;
+        const y = cy + Math.sin(angle) * radius + r * 0.08;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      break;
+    case 'cross': {
+      const arm = r * 0.34;
+      ctx.rect(cx - arm, cy - r * 0.9, arm * 2, r * 1.8);
+      ctx.rect(cx - r * 0.9, cy - arm, r * 1.8, arm * 2);
+      break;
+    }
+  }
+  ctx.closePath();
+  ctx.fill('nonzero');
+}
+
 /* ------------------------------------------------------------------ gates */
 
 /** A solid, moulded arrow with a lit top facet and a shaded underside. */
@@ -401,12 +454,19 @@ function drawGates(
     box(ctx, bx, by, bw - (horizontal ? 0 : 1.5), bh - (horizontal ? 1.5 : 0), barRadius);
     ctx.fill();
 
-    // A moulded arrow set into the lip, pointing out of the tray.
+    // A moulded arrow set into the lip, pointing out of the tray. With
+    // shapes on, the arrow moves along the lip to make room for the gate's
+    // shape beside it, the same shape its blocks carry.
+    const thickness = Math.min(bw, bh);
+    const length = Math.max(bw, bh);
+    const spread = options.glyphs ? Math.min(length * 0.2, thickness * 0.95) : 0;
+    const ax = bx + bw / 2 - (horizontal ? spread : 0);
+    const ay = by + bh / 2 - (horizontal ? 0 : spread);
     mouldedArrow(
       ctx,
-      bx + bw / 2,
-      by + bh / 2,
-      Math.min(bw, bh) * 0.8,
+      ax,
+      ay,
+      thickness * 0.8,
       gate.side,
       shade(colour, 0.42),
       tint(colour, 0.5),
@@ -414,13 +474,9 @@ function drawGates(
     );
 
     if (options.glyphs) {
-      ctx.fillStyle = withAlpha(shade(colour, 0.62), 0.95);
-      ctx.font = `800 ${Math.round(Math.min(bw, bh) * 0.36)}px system-ui, sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      const offX = gate.side === 'left' ? -bw * 0.32 : gate.side === 'right' ? bw * 0.32 : 0;
-      const offY = gate.side === 'top' ? -bh * 0.32 : gate.side === 'bottom' ? bh * 0.32 : 0;
-      ctx.fillText(blockGlyph(gate.color), bx + bw / 2 + offX, by + bh / 2 + offY);
+      const gx = bx + bw / 2 + (horizontal ? spread : 0);
+      const gy = by + bh / 2 + (horizontal ? 0 : spread);
+      drawGlyph(ctx, blockGlyph(gate.color), gx, gy, thickness * 0.72, shade(colour, 0.6));
     }
   }
 }
@@ -602,11 +658,7 @@ function drawBlock(
   }
 
   if (options.glyphs && !isCrate) {
-    ctx.fillStyle = withAlpha(shade(base, 0.5), 0.7);
-    ctx.font = `800 ${Math.round(cell * 0.36)}px system-ui, sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(blockGlyph(block.color), bounds.cx, bounds.cy);
+    drawGlyph(ctx, blockGlyph(block.color), bounds.cx, bounds.cy, cell * 0.34, withAlpha(shade(base, 0.5), 0.75));
   }
 }
 

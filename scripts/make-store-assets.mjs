@@ -104,7 +104,7 @@ const progressed = {
   adsRemoved: false,
   levelsSinceLastAd: 0,
   lastAdAtMs: 0,
-  settings: { sound: true, music: false, haptics: true, colourBlindGlyphs: false, reduceMotion: false, theme: 'slate' },
+  settings: { sound: true, music: false, haptics: true, colourBlindShapes: false, reduceMotion: false, theme: 'slate' },
 };
 
 await seed(progressed);

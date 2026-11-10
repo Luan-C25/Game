@@ -14,8 +14,14 @@ export interface Settings {
   sound: boolean;
   music: boolean;
   haptics: boolean;
-  /** Adds a distinct glyph to every block, so colour is never the only cue. */
-  colourBlindGlyphs: boolean;
+  /**
+   * Draws a distinct shape on every block and gate, so colour is never the
+   * only cue. On by default since 1.0.1, after a tester said players who
+   * struggle with yellow, blue and green were locked out. It was stored as
+   * `colourBlindGlyphs` (default off) before that; the new name means every
+   * existing save picks up the new default instead of its stored "off".
+   */
+  colourBlindShapes: boolean;
   reduceMotion: boolean;
   theme: string;
 }
@@ -37,7 +43,7 @@ export const DEFAULT_SETTINGS: Settings = {
   sound: true,
   music: false,
   haptics: true,
-  colourBlindGlyphs: false,
+  colourBlindShapes: true,
   reduceMotion: false,
   theme: 'slate',
 };
@@ -80,10 +86,10 @@ export function reconcile(raw: unknown): SaveData {
     sound: typeof storedSettings.sound === 'boolean' ? storedSettings.sound : base.settings.sound,
     music: typeof storedSettings.music === 'boolean' ? storedSettings.music : base.settings.music,
     haptics: typeof storedSettings.haptics === 'boolean' ? storedSettings.haptics : base.settings.haptics,
-    colourBlindGlyphs:
-      typeof storedSettings.colourBlindGlyphs === 'boolean'
-        ? storedSettings.colourBlindGlyphs
-        : base.settings.colourBlindGlyphs,
+    colourBlindShapes:
+      typeof storedSettings.colourBlindShapes === 'boolean'
+        ? storedSettings.colourBlindShapes
+        : base.settings.colourBlindShapes,
     reduceMotion:
       typeof storedSettings.reduceMotion === 'boolean'
         ? storedSettings.reduceMotion
