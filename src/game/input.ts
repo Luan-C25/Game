@@ -24,8 +24,17 @@ import type { Viewport } from './render.ts';
 
 /** Pixels of travel before a drag commits to an axis. */
 const AXIS_LOCK_PX = 5;
-/** Release speed, in CSS px per ms, that counts as a flick (about 450 px/s). */
+/**
+ * Release speed, in CSS px per ms, that counts as a flick (about 450 px/s).
+ * Measured on the owner's phone over 58 gestures: deliberate drags released
+ * at 0.24 or less, flicks at 0.57 to 2.13, so this sits in the gap.
+ */
 const FLICK_SPEED = 0.45;
+/**
+ * Travel a flick needs before it counts. In the same session two short
+ * nudges of about 15 px released at 0.33 and 0.44, just under the speed.
+ */
+const FLICK_MIN_TRAVEL_PX = 20;
 /** How far back the release speed is measured. */
 const FLICK_WINDOW_MS = 90;
 /** Duration of the flick's slide out, per cell and at most. */
@@ -257,6 +266,9 @@ export class DragController {
 
     const speed = this.releaseSpeed();
     if (Math.abs(speed) < FLICK_SPEED) return false;
+    const last = this.samples[this.samples.length - 1];
+    const travel = axis === 'x' ? last.x - this.startClientX : last.y - this.startClientY;
+    if (Math.abs(travel) < FLICK_MIN_TRAVEL_PX) return false;
 
     const dir: Dir = axis === 'x' ? (speed > 0 ? 'right' : 'left') : speed > 0 ? 'down' : 'up';
     const session = this.getSession();

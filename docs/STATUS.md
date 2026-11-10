@@ -179,6 +179,29 @@ Done by the owner in Play Console, step by step:
 Recruitment posts are drafted in `marketing/reddit-post-v1.0-closed-test.md`,
 to go up once the release is approved.
 
+## 1.0.1 (11 November)
+
+The 14-day closed test is done. Engagement was low (about 2.4 minutes per
+active user on day one, then under a minute a day), typical of reciprocal
+testers. Three testers' comments drove 1.0.1, versionCode 2:
+
+- **Flick to exit**: a fast release whose lane runs clear to a matching gate
+  slides out by itself; anything else stays where it was dragged, so no
+  level can become unsolvable. The drag axis follows the finger until the
+  block moves a cell. Thresholds come from 58 gestures logged on the owner's
+  phone: drags released at 0.24 px/ms or less, flicks at 0.57 to 2.13; a
+  flick needs 0.45 px/ms and 20 px of travel.
+- **Colour-blind shapes** drawn as paths, now on gates as well (they were
+  invisibly small there), and on by default. The setting was renamed
+  `colourBlindShapes` so old saves pick up the new default.
+- **Chapters** of 20 in the level select, headings only.
+- **Win card** waits 1.1 s (was 620 ms).
+- **Five new themes** (Citrus, Meadow, Bubblegum, Seaside, Lantern; design
+  and contrast figures in `design/themes/`), and Warm Clay down to 150 coins.
+
+Next: upload 1.0.1 to the closed track, then apply for production with the
+answers that say what changed.
+
 ## Next steps
 
 1. ~~Fix findings 1–4 above.~~ Done 22 October, see the follow-up.
