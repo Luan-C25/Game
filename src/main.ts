@@ -28,6 +28,8 @@ import { AD_PROMISES, mayShowInterstitial, noopAdProvider, type AdProvider } fro
 import { admobProvider, adsAvailable, initialiseAds } from './game/ads-native.ts';
 import { isMusicEnabled, setMusicEnabled, setSoundEnabled, sfx, unlockAudio } from './game/audio.ts';
 import * as store from './game/save.ts';
+import { CHAPTERS, CHAPTER_SIZE, backgroundUrl, chapterOf, mapUrl } from './game/chapters.ts';
+import { chapterNodesSvg, type NodeInfo } from './game/map-view.ts';
 
 type ScreenId = 'home' | 'levels' | 'game' | 'themes' | 'settings' | 'promises';
 
@@ -185,82 +187,92 @@ function fitTitle(): void {
 }
 
 /**
- * Levels per chapter in the level select. A tester found 200 numbered tiles
- * "an endless grid of squares"; chapters break it into milestones. They are
- * headings only: nothing is locked behind them.
+ * The level select is one chapter's illustrated map at a time, opened on the
+ * chapter holding the next level. Testers found 200 numbered tiles "an
+ * endless grid of squares". Chapters are places, not gates: nothing is
+ * locked behind one, a level opens when the one before it is cleared.
  */
-const CHAPTER_SIZE = 20;
+let shownChapter = 0;
 
-function chapterHeader(firstId: number): HTMLElement {
-  const lastId = Math.min(LEVEL_COUNT, firstId + CHAPTER_SIZE - 1);
-  const chapter = Math.floor((firstId - 1) / CHAPTER_SIZE) + 1;
-  const total = lastId - firstId + 1;
-
-  let cleared = 0;
-  let stars = 0;
-  for (let id = firstId; id <= lastId; id++) {
-    const best = saveData.bestMoves[id];
-    if (best === undefined) continue;
-    cleared++;
-    const level = getLevel(id);
-    stars += level ? starsFor(best, level.minMoves) : 1;
-  }
-
-  const header = document.createElement('div');
-  header.className = 'chapter';
-  if (firstId > saveData.highestUnlocked) header.classList.add('locked');
-  if (cleared === total) header.classList.add('complete');
-
-  const title = document.createElement('h3');
-  title.textContent = `Chapter ${chapter}`;
-  const range = document.createElement('span');
-  range.className = 'chapter-range';
-  range.textContent = `Levels ${firstId} to ${lastId}`;
-  const tally = document.createElement('span');
-  tally.className = 'chapter-stars';
-  tally.textContent = `★ ${stars} / ${total * 3}`;
-
-  // A recessed groove that fills as the chapter is cleared.
-  const groove = document.createElement('div');
-  groove.className = 'chapter-groove';
-  const fill = document.createElement('div');
-  fill.style.width = `${(cleared / total) * 100}%`;
-  groove.append(fill);
-
-  header.append(title, range, tally, groove);
-  return header;
+function chapterIndexFor(levelId: number): number {
+  return CHAPTERS.indexOf(chapterOf(levelId));
 }
 
 function renderLevelGrid(): void {
-  const grid = $('level-grid');
-  grid.textContent = '';
   $('levels-coins').textContent = `${saveData.coins} coins`;
+  shownChapter = chapterIndexFor(Math.min(saveData.highestUnlocked, LEVEL_COUNT));
+  renderChapter();
+}
 
-  for (let id = 1; id <= LEVEL_COUNT; id++) {
-    if ((id - 1) % CHAPTER_SIZE === 0) grid.append(chapterHeader(id));
+function renderChapter(): void {
+  const chapter = CHAPTERS[shownChapter];
+  const first = (chapter.n - 1) * CHAPTER_SIZE + 1;
 
-    const button = document.createElement('button');
-    button.className = 'level-cell';
-    const unlocked = id <= saveData.highestUnlocked;
-    button.disabled = !unlocked;
-
-    const number = document.createElement('span');
-    number.textContent = String(id);
-    button.append(number);
-
-    const best = saveData.bestMoves[id];
+  let stars = 0;
+  const nodes: NodeInfo[] = chapter.nodes.map((_, i) => {
+    const level = first + i;
+    const best = saveData.bestMoves[level];
     if (best !== undefined) {
-      const level = getLevel(id);
-      const stars = level ? starsFor(best, level.minMoves) : 1;
-      const label = document.createElement('small');
-      label.textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
-      button.append(label);
-      button.classList.add('cleared');
+      const data = getLevel(level);
+      const earned = data ? starsFor(best, data.minMoves) : 1;
+      stars += earned;
+      return { level, state: 'done', stars: earned };
     }
+    if (level > saveData.highestUnlocked || level > LEVEL_COUNT) return { level, state: 'locked', stars: 0 };
+    return { level, state: level === saveData.highestUnlocked ? 'now' : 'open', stars: 0 };
+  });
 
-    if (unlocked) button.addEventListener('click', () => startLevel(id));
-    grid.append(button);
-  }
+  $('chapter-title').textContent = chapter.name;
+  $('chapter-num').textContent = `Chapter ${chapter.n}`;
+  $('chapter-stars').textContent = `★ ${stars} / ${CHAPTER_SIZE * 3}`;
+  $<HTMLButtonElement>('chapter-prev').disabled = shownChapter === 0;
+  $<HTMLButtonElement>('chapter-next').disabled = shownChapter === CHAPTERS.length - 1;
+
+  const art = $<HTMLImageElement>('map-art');
+  const url = mapUrl(chapter);
+  if (art.getAttribute('src') !== url) art.src = url;
+
+  const svg = $('map-nodes');
+  svg.setAttribute('viewBox', `0 0 ${chapter.width} ${chapter.height}`);
+  svg.innerHTML = chapterNodesSvg(chapter, nodes);
+
+  const hits = $('map-hits');
+  hits.textContent = '';
+  let focus: number | null = null;
+  nodes.forEach((node, i) => {
+    if (node.state === 'locked') return;
+    const [x, y] = chapter.nodes[i];
+    const hit = document.createElement('button');
+    hit.className = 'map-hit';
+    hit.style.left = `${(x / chapter.width) * 100}%`;
+    hit.style.top = `${(y / chapter.height) * 100}%`;
+    hit.setAttribute(
+      'aria-label',
+      node.state === 'done' ? `Level ${node.level}, ${node.stars} of 3 stars` : `Level ${node.level}`,
+    );
+    hit.addEventListener('click', () => startLevel(node.level));
+    hits.append(hit);
+    if (node.state === 'now') focus = y;
+  });
+
+  const scroller = $('map-scroll');
+  const map = $('map');
+  const place = (): void => {
+    const scale = map.clientHeight / chapter.height;
+    // The road runs bottom to top: with no next level here, show the start
+    // of the chapter if it is ahead of the player, the end if it is behind.
+    const target =
+      focus ?? (first > saveData.highestUnlocked ? chapter.nodes[0][1] : chapter.nodes[CHAPTER_SIZE - 1][1]);
+    scroller.scrollTop = target * scale - scroller.clientHeight / 2;
+  };
+  requestAnimationFrame(place);
+}
+
+function stepChapter(delta: number): void {
+  const next = shownChapter + delta;
+  if (next < 0 || next >= CHAPTERS.length) return;
+  shownChapter = next;
+  renderChapter();
 }
 
 function renderThemes(): void {
@@ -510,6 +522,8 @@ function startLevel(id: number): void {
     return;
   }
   currentLevelId = id;
+  // Each chapter's scenery behind its levels, so the map's places carry on into play.
+  $('screen-game').style.setProperty('--chapter-bg', `url("${backgroundUrl(chapterOf(id))}")`);
   session = new Session(level);
   hintedBlocks = [];
   particles.clear();
@@ -604,6 +618,8 @@ function bindNavigation(): void {
   $('btn-themes').addEventListener('click', () => showScreen('themes'));
   $('btn-settings').addEventListener('click', () => showScreen('settings'));
   $('btn-promises').addEventListener('click', () => showScreen('promises'));
+  $('chapter-prev').addEventListener('click', () => stepChapter(-1));
+  $('chapter-next').addEventListener('click', () => stepChapter(1));
 
   for (const button of document.querySelectorAll<HTMLButtonElement>('[data-back]')) {
     button.addEventListener('click', goBack);

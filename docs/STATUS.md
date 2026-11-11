@@ -194,13 +194,34 @@ testers. Three testers' comments drove 1.0.1, versionCode 2:
 - **Colour-blind shapes** drawn as paths, now on gates as well (they were
   invisibly small there), and on by default. The setting was renamed
   `colourBlindShapes` so old saves pick up the new default.
-- **Chapters** of 20 in the level select, headings only.
+- **Chapters** of 20 in the level select, headings only (replaced by maps after 1.0.1).
 - **Win card** waits 1.1 s (was 620 ms).
 - **Five new themes** (Citrus, Meadow, Bubblegum, Seaside, Lantern; design
   and contrast figures in `design/themes/`), and Warm Clay down to 150 coins.
 
 Next: upload 1.0.1 to the closed track, then apply for production with the
 answers that say what changed.
+
+## Chapter maps (12 November, not released yet)
+
+The level select is now one illustrated map per chapter instead of a grid,
+and each chapter's scenery sits behind its levels on the game screen. The
+art was designed in `design/maps/` (see its `NOTES.md`).
+
+- `node scripts/import-chapter-maps.mjs` copies the art into `public/maps/`
+  and writes `src/game/chapters.ts` from the node files. Re-run it after
+  the design changes; don't edit `chapters.ts` by hand.
+- `src/game/map-view.ts` draws the level tiles, stars and the bobbing pin
+  from the save, with the design's tile code. The map opens on the chapter
+  holding the next level; arrows step between chapters. Nothing is locked
+  behind a chapter.
+- On the game screen the tool labels sit on plates (theme text can't be
+  trusted on a picture) and the "free and unlimited" footer is hidden there.
+- Still open from the design notes: weak theme/ground pairings (Citrus on
+  the green chapters, Seaside and Porcelain on Snowy Peaks, Warm Clay on the
+  clay chapters) and Lantern Gardens being the only dark chapter. Check them
+  on the phone before deciding on an outline under the board.
+- Ships as 1.0.2 (versionCode 3) when it goes out; 1.0.1 is still in review.
 
 ## Next steps
 

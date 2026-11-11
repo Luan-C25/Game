@@ -48,13 +48,32 @@
       </section>
 
       <!-- Level select -->
-      <section class="screen" id="screen-levels" hidden>
+      <section class="screen screen-levels" id="screen-levels" hidden>
         <header class="bar">
           <button class="icon-btn" data-back aria-label="Back">←</button>
-          <h2>Levels</h2>
+          <h2 id="chapter-title">Kiln Meadow</h2>
           <span class="coins" id="levels-coins"></span>
         </header>
-        <div class="level-grid" id="level-grid"></div>
+        <!-- One chapter's illustrated road; the level tiles are drawn from the save. -->
+        <div class="map-scroll" id="map-scroll">
+          <div class="map" id="map">
+            <img class="map-art" id="map-art" alt="" decoding="async" />
+            <svg class="map-nodes" id="map-nodes" aria-hidden="true"></svg>
+            <div class="map-hits" id="map-hits"></div>
+          </div>
+        </div>
+        <nav class="chapter-nav">
+          <button class="chapter-step" id="chapter-prev" aria-label="Previous chapter">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+          </button>
+          <div class="chapter-plate">
+            <span class="chapter-num" id="chapter-num">Chapter 1</span>
+            <span class="chapter-stars" id="chapter-stars">★ 0 / 60</span>
+          </div>
+          <button class="chapter-step" id="chapter-next" aria-label="Next chapter">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+          </button>
+        </nav>
       </section>
 
       <!-- Game -->
