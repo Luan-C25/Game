@@ -523,7 +523,10 @@ function startLevel(id: number): void {
   }
   currentLevelId = id;
   // Each chapter's scenery behind its levels, so the map's places carry on into play.
-  $('screen-game').style.setProperty('--chapter-bg', `url("${backgroundUrl(chapterOf(id))}")`);
+  // Made absolute: a relative url() in a custom property resolves against the
+  // stylesheet that uses it, which in the build is assets/, not the page.
+  const background = new URL(backgroundUrl(chapterOf(id)), document.baseURI).href;
+  $('screen-game').style.setProperty('--chapter-bg', `url("${background}")`);
   session = new Session(level);
   hintedBlocks = [];
   particles.clear();
