@@ -1627,11 +1627,15 @@ hr {
 }
 
 .companion {
+  /* left, top and size come from positionCompanion() in main.ts. */
   position: absolute;
-  left: 2px;
-  bottom: -6px;
+  left: 50%;
+  top: 0;
   width: 52px;
   height: 64px;
+  transform: translateX(-50%);
+  object-fit: contain;
+  object-position: bottom;
   pointer-events: none;
   z-index: 1;
 }

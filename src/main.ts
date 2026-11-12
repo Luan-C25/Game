@@ -833,6 +833,7 @@ function completeDaily(day: number, stars: number, moves: number): void {
 
   const streak = result.state.streak;
   $('win-title').textContent = 'Daily Kiln fired';
+  $('btn-win-levels').textContent = 'Daily Kiln';
   fillStars(stars);
   $('win-detail').textContent = result.firstToday
     ? `Solved in ${moves} moves. ${streak} ${streak === 1 ? 'day' : 'days'} in a row.`
@@ -960,6 +961,24 @@ function placeCompanion(): void {
     if (img.getAttribute('src') !== url) img.src = url;
     img.alt = `${friend.name} keeps you company`;
   }
+  positionCompanion();
+}
+
+/**
+ * Stands the companion on the middle of the tray's top rim, where the player
+ * looks first. Taller boards leave less room above the tray, so the figure
+ * shrinks to fit rather than covering the moves counter.
+ */
+function positionCompanion(): void {
+  const img = $<HTMLImageElement>('companion');
+  if (img.hidden || !session) return;
+  const trayTop = viewport.originY - viewport.wall;
+  const height = Math.max(40, Math.min(72, trayTop + 3));
+  img.style.height = `${height}px`;
+  img.style.width = `${Math.round(height * 0.8)}px`;
+  img.style.left = `${viewport.originX + (session.level.width * viewport.cell) / 2}px`;
+  // Feet rest on the rim's outer edge, clear of any gate set into it.
+  img.style.top = `${trayTop + 3 - height}px`;
 }
 
 /* --------------------------------------------------------------------- game */
@@ -984,6 +1003,7 @@ function resizeCanvas(): void {
   ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   viewport = computeViewport(session.level, rect.width, rect.height);
+  positionCompanion();
   requestDraw();
 }
 
@@ -1116,6 +1136,7 @@ function checkComplete(): void {
     requestDraw();
   }
 
+  $('btn-win-levels').textContent = 'Levels';
   $('win-title').textContent = currentLevelId >= LEVEL_COUNT ? 'Final level complete' : 'Level complete';
   const starRow = $('win-stars');
   starRow.textContent = '';
@@ -1176,7 +1197,8 @@ function beginSession(level: Level, chapter: Chapter): void {
   resizeCanvas();
 }
 
-function leaveLevel(): void {
+/** Leaves the board for the home screen, or for a screen reached from it. */
+function leaveLevel(to: ScreenId = 'home'): void {
   const now = Date.now();
   const shouldAd = mayShowInterstitial(
     {
@@ -1202,7 +1224,7 @@ function leaveLevel(): void {
   drag.cancel();
   $('overlay-win').hidden = true;
   screenStack = ['home'];
-  showScreen('home', { push: false });
+  showScreen(to, { push: to !== 'home' });
 }
 
 function showHint(): void {
@@ -1282,7 +1304,7 @@ function bindNavigation(): void {
     button.addEventListener('click', goBack);
   }
 
-  $('btn-game-back').addEventListener('click', leaveLevel);
+  $('btn-game-back').addEventListener('click', () => leaveLevel());
   $('btn-undo').addEventListener('click', () => {
     if (session?.undo()) {
       hintedBlocks = [];
@@ -1310,7 +1332,9 @@ function bindNavigation(): void {
     if (dailyDay !== null) startDaily();
     else startLevel(currentLevelId);
   });
-  $('btn-win-menu').addEventListener('click', leaveLevel);
+  $('btn-win-menu').addEventListener('click', () => leaveLevel());
+  // Straight back to the map (or the Daily Kiln calendar) without the menu.
+  $('btn-win-levels').addEventListener('click', () => leaveLevel(dailyDay !== null ? 'daily' : 'levels'));
 }
 
 /**
