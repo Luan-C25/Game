@@ -60,8 +60,19 @@ Every promise below is written into the game itself, on the Promises screen:
 • No ads at all until after level 10
 • After that, at most one ad per four levels, and never twice within three
   minutes
+• The only ad you can choose to watch keeps your daily gift streak after one
+  missed day, and saying no costs nothing else
 • Hints, undo and restart are always free
-• Coins buy themes and nothing else
+• Coins buy themes, friends, glazes and effects, never anything you need to
+  finish a level
+
+SOMETHING NEW EVERY DAY
+
+The Daily Kiln is a fresh puzzle each day, the same for everyone, with streak
+badges from 7 days all the way past a year. Open the kiln once a day for a
+gift, and on day 7 a new friend moves into the village. The Potter's Ledger
+has 39 goals that pay coins, and every chapter you finish fires a pot for your
+shelf, glazed gold if you match par on every level.
 
 200 SOLVER-CHECKED LEVELS
 
@@ -71,8 +82,9 @@ delete this kind of game.
 
 PLAYS ANYWHERE
 
-Works completely offline. No account, no sign-in, nothing uploaded. Three
-extra themes to unlock with the coins you earn by playing.
+Works completely offline. No account, no sign-in, nothing uploaded. Themes,
+village friends, tile glazes and exit effects to unlock with the coins you
+earn by playing.
 
 BUILT TO BE READABLE
 
@@ -80,16 +92,19 @@ Block colours come from a colour-blind-safe palette, and you can turn on
 shapes so colour is never the only thing telling you where a block goes. A
 reduce-motion setting stops every animation.
 ```
-*About 2,160 characters. Every claim here was checked against the code on 23
-October 2026; re-check when a feature changes.*
+*About 2,690 characters. Every claim here was checked against the code on 13
+November 2026; re-check when a feature changes.*
 
 ---
 
 ## Release notes (500 characters max)
 
 ```
-First release. 200 solver-verified levels, four themes, and no timers or
-lives anywhere. Undo, hints and restarts are free and unlimited.
+New: the Daily Kiln, a fresh puzzle every day with streak badges. A daily
+gift with a new friend on day 7. The Potter's Ledger, 39 goals that pay
+coins. A pottery shelf with a pot for every chapter. A bigger shop with
+friends, tile glazes and exit effects. Chapter maps with scenery behind the
+board, friendlier music, and a Levels button on the win screen.
 ```
 
 ## Category and tags
