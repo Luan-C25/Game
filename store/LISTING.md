@@ -17,10 +17,12 @@ Glazeway.*
 ## Short description (80 characters max)
 
 ```
-Slide the blocks out. No timers, no lives, free hints. Every level is solvable.
+Slide blocks out through matching gates. No timers, no lives, unlimited hints.
 ```
 *78 characters. This is the line most people actually read, so it leads with
-the differentiators rather than the genre.*
+the differentiators rather than the genre. No "free": Play counts it as a
+price word in the short description and stops promoting the app (flagged 13
+November 2026).*
 
 ## Full description (4000 characters max)
 
