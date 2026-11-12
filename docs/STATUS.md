@@ -203,7 +203,7 @@ testers. Three testers' comments drove 1.0.1, versionCode 2:
 Next: upload 1.0.1 to the closed track, then apply for production with the
 answers that say what changed.
 
-## Chapter maps (12 November, not released yet)
+## Chapter maps (12 November, shipped in 1.1.0)
 
 The level select is now one illustrated map per chapter instead of a grid,
 and each chapter's scenery sits behind its levels on the game screen. The
@@ -222,7 +222,22 @@ art was designed in `design/maps/` (see its `NOTES.md`).
   the green chapters, Seaside and Porcelain on Snowy Peaks, Warm Clay on the
   clay chapters) and Lantern Gardens being the only dark chapter. Check them
   on the phone before deciding on an outline under the board.
-- Ships as 1.0.2 (versionCode 3) when it goes out; 1.0.1 is still in review.
+- Shipped in 1.1.0 (versionCode 3), below.
+
+## 1.1.0 (13 November, submitted to the closed track)
+
+The chapter maps plus the depth update (`docs/DEPTH-UPDATE.md`): Daily Kiln,
+daily gift, Potter's Ledger, pottery shelf, the four-tab shop with friends,
+glazes and effects, a friend standing on the tray, a Levels button on the win
+card, a real tune instead of the drone, and the reworked economy.
+
+- 1.0.1 is live on the closed track; the production application is in
+  review. 1.1.0 went to the closed track the same day, so when production is
+  approved, promote 1.1.0 rather than uploading again.
+- Store listing updated with it: new full description, eight screenshots
+  captured from the phone (`scripts/phone-screenshots.mjs`), and the short
+  description and feature graphic reworded without "free", which Play flags
+  as a price word.
 
 ## Next steps
 
