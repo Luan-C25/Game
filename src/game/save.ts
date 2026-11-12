@@ -8,6 +8,8 @@
  * are preserved rather than dropped.
  */
 
+import { defaultDaily, defaultGift, type DailyState, type GiftState } from './daily.ts';
+
 const STORAGE_KEY = 'colourjam.save.v1';
 
 export interface Settings {
@@ -24,6 +26,12 @@ export interface Settings {
   colourBlindShapes: boolean;
   reduceMotion: boolean;
   theme: string;
+  /** Tile finish; an unknown id draws the free default. */
+  glaze: string;
+  /** Exit effect; an unknown or empty id plays the free default. */
+  effect: string;
+  /** Character id sitting beside the board, or '' for nobody. */
+  companion: string;
 }
 
 export interface SaveData {
@@ -37,6 +45,17 @@ export interface SaveData {
   levelsSinceLastAd: number;
   lastAdAtMs: number;
   settings: Settings;
+  daily: DailyState;
+  gift: GiftState;
+  /** Character ids the player owns. */
+  characters: string[];
+  /** Potter's Ledger goals already paid out. */
+  goalsClaimed: string[];
+  /** Blocks flicked out through their gates, for the ledger. */
+  flicks: number;
+  /** Bought glaze and effect ids; free defaults need no entry. */
+  ownedGlazes: string[];
+  ownedEffects: string[];
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -46,6 +65,9 @@ export const DEFAULT_SETTINGS: Settings = {
   colourBlindShapes: true,
   reduceMotion: false,
   theme: 'slate',
+  glaze: 'gloss',
+  effect: '',
+  companion: '',
 };
 
 export function defaultSave(): SaveData {
@@ -59,11 +81,46 @@ export function defaultSave(): SaveData {
     levelsSinceLastAd: 0,
     lastAdAtMs: 0,
     settings: { ...DEFAULT_SETTINGS },
+    daily: defaultDaily(),
+    gift: defaultGift(),
+    characters: [],
+    goalsClaimed: [],
+    flicks: 0,
+    ownedGlazes: [],
+    ownedEffects: [],
   };
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
+}
+
+const whole = (v: unknown, min = 0): number | null =>
+  typeof v === 'number' && Number.isFinite(v) && v >= min ? Math.floor(v) : null;
+
+const numbers = (v: unknown): number[] =>
+  Array.isArray(v) ? v.filter((n): n is number => typeof n === 'number' && Number.isInteger(n) && n >= 0) : [];
+
+const strings = (v: unknown): string[] => (Array.isArray(v) ? v.filter((t): t is string => typeof t === 'string') : []);
+
+function reconcileDaily(raw: unknown): DailyState {
+  if (!isRecord(raw)) return defaultDaily();
+  const clearedDays = [...new Set(numbers(raw.clearedDays))].sort((a, b) => a - b);
+  return {
+    clearedDays,
+    streak: whole(raw.streak) ?? 0,
+    best: whole(raw.best) ?? 0,
+    badges: [...new Set(numbers(raw.badges))],
+  };
+}
+
+function reconcileGift(raw: unknown): GiftState {
+  if (!isRecord(raw)) return defaultGift();
+  const index = whole(raw.lastIndex);
+  return {
+    lastClaimDay: whole(raw.lastClaimDay),
+    lastIndex: index !== null && index <= 7 ? index : 0,
+  };
 }
 
 /** Merges a stored save over the defaults, discarding only what is invalid. */
@@ -95,6 +152,9 @@ export function reconcile(raw: unknown): SaveData {
         ? storedSettings.reduceMotion
         : base.settings.reduceMotion,
     theme: typeof storedSettings.theme === 'string' ? storedSettings.theme : base.settings.theme,
+    glaze: typeof storedSettings.glaze === 'string' ? storedSettings.glaze : base.settings.glaze,
+    effect: typeof storedSettings.effect === 'string' ? storedSettings.effect : base.settings.effect,
+    companion: typeof storedSettings.companion === 'string' ? storedSettings.companion : base.settings.companion,
   };
 
   const themes = Array.isArray(raw.unlockedThemes)
@@ -118,6 +178,14 @@ export function reconcile(raw: unknown): SaveData {
         : 0,
     lastAdAtMs: typeof raw.lastAdAtMs === 'number' && raw.lastAdAtMs >= 0 ? raw.lastAdAtMs : 0,
     settings,
+    daily: reconcileDaily(raw.daily),
+    gift: reconcileGift(raw.gift),
+    // Owned things are never dropped by a bad read of something else.
+    characters: [...new Set(strings(raw.characters))],
+    goalsClaimed: [...new Set(strings(raw.goalsClaimed))],
+    flicks: whole(raw.flicks) ?? 0,
+    ownedGlazes: [...new Set(strings(raw.ownedGlazes))],
+    ownedEffects: [...new Set(strings(raw.ownedEffects))],
   };
 }
 

@@ -31,16 +31,17 @@ export const AD_POLICY = {
 
 /**
  * Plain-language version of the above, rendered on the Promises screen.
- * Every line must be true of the shipped build. Promises about opt-in
- * rewarded ads and a Remove Ads purchase come back when those exist.
+ * Every line must be true of the shipped build. The Remove Ads promise
+ * comes back when that purchase exists.
  */
 export const AD_PROMISES: string[] = [
   'No ad will ever interrupt a puzzle you are solving.',
   'No ad will ever play when you finish a level.',
   'No ads at all until after level 10.',
   'After that, at most one ad per four levels, and never twice within three minutes.',
+  'The only ad you can choose to watch keeps your daily gift streak after one missed day. Saying no costs nothing else.',
   'Hints, undo and restart are free, unlimited, and never cost coins.',
-  'Coins buy themes. They are never required to finish a level.',
+  'Coins buy themes, friends, glazes and effects. They are never required to finish a level.',
 ];
 
 export interface AdState {

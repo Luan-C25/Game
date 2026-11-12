@@ -15,6 +15,7 @@
  */
 
 import { blockCells, type Block, type Level } from '../engine/types.ts';
+import type { GlazeId } from './cosmetics.ts';
 import type { Particles } from './particles.ts';
 import { blockColour, blockGlyph, shade, tint, withAlpha, type GlyphShape, type Theme } from './theme.ts';
 
@@ -40,6 +41,8 @@ export interface RenderOptions {
   drag?: DragVisual | null;
   highlight?: number[];
   particles?: Particles;
+  /** Tile finish. Defaults to 'gloss', which is the original look. */
+  glaze?: GlazeId;
 }
 
 /**
@@ -538,6 +541,175 @@ function blockBounds(block: Block, vp: Viewport, dx: number, dy: number) {
   };
 }
 
+/* ----------------------------------------------------------- glaze finishes */
+
+type Bounds = ReturnType<typeof blockBounds>;
+
+/** mulberry32: a tiny seeded generator, so patterns never use Math.random. */
+function seededRng(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+interface Fleck {
+  x: number;
+  y: number;
+  r: number;
+  light: boolean;
+}
+
+const FLECKS_PER_CELL = 15;
+const speckleCache = new Map<string, Fleck[]>();
+
+/** Fleck positions in unit coordinates, per block id and cell count. Built once. */
+function flecksFor(block: Block, cellCount: number): Fleck[] {
+  const key = block.id + ':' + cellCount;
+  let list = speckleCache.get(key);
+  if (!list) {
+    const r = seededRng(block.id * 7919 + 13);
+    list = [];
+    for (let c = 0; c < cellCount; c++) {
+      for (let i = 0; i < FLECKS_PER_CELL; i++) {
+        list.push({ x: 0.15 + r() * 0.7, y: 0.17 + r() * 0.66, r: 0.016 + r() * 0.02, light: i >= 10 });
+      }
+    }
+    speckleCache.set(key, list);
+  }
+  return list;
+}
+
+/** One fixed crack template in unit coordinates; blocks pick a variant of it. */
+const CRACKLE: number[][][] = [
+  [[0.06, 0.34], [0.3, 0.42], [0.46, 0.3], [0.72, 0.38], [0.94, 0.27]],
+  [[0.46, 0.3], [0.53, 0.08]],
+  [[0.3, 0.42], [0.26, 0.7], [0.52, 0.78], [0.62, 0.96]],
+  [[0.72, 0.38], [0.66, 0.62], [0.9, 0.76]],
+  [[0.26, 0.7], [0.06, 0.82]],
+  [[0.52, 0.78], [0.78, 0.88]],
+];
+
+/** The eight variants (4 rotations, optional mirror) as ready-made point lists. */
+const CRACKLE_VARIANTS: number[][][][] = [];
+for (let v = 0; v < 8; v++) {
+  CRACKLE_VARIANTS.push(
+    CRACKLE.map((line) =>
+      line.map(([px, py]) => {
+        let x = px;
+        let y = py;
+        if (v >> 2) x = 1 - x;
+        for (let i = 0; i < (v & 3); i++) {
+          const t = x;
+          x = 1 - y;
+          y = t;
+        }
+        return [x, y];
+      }),
+    ),
+  );
+}
+
+function fillPill(
+  ctx: CanvasRenderingContext2D,
+  b: Bounds,
+  fx: number,
+  fy: number,
+  fw: number,
+  fh: number,
+  fill: string,
+): void {
+  const w = fw * b.w;
+  const h = fh * b.h;
+  ctx.fillStyle = fill;
+  roundRectPath(ctx, b.x + fx * b.w, b.y + fy * b.h, w, h, { tl: h / 2, tr: h / 2, br: h / 2, bl: h / 2 });
+  ctx.fill();
+}
+
+/**
+ * Draws one non-gloss finish over the flat base colour, clipped to the face.
+ * Everything is a flat fill or hairline stroke in a fixed tint or shade of
+ * the tile's own colour, so the colour (and the glyph drawn after) is never
+ * disturbed. Patterns are seeded from the block id, so they hold still.
+ */
+function drawGlazeLayer(
+  ctx: CanvasRenderingContext2D,
+  glaze: GlazeId,
+  block: Block,
+  vp: Viewport,
+  b: Bounds,
+  base: string,
+  dx: number,
+  dy: number,
+  face: () => void,
+  inset: number,
+): void {
+  const { cell } = vp;
+  const cells = blockCells(block);
+  ctx.save();
+  face();
+  ctx.clip();
+
+  if (glaze === 'speckled') {
+    fillPill(ctx, b, 0.13, 0.11, 0.3, 0.1, 'rgba(255,255,255,0.32)');
+    const flecks = flecksFor(block, cells.length);
+    for (const light of [false, true]) {
+      ctx.fillStyle = light ? withAlpha(tint(base, 0.55), 0.75) : withAlpha(shade(base, 0.32), 0.6);
+      ctx.beginPath();
+      for (let ci = 0; ci < cells.length; ci++) {
+        const cx = vp.originX + cells[ci].x * cell + dx;
+        const cy = vp.originY + cells[ci].y * cell + dy;
+        for (let i = 0; i < FLECKS_PER_CELL; i++) {
+          const f = flecks[ci * FLECKS_PER_CELL + i];
+          if (f.light !== light) continue;
+          const px = cx + f.x * cell;
+          const py = cy + f.y * cell;
+          const rr = Math.max(0.9, f.r * cell);
+          ctx.moveTo(px + rr, py);
+          ctx.arc(px, py, rr, 0, Math.PI * 2);
+        }
+      }
+      ctx.fill();
+    }
+  } else if (glaze === 'crackle') {
+    fillPill(ctx, b, 0.13, 0.11, 0.34, 0.11, 'rgba(255,255,255,0.4)');
+    const lines = CRACKLE_VARIANTS[block.id % 8];
+    ctx.strokeStyle = withAlpha(shade(base, 0.38), 0.55);
+    ctx.lineWidth = Math.max(0.8, cell * 0.016);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    for (const c of cells) {
+      const cx = vp.originX + c.x * cell + dx;
+      const cy = vp.originY + c.y * cell + dy;
+      for (const line of lines) {
+        for (let i = 0; i < line.length; i++) {
+          const px = cx + line[i][0] * cell;
+          const py = cy + line[i][1] * cell;
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+      }
+    }
+    ctx.stroke();
+  } else if (glaze === 'matte') {
+    // No shine: a pressed-in inset, dark on the top-left, light on the bottom-right.
+    const sh = Math.max(1.4, cell * 0.04);
+    ctx.lineWidth = sh * 2;
+    ctx.strokeStyle = withAlpha(shade(base, 0.3), 0.38);
+    blockPath(ctx, block, vp, dx + sh, dy + sh, inset);
+    ctx.stroke();
+    ctx.strokeStyle = withAlpha(tint(base, 0.35), 0.3);
+    blockPath(ctx, block, vp, dx - sh, dy - sh, inset);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
 function drawBlock(
   ctx: CanvasRenderingContext2D,
   block: Block,
@@ -573,16 +745,22 @@ function drawBlock(
   face();
   ctx.fill();
 
-  // A soft, broad top highlight - satin, not a candy sparkle.
-  ctx.save();
-  face();
-  ctx.clip();
-  const sheen = ctx.createLinearGradient(bounds.x, bounds.y, bounds.x, bounds.y + bounds.h * 0.62);
-  sheen.addColorStop(0, 'rgba(255,255,255,0.24)');
-  sheen.addColorStop(1, 'rgba(255,255,255,0)');
-  ctx.fillStyle = sheen;
-  ctx.fillRect(bounds.x, bounds.y, bounds.w, bounds.h * 0.62);
-  ctx.restore();
+  // The finish layer. Crates and the default gloss keep the original satin
+  // sheen; the other glazes draw flat shapes only (no gradients).
+  const glaze: GlazeId = isCrate ? 'gloss' : (options.glaze ?? 'gloss');
+  if (glaze === 'gloss') {
+    ctx.save();
+    face();
+    ctx.clip();
+    const sheen = ctx.createLinearGradient(bounds.x, bounds.y, bounds.x, bounds.y + bounds.h * 0.62);
+    sheen.addColorStop(0, 'rgba(255,255,255,0.24)');
+    sheen.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = sheen;
+    ctx.fillRect(bounds.x, bounds.y, bounds.w, bounds.h * 0.62);
+    ctx.restore();
+  } else {
+    drawGlazeLayer(ctx, glaze, block, vp, bounds, base, dx, dy, face, inset);
+  }
 
   // Crates are embossed obstacle pieces: raised ribs, each with a lit edge
   // and a shaded one, so they read as moulded rather than painted.
@@ -634,14 +812,17 @@ function drawBlock(
   ctx.restore();
 
   // The crisp inset line just inside the edge - the moulded tile's own rim.
-  ctx.save();
-  face();
-  ctx.clip();
-  ctx.strokeStyle = withAlpha(tint(base, 0.5), 0.85);
-  ctx.lineWidth = 1;
-  blockPath(ctx, block, vp, dx + 1.5, dy + 1.5, inset + 1.5);
-  ctx.stroke();
-  ctx.restore();
+  // Matte skips it: it has its own pressed-in inset instead.
+  if (glaze !== 'matte') {
+    ctx.save();
+    face();
+    ctx.clip();
+    ctx.strokeStyle = withAlpha(tint(base, 0.5), 0.85);
+    ctx.lineWidth = 1;
+    blockPath(ctx, block, vp, dx + 1.5, dy + 1.5, inset + 1.5);
+    ctx.stroke();
+    ctx.restore();
+  }
 
   // Hard outline, so every tile stays legible against its neighbours.
   face();

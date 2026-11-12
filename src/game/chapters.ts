@@ -7,6 +7,8 @@
 
 export interface Chapter {
   n: number;
+  /** File-name form of the name, as the design files use it (pots, maps). */
+  slug: string;
   name: string;
   /** Size of the map art, in the units the node positions use. */
   width: number;
@@ -22,6 +24,7 @@ export const CHAPTER_SIZE = 20;
 export const CHAPTERS: Chapter[] = [
   {
     n: 1,
+    slug: 'kiln-meadow',
     name: 'Kiln Meadow',
     width: 375,
     height: 1640,
@@ -30,6 +33,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     n: 2,
+    slug: 'clay-creek',
     name: 'Clay Creek',
     width: 375,
     height: 1640,
@@ -38,6 +42,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     n: 3,
+    slug: 'sunflower-fields',
     name: 'Sunflower Fields',
     width: 375,
     height: 1640,
@@ -46,6 +51,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     n: 4,
+    slug: 'market-town',
     name: 'Market Town',
     width: 375,
     height: 1640,
@@ -54,6 +60,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     n: 5,
+    slug: 'seaside-pier',
     name: 'Seaside Pier',
     width: 375,
     height: 1640,
@@ -62,6 +69,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     n: 6,
+    slug: 'bluegum-forest',
     name: 'Bluegum Forest',
     width: 375,
     height: 1640,
@@ -70,6 +78,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     n: 7,
+    slug: 'lantern-gardens',
     name: 'Lantern Gardens',
     width: 375,
     height: 1640,
@@ -78,6 +87,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     n: 8,
+    slug: 'snowy-peaks',
     name: 'Snowy Peaks',
     width: 375,
     height: 1640,
@@ -86,6 +96,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     n: 9,
+    slug: 'glass-desert',
     name: 'Glass Desert',
     width: 375,
     height: 1640,
@@ -94,6 +105,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     n: 10,
+    slug: 'great-kiln',
     name: 'The Great Kiln',
     width: 375,
     height: 1640,

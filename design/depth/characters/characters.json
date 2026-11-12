@@ -1,0 +1,158 @@
+[
+  {
+    "id": "potter",
+    "name": "Poppy the Potter",
+    "description": "Keeps the village wheel turning and always has a fresh pot in hand.",
+    "home": "Kiln Meadow",
+    "homeChapter": 1,
+    "kind": "gift",
+    "giftOrder": 1,
+    "files": {
+      "map": "potter-map.svg",
+      "side": "potter-side.svg"
+    }
+  },
+  {
+    "id": "dog",
+    "name": "Biscuit the Dog",
+    "description": "A friendly meadow dog who guards the kiln and fetches stray tiles.",
+    "home": "Kiln Meadow",
+    "homeChapter": 1,
+    "kind": "gift",
+    "giftOrder": 2,
+    "files": {
+      "map": "dog-map.svg",
+      "side": "dog-side.svg"
+    }
+  },
+  {
+    "id": "duck",
+    "name": "Puddle the Duck",
+    "description": "Paddles along the creek and quacks when a block slides home.",
+    "home": "Clay Creek",
+    "homeChapter": 2,
+    "kind": "gift",
+    "giftOrder": 3,
+    "files": {
+      "map": "duck-map.svg",
+      "side": "duck-side.svg"
+    }
+  },
+  {
+    "id": "scarecrow",
+    "name": "Scruff the Scarecrow",
+    "description": "Keeps watch over the sunflowers, with a crow friend on one arm.",
+    "home": "Sunflower Fields",
+    "homeChapter": 3,
+    "kind": "gift",
+    "giftOrder": 4,
+    "files": {
+      "map": "scarecrow-map.svg",
+      "side": "scarecrow-side.svg"
+    }
+  },
+  {
+    "id": "cat",
+    "name": "Marmalade the Cat",
+    "description": "A market-square cat who naps on warm cobbles and watches every move.",
+    "home": "Market Town",
+    "homeChapter": 4,
+    "kind": "gift",
+    "giftOrder": 5,
+    "files": {
+      "map": "cat-map.svg",
+      "side": "cat-side.svg"
+    }
+  },
+  {
+    "id": "kilnmaster",
+    "name": "Old Ember the Kiln Master",
+    "description": "Sooty, proud and patient, he has fired every glaze at the Great Kiln.",
+    "home": "The Great Kiln",
+    "homeChapter": 10,
+    "kind": "gift",
+    "giftOrder": 6,
+    "files": {
+      "map": "kilnmaster-map.svg",
+      "side": "kilnmaster-side.svg"
+    }
+  },
+  {
+    "id": "stallholder",
+    "name": "Mabel the Stallholder",
+    "description": "Sells apples and chatter from a striped stall in Market Town.",
+    "home": "Market Town",
+    "homeChapter": 4,
+    "kind": "shop",
+    "price": 120,
+    "files": {
+      "map": "stallholder-map.svg",
+      "side": "stallholder-side.svg"
+    }
+  },
+  {
+    "id": "koala",
+    "name": "Gumnut the Koala",
+    "description": "Dozes on a gum branch and wakes only for a very good puzzle.",
+    "home": "Bluegum Forest",
+    "homeChapter": 6,
+    "kind": "shop",
+    "price": 140,
+    "files": {
+      "map": "koala-map.svg",
+      "side": "koala-side.svg"
+    }
+  },
+  {
+    "id": "ferrycaptain",
+    "name": "Captain Brine",
+    "description": "Runs the ferry off Seaside Pier and keeps a lifebuoy handy.",
+    "home": "Seaside Pier",
+    "homeChapter": 5,
+    "kind": "shop",
+    "price": 160,
+    "files": {
+      "map": "ferrycaptain-map.svg",
+      "side": "ferrycaptain-side.svg"
+    }
+  },
+  {
+    "id": "snowgoat",
+    "name": "Flurry the Snow-goat",
+    "description": "A scarfed mountain goat who hops the icy ledges of Snowy Peaks.",
+    "home": "Snowy Peaks",
+    "homeChapter": 8,
+    "kind": "shop",
+    "price": 180,
+    "files": {
+      "map": "snowgoat-map.svg",
+      "side": "snowgoat-side.svg"
+    }
+  },
+  {
+    "id": "lanternkeeper",
+    "name": "Wick the Lantern Keeper",
+    "description": "Lights every lantern in the garden at dusk, one pole at a time.",
+    "home": "Lantern Gardens",
+    "homeChapter": 7,
+    "kind": "shop",
+    "price": 200,
+    "files": {
+      "map": "lanternkeeper-map.svg",
+      "side": "lanternkeeper-side.svg"
+    }
+  },
+  {
+    "id": "cameltrader",
+    "name": "Dune the Camel Trader",
+    "description": "Hauls glass and bright rugs across the desert with a patient smile.",
+    "home": "Glass Desert",
+    "homeChapter": 9,
+    "kind": "shop",
+    "price": 250,
+    "files": {
+      "map": "cameltrader-map.svg",
+      "side": "cameltrader-side.svg"
+    }
+  }
+]

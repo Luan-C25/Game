@@ -1,0 +1,177 @@
+[
+  {
+    "file": "badge-7.svg",
+    "width": 96,
+    "height": 96,
+    "label": "7 day streak (bronze glaze)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-14.svg",
+    "width": 96,
+    "height": 96,
+    "label": "14 day streak (silver glaze)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-21.svg",
+    "width": 96,
+    "height": 96,
+    "label": "21 day streak (gold glaze)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-month-01.svg",
+    "width": 96,
+    "height": 96,
+    "label": "Month 1 streak (30 days)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-month-02.svg",
+    "width": 96,
+    "height": 96,
+    "label": "Month 2 streak (60 days)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-month-03.svg",
+    "width": 96,
+    "height": 96,
+    "label": "Month 3 streak (90 days)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-month-04.svg",
+    "width": 96,
+    "height": 96,
+    "label": "Month 4 streak (120 days)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-month-05.svg",
+    "width": 96,
+    "height": 96,
+    "label": "Month 5 streak (150 days)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-month-06.svg",
+    "width": 96,
+    "height": 96,
+    "label": "Month 6 streak (180 days)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-month-07.svg",
+    "width": 96,
+    "height": 96,
+    "label": "Month 7 streak (210 days)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-month-08.svg",
+    "width": 96,
+    "height": 96,
+    "label": "Month 8 streak (240 days)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-month-09.svg",
+    "width": 96,
+    "height": 96,
+    "label": "Month 9 streak (270 days)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-month-10.svg",
+    "width": 96,
+    "height": 96,
+    "label": "Month 10 streak (300 days)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-month-11.svg",
+    "width": 96,
+    "height": 96,
+    "label": "Month 11 streak (330 days)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-month-12.svg",
+    "width": 96,
+    "height": 96,
+    "label": "Month 12 streak (1 year, 360 days)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-year-template.svg",
+    "width": 96,
+    "height": 96,
+    "label": "Year and months streak template (1y 3m placeholder)",
+    "group": "streaks"
+  },
+  {
+    "file": "badge-locked.svg",
+    "width": 96,
+    "height": 96,
+    "label": "Streak badge not yet earned",
+    "group": "streaks"
+  },
+  {
+    "file": "gift-kiln-closed.svg",
+    "width": 96,
+    "height": 110,
+    "label": "Daily gift kiln, door shut",
+    "group": "streaks"
+  },
+  {
+    "file": "gift-kiln-ready.svg",
+    "width": 96,
+    "height": 110,
+    "label": "Daily gift kiln, ready to open (glowing)",
+    "group": "streaks"
+  },
+  {
+    "file": "gift-kiln-open.svg",
+    "width": 96,
+    "height": 110,
+    "label": "Daily gift kiln, open with a gift out front",
+    "group": "streaks"
+  },
+  {
+    "file": "gift-row.svg",
+    "width": 375,
+    "height": 262,
+    "label": "Daily gift row, 7 days (day 1 today)",
+    "group": "streaks"
+  },
+  {
+    "file": "gift-row-day3.svg",
+    "width": 375,
+    "height": 262,
+    "label": "Daily gift row, days 1 and 2 claimed, day 3 today",
+    "group": "streaks"
+  },
+  {
+    "file": "icon-daily-kiln.svg",
+    "width": 64,
+    "height": 64,
+    "label": "Daily Kiln home-screen icon",
+    "group": "streaks"
+  },
+  {
+    "file": "calendar-plate.svg",
+    "width": 375,
+    "height": 412,
+    "label": "Monthly calendar plate, November 2026 sample",
+    "group": "streaks"
+  },
+  {
+    "file": "calendar-plate-empty.svg",
+    "width": 375,
+    "height": 412,
+    "label": "Monthly calendar plate, empty month",
+    "group": "streaks"
+  }
+]

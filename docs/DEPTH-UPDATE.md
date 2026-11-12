@@ -86,3 +86,25 @@ badges, gift kiln, glaze finishes and effects need a design session first:
 the brief is `docs/DEPTH-ART-PROMPT.md`.
 
 Ships as one release after the chapter maps (1.0.2 or 1.1.0).
+
+## Status (12 November 2026)
+
+Built, with the art from `design/depth/` (imported by
+`node scripts/import-depth-art.mjs` into `public/depth/`, which also writes
+`src/game/characters.ts`):
+
+- Daily Kiln with streak, month calendar and badge art; board generated from
+  the date at the weekday's difficulty, over a rotating chapter background.
+- Daily gift with the gift kiln art, day-7 friends in the art's order, and
+  the opt-in ad that keeps a place after exactly one missed day.
+- Potter's Ledger (39 goals), with a dot on the home button when one is ready.
+- Pottery shelf: fired when a chapter is cleared, gold when every level
+  matches par.
+- Shop with Themes, Friends, Glazes and Effects. Owned friends stand on
+  their home chapter's map; one can sit beside the board.
+- Glaze finishes in `render.ts`, exit effects in `particles.ts`, prices in
+  `src/game/cosmetics.ts`.
+
+Still to do: play a Daily Kiln to the end on the phone, check the glazes and
+effects on a low-end device, and settle the economy (gift coins 10 to 60,
+glazes 150 to 200, effects 80 to 120, friends 120 to 250).

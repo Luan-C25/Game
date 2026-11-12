@@ -54,12 +54,14 @@ export interface DragVisualState {
 export interface InputCallbacks {
   onChange(): void;
   /** Fires while the block is still on the board, so effects can use its position. */
-  onBeforeExit(blockId: number): void;
+  onBeforeExit(blockId: number, dir: Dir): void;
   onBlockExited(): void;
   onBlocked(): void;
   onPickUp(): void;
   /** The game's own reduce-motion setting: a flick then lands at once. */
   reduceMotion(): boolean;
+  /** A flick carried a block out through its gate. */
+  onFlicked?(): void;
 }
 
 export class DragController {
@@ -206,7 +208,7 @@ export class DragController {
       // Only when this very step takes it off the board - reach.exits alone
       // is true from several cells away.
       const reach = session.reachIn(this.blockId, dir);
-      if (reach.exits && reach.distance === 1) this.callbacks.onBeforeExit(this.blockId);
+      if (reach.exits && reach.distance === 1) this.callbacks.onBeforeExit(this.blockId, dir);
       if (!session.step(this.blockId, dir, 1)) {
         jammed = true;
         this.callbacks.onBlocked();
@@ -290,10 +292,13 @@ export class DragController {
       this.flickFrame = 0;
       // Up to the gate first, so the exit burst starts where a dragged exit's would.
       if (reach.distance > 1) session.step(blockId, dir, reach.distance - 1);
-      this.callbacks.onBeforeExit(blockId);
+      this.callbacks.onBeforeExit(blockId, dir);
       const exited = session.step(blockId, dir, 1);
       this.finishGesture();
-      if (exited) this.callbacks.onBlockExited();
+      if (exited) {
+        this.callbacks.onFlicked?.();
+        this.callbacks.onBlockExited();
+      }
       this.callbacks.onChange();
     };
 

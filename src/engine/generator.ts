@@ -334,6 +334,8 @@ export interface GenerateOptions {
   maxAttempts?: number;
   maxStatesPerSolve?: number;
   scrambleCap?: number;
+  /** Use this level number's difficulty instead of the id's own (daily puzzles). */
+  profileLevel?: number;
 }
 
 /**
@@ -344,7 +346,7 @@ export function generateLevel(id: number, options: GenerateOptions = {}): Level 
   const maxAttempts = options.maxAttempts ?? 60;
   const maxStates = options.maxStatesPerSolve ?? 60_000;
   const scrambleCap = options.scrambleCap ?? 8;
-  const profile = profileForLevel(id);
+  const profile = profileForLevel(options.profileLevel ?? id);
   const seed = seedForLevel(id);
   const rng = new Rng(seed);
 

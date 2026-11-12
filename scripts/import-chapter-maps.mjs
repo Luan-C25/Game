@@ -38,7 +38,7 @@ const entries = CHAPTERS.map(([n, id, name]) => {
   });
   const nodes = json.levels.map((l) => `[${l.x}, ${l.y}]`).join(', ');
   const locked = LOCKED[n] ?? DEFAULT_LOCKED;
-  return `  {\n    n: ${n},\n    name: '${name.replace(/'/g, "\\'")}',\n    width: ${json.width},\n    height: ${json.height},\n    locked: ['${locked[0]}', '${locked[1]}'],\n    nodes: [${nodes}],\n  },`;
+  return `  {\n    n: ${n},\n    slug: '${id}',\n    name: '${name.replace(/'/g, "\\'")}',\n    width: ${json.width},\n    height: ${json.height},\n    locked: ['${locked[0]}', '${locked[1]}'],\n    nodes: [${nodes}],\n  },`;
 });
 
 writeFileSync(
@@ -52,6 +52,8 @@ writeFileSync(
 
 export interface Chapter {
   n: number;
+  /** File-name form of the name, as the design files use it (pots, maps). */
+  slug: string;
   name: string;
   /** Size of the map art, in the units the node positions use. */
   width: number;

@@ -1,0 +1,233 @@
+[
+  {
+    "file": "pot-1-kiln-meadow.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Kiln Meadow",
+    "group": "pots"
+  },
+  {
+    "file": "pot-1-kiln-meadow-gold.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Kiln Meadow (gold)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-1-kiln-meadow-empty.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Kiln Meadow (not fired)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-2-clay-creek.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Clay Creek",
+    "group": "pots"
+  },
+  {
+    "file": "pot-2-clay-creek-gold.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Clay Creek (gold)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-2-clay-creek-empty.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Clay Creek (not fired)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-3-sunflower-fields.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Sunflower Fields",
+    "group": "pots"
+  },
+  {
+    "file": "pot-3-sunflower-fields-gold.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Sunflower Fields (gold)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-3-sunflower-fields-empty.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Sunflower Fields (not fired)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-4-market-town.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Market Town",
+    "group": "pots"
+  },
+  {
+    "file": "pot-4-market-town-gold.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Market Town (gold)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-4-market-town-empty.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Market Town (not fired)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-5-seaside-pier.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Seaside Pier",
+    "group": "pots"
+  },
+  {
+    "file": "pot-5-seaside-pier-gold.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Seaside Pier (gold)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-5-seaside-pier-empty.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Seaside Pier (not fired)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-6-bluegum-forest.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Bluegum Forest",
+    "group": "pots"
+  },
+  {
+    "file": "pot-6-bluegum-forest-gold.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Bluegum Forest (gold)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-6-bluegum-forest-empty.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Bluegum Forest (not fired)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-7-lantern-gardens.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Lantern Gardens",
+    "group": "pots"
+  },
+  {
+    "file": "pot-7-lantern-gardens-gold.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Lantern Gardens (gold)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-7-lantern-gardens-empty.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Lantern Gardens (not fired)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-8-snowy-peaks.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Snowy Peaks",
+    "group": "pots"
+  },
+  {
+    "file": "pot-8-snowy-peaks-gold.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Snowy Peaks (gold)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-8-snowy-peaks-empty.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Snowy Peaks (not fired)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-9-glass-desert.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Glass Desert",
+    "group": "pots"
+  },
+  {
+    "file": "pot-9-glass-desert-gold.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Glass Desert (gold)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-9-glass-desert-empty.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Glass Desert (not fired)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-10-great-kiln.svg",
+    "width": 96,
+    "height": 120,
+    "label": "The Great Kiln",
+    "group": "pots"
+  },
+  {
+    "file": "pot-10-great-kiln-gold.svg",
+    "width": 96,
+    "height": 120,
+    "label": "The Great Kiln (gold)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-10-great-kiln-empty.svg",
+    "width": 96,
+    "height": 120,
+    "label": "The Great Kiln (not fired)",
+    "group": "pots"
+  },
+  {
+    "file": "pot-empty.svg",
+    "width": 96,
+    "height": 120,
+    "label": "Not fired yet",
+    "group": "pots"
+  },
+  {
+    "file": "shelf.svg",
+    "width": 375,
+    "height": 1080,
+    "label": "Pottery shelf (sample)",
+    "group": "pots"
+  },
+  {
+    "file": "shelf-empty.svg",
+    "width": 375,
+    "height": 1080,
+    "label": "Pottery shelf (all not fired)",
+    "group": "pots"
+  }
+]
