@@ -17,10 +17,11 @@ Glazeway.*
 ## Short description (80 characters max)
 
 ```
-Slide blocks out through matching gates. No timers, no lives, unlimited hints.
+Slide colour blocks out through matching gates. 200 levels and a daily puzzle.
 ```
-*78 characters. This is the line most people actually read, so it leads with
-the differentiators rather than the genre. No "free": Play counts it as a
+*78 characters. It says what the game is, then gives two reasons to pick it
+that the feature graphic does not already say (Google recommends the two do
+not repeat each other, as they can appear side by side). No "free": Play counts it as a
 price word in the short description and stops promoting the app (flagged 13
 November 2026).*
 
