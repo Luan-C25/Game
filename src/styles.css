@@ -1531,9 +1531,19 @@ hr {
   flex: none;
 }
 
+/* On a phone the button drops under the text instead of squeezing the name
+   into three lines; on a wide screen the row stays on one line. */
+.theme-row {
+  flex-wrap: wrap;
+}
+
+.theme-row .shop-item {
+  flex: 1 1 220px;
+}
+
 .theme-row .btn {
   flex: none;
-  max-width: 46%;
+  margin-left: auto;
 }
 
 /* The pottery shelf: wooden planks, two pots a plank, a plaque under each. */
