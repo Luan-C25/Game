@@ -43,19 +43,19 @@ function chapterGoals(): Goal[] {
       {
         id: `chapter-${chapter.n}-clear`,
         title: `Clear every level in ${chapter.name}`,
-        reward: 50,
+        reward: 25,
         progress: (s) => ({ current: ids.filter((id) => s.bestMoves[id] !== undefined).length, target: CHAPTER_SIZE }),
       },
       {
         id: `chapter-${chapter.n}-stars`,
         title: `Earn 50 stars in ${chapter.name}`,
-        reward: 75,
+        reward: 40,
         progress: (s) => ({ current: Math.min(50, stars(s)), target: 50 }),
       },
       {
         id: `chapter-${chapter.n}-par`,
         title: `Match par on every level in ${chapter.name}`,
-        reward: 150,
+        reward: 75,
         progress: (s) => ({ current: stars(s), target: CHAPTER_SIZE * 3 }),
       },
     );
@@ -73,9 +73,9 @@ function tiered(id: string, title: (n: number) => string, tiers: [number, number
 }
 
 export const GOALS: Goal[] = [
-  ...tiered('clears', (n) => `Clear ${n} levels`, [[10, 20], [50, 60], [100, 120]], (s) => Object.keys(s.bestMoves).length),
-  ...tiered('flicks', (n) => `Flick ${n.toLocaleString('en-AU')} blocks out through their gates`, [[100, 25], [500, 75], [1000, 150]], (s) => s.flicks),
-  ...tiered('daily', (n) => (n === 1 ? 'Clear a Daily Kiln' : `Clear ${n} Daily Kilns`), [[1, 15], [10, 60], [50, 200]], (s) => s.dailyClears),
+  ...tiered('clears', (n) => `Clear ${n} levels`, [[10, 10], [50, 30], [100, 60]], (s) => Object.keys(s.bestMoves).length),
+  ...tiered('flicks', (n) => `Flick ${n.toLocaleString('en-AU')} blocks out through their gates`, [[100, 15], [500, 40], [1000, 75]], (s) => s.flicks),
+  ...tiered('daily', (n) => (n === 1 ? 'Clear a Daily Kiln' : `Clear ${n} Daily Kilns`), [[1, 10], [10, 30], [50, 100]], (s) => s.dailyClears),
   ...chapterGoals(),
 ];
 

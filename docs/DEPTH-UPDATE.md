@@ -105,6 +105,31 @@ Built, with the art from `design/depth/` (imported by
 - Glaze finishes in `render.ts`, exit effects in `particles.ts`, prices in
   `src/game/cosmetics.ts`.
 
-Still to do: play a Daily Kiln to the end on the phone, check the glazes and
-effects on a low-end device, and settle the economy (gift coins 10 to 60,
-glazes 150 to 200, effects 80 to 120, friends 120 to 250).
+Played end to end on the phone on 13 November 2026.
+
+## Economy (13 November 2026)
+
+The owner's rule: a player should not be able to buy everything long before
+finishing the 200 levels. The first prices let a typical player earn about
+10,000 coins by level 200 against a 3,400-coin shop, so everything was
+affordable by about level 70. Income was roughly halved and prices raised:
+
+| Source | Before | Now |
+| --- | --- | --- |
+| Level, first clear | 10 + 5 a star (15 to 25) | 5 + 2 a star (7 to 11) |
+| Daily Kiln | 30 | 15 |
+| Daily gift days 1 to 6 | 10, 15, 20, 30, 40, 60 | 5, 8, 10, 15, 20, 30 |
+| Day 7 once every gift friend is owned | 150 | 75 |
+| Goals (39) | about 3,500 in all | about 1,770 in all |
+
+| Shop | Before | Now |
+| --- | --- | --- |
+| Themes | 100 to 400 (1,650 in all) | 150 to 600 (2,475) |
+| Glazes | 150, 175, 200 | 250, 300, 350 |
+| Effects | 80, 120 | 150, 200 |
+| Friends | 120 to 250 (1,050) | 200 to 450 (1,850) |
+
+A typical player (about 2.5 stars a level, half the par goals, a daily most
+days for six weeks) now earns about 4,300 by level 200 against a 5,575-coin
+shop, so the last few items land after the levels run out, carried by the
+Daily Kiln and gifts. Coins already earned are kept.

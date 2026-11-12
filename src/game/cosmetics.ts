@@ -18,9 +18,9 @@ export const DEFAULT_GLAZE: GlazeId = 'gloss';
 
 export const GLAZES: GlazeInfo[] = [
   { id: 'gloss', name: 'Gloss', price: 0, blurb: 'Crisp and glassy, with one clean highlight.' },
-  { id: 'speckled', name: 'Speckled', price: 150, blurb: 'Fired clay with tiny iron flecks.' },
-  { id: 'crackle', name: 'Crackle', price: 175, blurb: 'Fine hairline cracks, like old crazed glaze.' },
-  { id: 'matte', name: 'Matte', price: 200, blurb: 'No shine. Soft, unglazed clay.' },
+  { id: 'speckled', name: 'Speckled', price: 250, blurb: 'Fired clay with tiny iron flecks.' },
+  { id: 'crackle', name: 'Crackle', price: 300, blurb: 'Fine hairline cracks, like old crazed glaze.' },
+  { id: 'matte', name: 'Matte', price: 350, blurb: 'No shine. Soft, unglazed clay.' },
 ];
 
 export type EffectId = 'kiln-puff' | 'petals' | 'glaze-splash';
@@ -36,8 +36,8 @@ export const DEFAULT_EFFECT: EffectId = 'kiln-puff';
 
 export const EFFECTS: EffectInfo[] = [
   { id: 'kiln-puff', name: 'Kiln puff', price: 0, blurb: 'Three soft puffs of kiln smoke.' },
-  { id: 'petals', name: 'Petals', price: 80, blurb: 'A small handful of petals in the tile colour.' },
-  { id: 'glaze-splash', name: 'Glaze splash', price: 120, blurb: 'The glaze pours out at the gate.' },
+  { id: 'petals', name: 'Petals', price: 150, blurb: 'A small handful of petals in the tile colour.' },
+  { id: 'glaze-splash', name: 'Glaze splash', price: 200, blurb: 'The glaze pours out at the gate.' },
 ];
 
 export function glazeById(id: string): GlazeInfo {

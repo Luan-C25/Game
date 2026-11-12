@@ -84,7 +84,7 @@
     "home": "Market Town",
     "homeChapter": 4,
     "kind": "shop",
-    "price": 120,
+    "price": 200,
     "files": {
       "map": "stallholder-map.svg",
       "side": "stallholder-side.svg"
@@ -97,7 +97,7 @@
     "home": "Bluegum Forest",
     "homeChapter": 6,
     "kind": "shop",
-    "price": 140,
+    "price": 240,
     "files": {
       "map": "koala-map.svg",
       "side": "koala-side.svg"
@@ -110,7 +110,7 @@
     "home": "Seaside Pier",
     "homeChapter": 5,
     "kind": "shop",
-    "price": 160,
+    "price": 280,
     "files": {
       "map": "ferrycaptain-map.svg",
       "side": "ferrycaptain-side.svg"
@@ -123,7 +123,7 @@
     "home": "Snowy Peaks",
     "homeChapter": 8,
     "kind": "shop",
-    "price": 180,
+    "price": 320,
     "files": {
       "map": "snowgoat-map.svg",
       "side": "snowgoat-side.svg"
@@ -136,7 +136,7 @@
     "home": "Lantern Gardens",
     "homeChapter": 7,
     "kind": "shop",
-    "price": 200,
+    "price": 360,
     "files": {
       "map": "lanternkeeper-map.svg",
       "side": "lanternkeeper-side.svg"
@@ -149,7 +149,7 @@
     "home": "Glass Desert",
     "homeChapter": 9,
     "kind": "shop",
-    "price": 250,
+    "price": 450,
     "files": {
       "map": "cameltrader-map.svg",
       "side": "cameltrader-side.svg"

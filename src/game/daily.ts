@@ -44,7 +44,7 @@ export function dailyDifficulty(day: number): number {
 }
 
 /** Coins for the first clear of each day's puzzle. */
-export const DAILY_REWARD = 30;
+export const DAILY_REWARD = 15;
 
 export interface DailyState {
   /** Every day whose puzzle was cleared, oldest first (kept for the calendar). */
@@ -138,9 +138,9 @@ export function recordDailyClear(state: DailyState, today: number): DailyClear {
 /* ------------------------------------------------------------ daily gift */
 
 /** Coins on days 1 to 6; day 7 gives a character instead. */
-export const GIFT_COINS = [10, 15, 20, 30, 40, 60];
+export const GIFT_COINS = [5, 8, 10, 15, 20, 30];
 /** Day 7 once every gift character is owned. */
-export const GIFT_DAY7_COINS = 150;
+export const GIFT_DAY7_COINS = 75;
 
 export interface GiftState {
   lastClaimDay: number | null;

@@ -85,7 +85,7 @@ export const THEMES: Theme[] = [
   {
     id: 'citrus',
     name: 'Citrus',
-    price: 100,
+    price: 150,
     dark: false,
     backdrop: '#ffe9a3',
     backdropLift: '#fff5cf',
@@ -109,7 +109,7 @@ export const THEMES: Theme[] = [
   {
     id: 'meadow',
     name: 'Meadow',
-    price: 100,
+    price: 150,
     dark: false,
     backdrop: '#d3eab0',
     backdropLift: '#e8f5cf',
@@ -133,7 +133,7 @@ export const THEMES: Theme[] = [
     id: 'clay',
     name: 'Warm Clay',
     // Was 250; a tester said it "took me ages just to unlock".
-    price: 150,
+    price: 225,
     dark: false,
     backdrop: '#ddcdba',
     backdropLift: '#efe4d5',
@@ -158,7 +158,7 @@ export const THEMES: Theme[] = [
   {
     id: 'bubblegum',
     name: 'Bubblegum',
-    price: 150,
+    price: 225,
     dark: false,
     backdrop: '#ffcfe0',
     backdropLift: '#ffe6ee',
@@ -183,7 +183,7 @@ export const THEMES: Theme[] = [
   {
     id: 'seaside',
     name: 'Seaside',
-    price: 150,
+    price: 225,
     dark: false,
     backdrop: '#93d3ec',
     backdropLift: '#c2e8f6',
@@ -207,7 +207,7 @@ export const THEMES: Theme[] = [
   {
     id: 'lantern',
     name: 'Lantern',
-    price: 200,
+    price: 300,
     dark: true,
     backdrop: '#241829',
     backdropLift: '#35233a',
@@ -230,7 +230,7 @@ export const THEMES: Theme[] = [
   {
     id: 'ink',
     name: 'Ink',
-    price: 400,
+    price: 600,
     dark: true,
     backdrop: '#101219',
     backdropLift: '#1d212c',
@@ -253,7 +253,7 @@ export const THEMES: Theme[] = [
   {
     id: 'porcelain',
     name: 'Porcelain',
-    price: 400,
+    price: 600,
     dark: false,
     backdrop: '#cfd6df',
     backdropLift: '#e8edf2',

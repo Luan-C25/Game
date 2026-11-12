@@ -1123,7 +1123,7 @@ function checkComplete(): void {
 
   let reward = 0;
   if (firstClear) {
-    reward = 10 + stars * 5;
+    reward = 5 + stars * 2;
     saveData.coins += reward;
   }
   saveData.levelsSinceLastAd++;

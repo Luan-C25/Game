@@ -26,12 +26,12 @@ export const GIFT_CHARACTERS: Character[] = [
 
 /** Bought with coins in the shop. */
 export const SHOP_CHARACTERS: Character[] = [
-  { id: 'stallholder', name: 'Mabel the Stallholder', blurb: 'Sells apples and chatter from a striped stall in Market Town.', homeChapter: 4, price: 120 },
-  { id: 'koala', name: 'Gumnut the Koala', blurb: 'Dozes on a gum branch and wakes only for a very good puzzle.', homeChapter: 6, price: 140 },
-  { id: 'ferrycaptain', name: 'Captain Brine', blurb: 'Runs the ferry off Seaside Pier and keeps a lifebuoy handy.', homeChapter: 5, price: 160 },
-  { id: 'snowgoat', name: 'Flurry the Snow-goat', blurb: 'A scarfed mountain goat who hops the icy ledges of Snowy Peaks.', homeChapter: 8, price: 180 },
-  { id: 'lanternkeeper', name: 'Wick the Lantern Keeper', blurb: 'Lights every lantern in the garden at dusk, one pole at a time.', homeChapter: 7, price: 200 },
-  { id: 'cameltrader', name: 'Dune the Camel Trader', blurb: 'Hauls glass and bright rugs across the desert with a patient smile.', homeChapter: 9, price: 250 },
+  { id: 'stallholder', name: 'Mabel the Stallholder', blurb: 'Sells apples and chatter from a striped stall in Market Town.', homeChapter: 4, price: 200 },
+  { id: 'koala', name: 'Gumnut the Koala', blurb: 'Dozes on a gum branch and wakes only for a very good puzzle.', homeChapter: 6, price: 240 },
+  { id: 'ferrycaptain', name: 'Captain Brine', blurb: 'Runs the ferry off Seaside Pier and keeps a lifebuoy handy.', homeChapter: 5, price: 280 },
+  { id: 'snowgoat', name: 'Flurry the Snow-goat', blurb: 'A scarfed mountain goat who hops the icy ledges of Snowy Peaks.', homeChapter: 8, price: 320 },
+  { id: 'lanternkeeper', name: 'Wick the Lantern Keeper', blurb: 'Lights every lantern in the garden at dusk, one pole at a time.', homeChapter: 7, price: 360 },
+  { id: 'cameltrader', name: 'Dune the Camel Trader', blurb: 'Hauls glass and bright rugs across the desert with a patient smile.', homeChapter: 9, price: 450 },
 ];
 
 export const CHARACTERS: Character[] = [...GIFT_CHARACTERS, ...SHOP_CHARACTERS];
