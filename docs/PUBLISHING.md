@@ -240,8 +240,8 @@ Upload the graphics from `store/`:
 
 - `icon-512.png` — app icon
 - `feature-graphic.png` — feature graphic
-- `screenshot-1-menu.png` through `screenshot-6-clay-theme.png` — phone
-  screenshots
+- `screenshot-1-menu.png` through `screenshot-8-promises.png` — phone
+  screenshots (upload them in number order)
 
 ## Step 9 — The closed test (the two-week part)
 

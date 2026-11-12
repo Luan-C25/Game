@@ -128,7 +128,7 @@ board, friendlier music, and a Levels button on the win screen.
 | --- | --- | --- |
 | App icon | 512x512 PNG, no transparency | `store/icon-512.png` |
 | Feature graphic | 1024x500 PNG | `store/feature-graphic.png` |
-| Phone screenshots | 2-8, 1080x1920 | `store/screenshot-*.png` (6 supplied) |
+| Phone screenshots | 2-8, 9:16 | `store/screenshot-*.png` (8 supplied, 886x1574) |
 
 Regenerate all of them with:
 
@@ -137,3 +137,8 @@ npm run build
 node scripts/make-icons.ts
 node scripts/make-store-assets.mjs
 ```
+
+The 1.1.0 screenshots were captured from the game on a phone instead, so
+they show real progress, friends and art: see the notes at the top of
+`scripts/phone-screenshots.mjs`. `make-store-assets.mjs` still makes the
+feature graphic, but its screenshot list is the old 1.0 set.

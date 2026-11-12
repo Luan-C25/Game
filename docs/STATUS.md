@@ -126,7 +126,8 @@ is in [DESIGN.md](./DESIGN.md). The research that picked this game is in
 - Release signing reads from `android/keystore.properties`, which is
   git-ignored along with the keystore itself.
 - `store/` holds the listing copy, the privacy policy, the 512px icon, the
-  1024x500 feature graphic and six 1080x1920 screenshots — all regenerable.
+  1024x500 feature graphic and eight 9:16 phone screenshots (1.1.0, captured
+  from a phone with `scripts/phone-screenshots.mjs`) — all regenerable.
 
 ## How far the laptop toolchain got
 
