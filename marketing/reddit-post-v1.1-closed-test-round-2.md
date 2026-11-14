@@ -92,31 +92,31 @@ Happy to test yours back properly too, drop your link below.
 ## Post 2: r/playmygame (a day after post 1)
 
 A player audience, not other devs, so this is where the genuine play comes
-from. Lead with the game and don't offer a test swap. Check the sidebar first:
-it needs a free, playable build, which a closed test should count as.
+from. The subreddit requires its own template (below, filled in). Tick "Free
+to play", add the Android flair after posting, and don't offer a test swap
+here. The description has to be at least 100 words; this one is 146.
 
 ### Title
 
-Made a colour block puzzle with a new puzzle every day, looking for people who like puzzle games to try it
+Glazeway, a colour block sliding puzzle with a new puzzle every day
 
 ### Body
 
-I've been making a sliding block puzzle for Android. You slide each coloured
-block out through the gate of the same colour, and because they all get in
-each other's way, the order you move them in is the puzzle.
+Game Title: Glazeway
 
-There are 200 levels, all checked by a solver so none of them are impossible,
-and a new daily puzzle with a streak if you like having a reason to come back.
-Hints, undo and restart are free, and there are no timers or lives.
+Playable Link: https://play.google.com/apps/testing/com.tilekiln.glazeway (it's in Google's closed testing, so join https://groups.google.com/g/glazeway-testers first with the Google account your Play Store uses, then open the link and opt in)
 
-I built it with Claude, I'm not really a developer. It's still in Google's
-testing stage, so you join a group first and then opt in:
+Platform: Android
 
-https://groups.google.com/g/glazeway-testers
-https://play.google.com/apps/testing/com.tilekiln.glazeway
+Description: I made a sliding block puzzle for Android. Each level is a board of coloured blocks, and you slide each one out through the gate of the same colour. The catch is that they all get in each other's way, so the order you move them in is the actual puzzle. There are 200 levels across ten chapters, each with its own little map, and every level is checked by a solver before it ships so none of them are impossible. There's also a new daily puzzle with a streak, a daily gift, goals that pay coins and village friends you can collect. Hints, undo and restart are free, and there are no timers or lives. It's still in Google's testing stage, so you join the tester group first and then opt in. I'm especially keen to hear where it got boring, confusing or too hard.
 
-Let me know what you think, good or bad. I'm especially keen to hear where it
-got boring or too hard.
+Free to Play Status:
+
+* [x] Free to play
+* [ ] Demo/Key available
+* [ ] Paid (Allowed only on Tuesdays with [TT] in the title)
+
+Involvement: I'm a solo dev and made all of it myself, with Claude writing most of the code. I'm not really a developer, so I designed it, playtested every level on my own phone and fixed whatever felt wrong.
 
 ---
 
