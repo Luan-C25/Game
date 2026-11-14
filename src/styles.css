@@ -1,0 +1,1645 @@
+/*
+ * Baloo 2 (SIL Open Font License 1.1, see public/fonts/OFL.txt). A variable
+ * face, so one 33 kB latin subset covers every weight the game uses, and it
+ * is bundled rather than fetched so the game still works offline.
+ */
+@font-face {
+  font-family: 'Baloo 2';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/baloo2.woff2') format('woff2');
+}
+
+/*
+ * Chrome styling.
+ *
+ * The chrome is built to look moulded rather than rendered: solid fills, hard
+ * dark outlines, and a real bottom edge that a press physically sinks into.
+ * There are no soft glows, no gradient text and no blurred drop shadows,
+ * because those are what make an interface read as generated rather than made.
+ *
+ * Every colour comes from a custom property the active theme sets at runtime
+ * (see applyTheme in main.ts), so a new theme never needs new CSS.
+ */
+
+:root {
+  --backdrop: #2c3444;
+  --backdrop-lift: #3b4557;
+  --surface: #38414e;
+  --surface-edge: #212832;
+  --line: #4a5462;
+  --text: #eef2f7;
+  --muted: #a3adbb;
+  --accent: #e8a33d;
+  --accent-edge: #a86f18;
+  --accent-ink: #2a2110;
+  --radius: 12px;
+  /* How far a pressed control sinks. */
+  --lift: 4px;
+  /* Rounded display face for anything the player reads at a glance. Body
+     copy stays on the system font, which is more legible at small sizes. */
+  --font-display: 'Baloo 2', ui-rounded, 'Segoe UI Rounded', system-ui, sans-serif;
+  --ink: #2a1c33;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* One quiet light source from above. The board is the only loud thing. */
+  background: radial-gradient(120% 70% at 50% -10%, var(--backdrop-lift), var(--backdrop) 70%);
+  background-attachment: fixed;
+}
+
+#app {
+  position: relative;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom));
+  gap: 14px;
+}
+
+.screen[hidden] {
+  display: none !important;
+}
+
+.stack {
+  margin: auto;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+/* Four tiles in the board's own material, set above the wordmark. */
+.brand-tiles {
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+  margin-bottom: 18px;
+}
+
+.brand-tiles span {
+  width: 42px;
+  height: 42px;
+  border-radius: 9px;
+  background: var(--tile);
+  border: 3px solid rgba(0, 0, 0, 0.45);
+  box-shadow:
+    0 5px 0 rgba(0, 0, 0, 0.4),
+    inset 0 3px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* A slight tilt on the outer pair: hand-set, not machine-aligned. */
+.brand-tiles span:first-child {
+  transform: rotate(-7deg);
+}
+
+.brand-tiles span:last-child {
+  transform: rotate(7deg);
+}
+
+/*
+ * Logo: a moulded plate, not gradient text. It deliberately uses the tray
+ * colour rather than the accent, so the only accent-coloured thing on the
+ * screen is the action you are meant to take.
+ */
+.brand h1 {
+  margin: 0;
+  display: inline-block;
+  padding: 11px 26px 13px;
+  font-size: clamp(1.9rem, 9.5vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--text);
+  background: var(--surface);
+  border: 3px solid var(--surface-edge);
+  border-radius: 16px;
+  box-shadow:
+    0 6px 0 var(--surface-edge),
+    inset 0 3px 0 rgba(255, 255, 255, 0.16);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
+}
+
+.tagline {
+  margin: 14px 0 0;
+  color: var(--muted);
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn {
+  appearance: none;
+  font-family: var(--font-display);
+  border: 3px solid var(--surface-edge);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  padding: 13px 18px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  min-height: 52px;
+  box-shadow:
+    0 var(--lift) 0 var(--surface-edge),
+    inset 0 2px 0 rgba(255, 255, 255, 0.14);
+  transition: transform 0.06s linear, box-shadow 0.06s linear;
+}
+
+.btn:active {
+  transform: translateY(var(--lift));
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.1);
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent-edge);
+  color: var(--accent-ink);
+  box-shadow:
+    0 var(--lift) 0 var(--accent-edge),
+    inset 0 2px 0 rgba(255, 255, 255, 0.4);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.btn-primary:active {
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-quiet {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  font-weight: 600;
+  color: var(--muted);
+  min-height: 44px;
+}
+
+.btn-quiet:active {
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-danger {
+  background: transparent;
+  border-color: #b8503f;
+  color: #e2705c;
+  box-shadow: 0 var(--lift) 0 #7d3327;
+}
+
+.bar {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.bar h2 {
+  font-family: var(--font-display);
+  margin: 0;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.icon-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius);
+  border: 3px solid var(--surface-edge);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow:
+    0 var(--lift) 0 var(--surface-edge),
+    inset 0 2px 0 rgba(255, 255, 255, 0.14);
+}
+
+.icon-btn:active {
+  transform: translateY(var(--lift));
+  box-shadow: none;
+}
+
+/* Coin counter: a stamped capsule. */
+.coins {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  color: var(--text);
+  background: var(--surface-edge);
+  border: 3px solid var(--surface-edge);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 0.85rem;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+.panel {
+  background: var(--surface);
+  border: 3px solid var(--surface-edge);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 540px;
+  width: 100%;
+  margin: 0 auto;
+  box-shadow:
+    0 var(--lift) 0 var(--surface-edge),
+    inset 0 2px 0 rgba(255, 255, 255, 0.12);
+}
+
+.panel h3 {
+  margin: 4px 0 0;
+  font-size: 1rem;
+}
+
+.lead {
+  margin: 0;
+  color: var(--muted);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+}
+
+.row small {
+  display: block;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.row input {
+  width: 24px;
+  height: 24px;
+  accent-color: var(--accent);
+}
+
+hr {
+  border: 0;
+  border-top: 2px solid var(--surface-edge);
+  margin: 4px 0;
+  width: 100%;
+}
+
+.promises {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* --- level select: one chapter's map ------------------------------------ */
+
+/* The map fills the screen; the header and chapter switcher float over it. */
+.screen-levels {
+  position: relative;
+  padding: 0;
+  gap: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.screen-levels > .bar,
+.chapter-nav {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  padding: 0 14px;
+  pointer-events: none;
+}
+
+.screen-levels > .bar {
+  top: max(14px, env(safe-area-inset-top));
+}
+
+.screen-levels > .bar > *,
+.chapter-nav > * {
+  pointer-events: auto;
+}
+
+/* Text can't trust a picture behind it, so the title sits on a plate. */
+.screen-levels > .bar h2 {
+  justify-self: center;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 3px solid var(--surface-edge);
+  box-shadow: 0 4px 0 var(--surface-edge);
+  font-size: 1.05rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.map-scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.map {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  aspect-ratio: 375 / 1640;
+}
+
+.map-art,
+.map-nodes,
+.map-hits {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.map-art {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.map-nodes {
+  pointer-events: none;
+  overflow: visible;
+}
+
+.map-nodes .pin {
+  animation: pin-bob 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes pin-bob {
+  to {
+    transform: translateY(-6px);
+  }
+}
+
+.still .map-nodes .pin {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-nodes .pin {
+    animation: none;
+  }
+}
+
+/* Invisible tap targets over each open tile, larger than the tile itself. */
+.map-hit {
+  position: absolute;
+  width: 18%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border: 0;
+  padding: 0;
+  border-radius: 16px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.map-hit:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: -4px;
+}
+
+.chapter-nav {
+  bottom: max(14px, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: 56px 1fr 56px;
+  align-items: center;
+  gap: 10px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.chapter-step {
+  width: 56px;
+  height: 52px;
+  border-radius: 18px;
+  border: 3px solid var(--surface-edge);
+  background: var(--surface);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow:
+    0 6px 0 var(--surface-edge),
+    inset 0 3px 0 rgba(255, 255, 255, 0.16);
+}
+
+.chapter-step svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chapter-step:active {
+  transform: translateY(6px);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.12);
+}
+
+.chapter-step:disabled {
+  visibility: hidden;
+}
+
+.chapter-plate {
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 18px 7px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 3px solid var(--surface-edge);
+  box-shadow: 0 5px 0 var(--surface-edge);
+  font-family: var(--font-display);
+  line-height: 1.15;
+}
+
+.chapter-num {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.chapter-stars {
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.screen-game {
+  gap: 10px;
+  /* The chapter's scenery: a horizon at the top, a foreground at the foot,
+     plain ground in the middle where the board sits. */
+  background: var(--chapter-bg, none) center / cover no-repeat, var(--backdrop);
+}
+
+/* Theme text colours can't be trusted on a picture, so labels sit on plates.
+   The "free and unlimited" line has no room here; the Promises screen says it. */
+.screen-game .tool-name {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 2px solid var(--surface-edge);
+  color: var(--text);
+}
+
+.screen-game .tool-note {
+  display: none;
+}
+
+/* A see-through cap would show the scenery through it; dim the icon instead. */
+.screen-game .tool:disabled .tool-cap {
+  opacity: 1;
+}
+
+.screen-game .tool:disabled .tool-cap svg {
+  opacity: 0.4;
+}
+
+.board-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+#board {
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  display: block;
+  background: transparent;
+}
+
+.tools {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 460px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.tool-note {
+  margin: 0;
+  text-align: center;
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+
+.theme-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.theme-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 2px solid var(--surface-edge);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.swatches {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  border: 2px solid rgba(0, 0, 0, 0.3);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 16, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 20;
+}
+
+.overlay[hidden] {
+  display: none !important;
+}
+
+.card {
+  background: var(--surface);
+  border: 3px solid var(--surface-edge);
+  border-radius: 18px;
+  padding: 22px;
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  box-shadow:
+    0 6px 0 var(--surface-edge),
+    inset 0 3px 0 rgba(255, 255, 255, 0.14);
+  animation: pop 0.2s steps(3, end);
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.9);
+  }
+}
+
+.card h2 {
+  font-family: var(--font-display);
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.stars {
+  font-size: 2.2rem;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.star {
+  color: var(--surface-edge);
+  animation: star-land 0.28s steps(4, end) both;
+}
+
+.star.earned {
+  color: #ffc23d;
+  text-shadow: 0 3px 0 #b87b0b;
+}
+
+@keyframes star-land {
+  from {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.reward {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--accent) !important;
+  font-size: 1.05rem;
+}
+
+.footnote {
+  margin: 0;
+  font-size: 0.76rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  /* Clears the control caps and their labels: a toast that covers the button
+     you just pressed hides the thing it is talking about. */
+  bottom: calc(136px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 3px solid var(--surface-edge);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  z-index: 30;
+  max-width: calc(100vw - 28px);
+  text-align: center;
+  box-shadow: 0 4px 0 var(--surface-edge);
+}
+
+.toast[hidden] {
+  display: none !important;
+}
+
+:root.still * {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ==========================================================================
+   Main menu
+   --------------------------------------------------------------------------
+   The menu is the game's shop window, so it is louder than the rest of the
+   app: moulded capsules with a glossy cap, a thick coloured underside you can
+   physically press into, and one action that dwarfs everything else.
+   ========================================================================== */
+
+.screen-home {
+  /* The menu keeps its own warm backdrop across every theme - it is a
+     branded moment rather than part of the board's material. */
+  background:
+    radial-gradient(90% 55% at 50% 0%, #ffd9ec 0%, transparent 60%),
+    radial-gradient(80% 50% at 15% 100%, #d7e6ff 0%, transparent 62%),
+    linear-gradient(180deg, #fff1f8 0%, #f2e6ff 100%);
+}
+
+.screen-home .tagline,
+.screen-home .footnote {
+  color: #6c5878;
+}
+
+.screen-home .stack {
+  max-width: 380px;
+}
+
+/* Wordmark: solid fill, crisp outline, and a slab of extrusion under it.
+   No gradient - a candy gradient here is exactly the tell we removed. */
+.brand h1 {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  font-family: var(--font-display);
+  font-size: clamp(2.9rem, 15vw, 4.2rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: #fff4fa;
+  transform: rotate(-2.5deg);
+  text-shadow:
+    -3px 0 0 var(--ink), 3px 0 0 var(--ink), 0 -3px 0 var(--ink), 0 3px 0 var(--ink),
+    -2px -2px 0 var(--ink), 2px -2px 0 var(--ink), -2px 2px 0 var(--ink), 2px 2px 0 var(--ink),
+    0 6px 0 #ff5fa8, 0 9px 0 #d63d84, 0 12px 0 var(--ink), 0 18px 22px rgba(70, 20, 60, 0.35);
+}
+
+.brand h1 span {
+  display: inline-block;
+}
+
+.brand-tiles {
+  margin-bottom: 22px;
+}
+
+.brand-tiles span {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 3px solid var(--ink);
+  /* A coloured underside, matching the capsules below - a grey shadow here
+     reads as dirt against the pale backdrop. */
+  box-shadow:
+    0 6px 0 var(--tile-deep),
+    0 10px 12px rgba(90, 50, 90, 0.22),
+    inset 0 4px 0 rgba(255, 255, 255, 0.5);
+}
+
+.screen-home .tagline {
+  margin-top: 22px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.02rem;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* --- the capsule ------------------------------------------------------- */
+
+.pill {
+  position: relative;
+  appearance: none;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--ink);
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform 0.07s ease-out, box-shadow 0.07s ease-out;
+}
+
+/* The gloss: a fat highlight capping the top half, which is what makes a
+   plastic button look wet rather than flat. */
+.pill::before {
+  content: '';
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 5px;
+  height: 42%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.12));
+  pointer-events: none;
+}
+
+.pill:active {
+  transform: translateY(var(--sink));
+  box-shadow: 0 0 0 var(--pill-deep);
+}
+
+/* --- the one that matters ---------------------------------------------- */
+
+.pill-play {
+  --sink: 12px;
+  --pill-deep: #c0165f;
+  min-height: 108px;
+  padding: 10px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  background: linear-gradient(180deg, #ff8fc5 0%, #ff4d95 48%, #f52d80 100%);
+  color: #fff;
+  box-shadow:
+    0 12px 0 var(--pill-deep),
+    0 20px 28px rgba(120, 20, 70, 0.4);
+}
+
+.pill-play .pill-label {
+  font-size: 2.5rem;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  text-shadow:
+    -2px 0 0 var(--ink), 2px 0 0 var(--ink), 0 -2px 0 var(--ink), 0 2px 0 var(--ink),
+    0 4px 0 rgba(42, 28, 51, 0.45);
+}
+
+.pill-play .pill-sub {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 2px 0 rgba(140, 25, 80, 0.6);
+}
+
+.pill-play .pill-sub:empty {
+  display: none;
+}
+
+/* --- the quieter pair -------------------------------------------------- */
+
+.pill-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.pill-sweet {
+  --sink: 7px;
+  --pill-deep: var(--candy-deep);
+  min-height: 68px;
+  font-size: 1.22rem;
+  background: var(--candy);
+  box-shadow:
+    0 7px 0 var(--candy-deep),
+    0 12px 16px rgba(90, 50, 90, 0.25);
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.5);
+}
+
+.pill-small {
+  --sink: 6px;
+  min-height: 58px;
+  font-size: 1.05rem;
+  opacity: 0.94;
+  box-shadow:
+    0 6px 0 var(--candy-deep),
+    0 10px 14px rgba(90, 50, 90, 0.2);
+}
+
+/* The pair sits close under the main action, so it reads as one group. */
+.menu .pill-pair:first-of-type {
+  margin-top: 2px;
+}
+
+.menu .pill-pair + .pill-pair {
+  margin-top: -4px;
+}
+
+
+/* ==========================================================================
+   Game screen furniture
+   --------------------------------------------------------------------------
+   The header and the controls are moulded parts of the same device as the
+   tray: raised badges with a lit top edge and a hard base, a readout sunk
+   into the frame, and caps that physically travel when pressed. Same matte
+   satin finish throughout - no blurred shadows, no floating rectangles.
+   ========================================================================== */
+
+.game-bar {
+  align-items: center;
+}
+
+/* The badge is sized by its contents and centred in the bar, rather than
+   stretching to fill the column. */
+.game-bar .pod-level {
+  justify-self: center;
+}
+
+/* --- raised badges ----------------------------------------------------- */
+
+.pod {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border: 3px solid var(--surface-edge);
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow:
+    0 4px 0 var(--surface-edge),
+    inset 0 2px 0 rgba(255, 255, 255, 0.18);
+}
+
+.pod strong {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+}
+
+.pod-cap {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pod-level {
+  gap: 7px;
+}
+
+/* A chunky struck coin, with a thick rim and a lit upper face. */
+.coin {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  flex: none;
+  background: #ffc93d;
+  border: 3px solid #9a6510;
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -4px 0 #e0a52c,
+    0 2px 0 #7d5210;
+}
+
+/* --- recessed readout -------------------------------------------------- */
+
+.readout {
+  margin: 0 auto;
+  padding: 5px 18px;
+  border-radius: 999px;
+  background: var(--surface-edge);
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  box-shadow:
+    inset 0 3px 5px rgba(0, 0, 0, 0.45),
+    0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* --- control caps ------------------------------------------------------ */
+
+.tools {
+  display: grid;
+  /* The primary action is wider than the two utilities beside it. */
+  grid-template-columns: 1fr 1.45fr 1fr;
+  gap: 12px;
+  align-items: end;
+  max-width: 440px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.tool {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+/* The cap is the physical part; the label sits beneath it, not on it. */
+.tool-cap {
+  --cap-face: var(--surface);
+  --cap-base: var(--surface-edge);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 58px;
+  border: 3px solid var(--cap-base);
+  border-radius: 18px;
+  background: var(--cap-face);
+  color: var(--text);
+  box-shadow:
+    0 6px 0 var(--cap-base),
+    inset 0 3px 0 rgba(255, 255, 255, 0.16);
+  transition: transform 0.06s linear, box-shadow 0.06s linear;
+}
+
+.tool-name {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  line-height: 1;
+}
+
+.tool svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tool svg .solid {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* The primary action: a pill, in the accent, physically taller. */
+.tool-key .tool-cap {
+  --cap-face: var(--accent);
+  --cap-base: var(--accent-edge);
+  height: 66px;
+  border-radius: 999px;
+  color: var(--accent-ink);
+  box-shadow:
+    0 7px 0 var(--cap-base),
+    inset 0 3px 0 rgba(255, 255, 255, 0.42);
+}
+
+.tool-key .tool-name {
+  color: var(--text);
+}
+
+.tool-key svg {
+  width: 30px;
+  height: 30px;
+}
+
+.tool:active .tool-cap {
+  transform: translateY(6px);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.12);
+}
+
+.tool-key:active .tool-cap {
+  transform: translateY(7px);
+}
+
+.tool:disabled {
+  cursor: default;
+}
+
+.tool:disabled .tool-cap {
+  opacity: 0.42;
+  transform: none;
+  box-shadow: 0 6px 0 var(--cap-base);
+}
+
+.tool:disabled .tool-name {
+  opacity: 0.5;
+}
+
+.icon-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- depth update: home extras, Daily Kiln, ledger, gift ----------------- */
+
+.pill-daily,
+#btn-goals {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.1;
+}
+
+.pill-note {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+/* A raised glaze bead: something on the ledger is ready to claim. */
+.pill-dot {
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ff5a4d;
+  box-shadow:
+    0 3px 0 #b3261e,
+    inset 0 2px 0 rgba(255, 255, 255, 0.5);
+}
+
+.pill-dot[hidden] {
+  display: none;
+}
+
+.screen .panel {
+  overflow-y: auto;
+}
+
+.daily-panel {
+  text-align: center;
+}
+
+.streak-plate {
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 150px;
+  padding: 10px 24px 12px;
+  border-radius: 22px;
+  background: var(--accent);
+  border: 3px solid var(--accent-edge);
+  color: var(--accent-ink);
+  font-family: var(--font-display);
+  box-shadow:
+    0 6px 0 var(--accent-edge),
+    inset 0 3px 0 rgba(255, 255, 255, 0.4);
+}
+
+.streak-plate strong {
+  font-size: 2.6rem;
+  line-height: 1;
+}
+
+.streak-plate span {
+  font-weight: 700;
+}
+
+/* The month as a tray of tiles: each cleared day is a fired, glazed tile. */
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  padding: 10px;
+  border-radius: 14px;
+  background: var(--surface-edge);
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.35);
+}
+
+.cal-head {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--surface);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.cal-day.fired {
+  background: #e69f00;
+  color: #fff;
+  box-shadow:
+    0 3px 0 #7f5800,
+    inset 0 2px 0 rgba(255, 255, 255, 0.4);
+}
+
+.cal-day.today {
+  outline: 3px solid #fff;
+  outline-offset: -1px;
+}
+
+.cal-day.ahead {
+  opacity: 0.45;
+  box-shadow: none;
+}
+
+/* Streak badges: fired-clay medallions. Placeholder until the badge art lands. */
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 78px;
+}
+
+.badge-face {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--muted);
+  background: var(--surface-edge);
+  border: 3px dashed var(--muted);
+  opacity: 0.7;
+}
+
+.badge.earned .badge-face {
+  color: #5a2a00;
+  background: #ffc96b;
+  border: 3px solid #b8701c;
+  opacity: 1;
+  box-shadow:
+    0 4px 0 #8a4f10,
+    inset 0 3px 0 rgba(255, 255, 255, 0.5);
+}
+
+.badge small {
+  font-size: 0.7rem;
+  color: var(--muted);
+  line-height: 1.2;
+}
+
+/* Potter's Ledger rows. */
+.goal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.goal {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--surface-edge);
+}
+
+.goal.claimed {
+  opacity: 0.55;
+}
+
+.goal-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.goal-text strong {
+  font-size: 0.92rem;
+  line-height: 1.25;
+}
+
+.goal-text small {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.goal-groove {
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.goal-groove > div {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--accent);
+}
+
+.goal-claim {
+  min-width: 64px;
+  min-height: 44px;
+  padding: 8px 10px;
+  font-family: var(--font-display);
+}
+
+.goal-claim:disabled {
+  cursor: default;
+  transform: none;
+}
+
+/* The gift card: a week of kiln slots, day 7 visibly bigger. */
+.gift-card {
+  max-width: 360px;
+}
+
+.gift-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.gift-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 2px;
+  border-radius: 12px;
+  background: var(--surface-edge);
+  font-family: var(--font-display);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.gift-slot small {
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.gift-slot strong {
+  font-size: 1.05rem;
+}
+
+.gift-slot.big {
+  grid-column: span 2;
+  background: #ffc96b;
+  color: #5a2a00;
+  box-shadow:
+    0 4px 0 #8a4f10,
+    inset 0 3px 0 rgba(255, 255, 255, 0.5);
+}
+
+.gift-slot.big small {
+  color: #8a4f10;
+}
+
+.gift-slot.opened {
+  opacity: 0.45;
+}
+
+.gift-slot.now {
+  outline: 3px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* --- depth update art ---------------------------------------------------- */
+
+.pill-icon {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 2px;
+}
+
+.badge-face {
+  position: relative;
+  border: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+.badge-face img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.badge:not(.earned) .badge-face img {
+  opacity: 0.7;
+}
+
+/* The year badge's numerals, written by the game over the medallion. */
+.badge-year-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 6%;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: #ffe9b0;
+  text-shadow: 0 2px 0 #3d1c10;
+}
+
+.gift-kiln {
+  width: 84px;
+  height: 96px;
+  align-self: center;
+  margin-bottom: -4px;
+}
+
+/* Shop sections: chunky tabs moulded into one strip. */
+.shop-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  max-width: 540px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 5px;
+  border-radius: 18px;
+  background: var(--surface-edge);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.35);
+}
+
+.shop-tab {
+  appearance: none;
+  border: 0;
+  border-radius: 13px;
+  padding: 9px 2px;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.86rem;
+  cursor: pointer;
+}
+
+.shop-tab.on {
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow:
+    0 4px 0 var(--accent-edge),
+    inset 0 2px 0 rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.shop-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.shop-item small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+.shop-figure {
+  width: 46px;
+  height: 57px;
+  flex: none;
+}
+
+/* On a phone the button drops under the text instead of squeezing the name
+   into three lines; on a wide screen the row stays on one line. */
+.theme-row {
+  flex-wrap: wrap;
+}
+
+.theme-row .shop-item {
+  flex: 1 1 220px;
+}
+
+.theme-row .btn {
+  flex: none;
+  margin-left: auto;
+}
+
+/* The pottery shelf: wooden planks, two pots a plank, a plaque under each. */
+.shelf-count {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.shelf {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-width: 420px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 10px 12px 0;
+  border-radius: 18px;
+  background: #f3e3c4;
+  border: 4px solid #8a5a3c;
+  box-shadow: 0 6px 0 #5e3a24;
+  overflow-y: auto;
+}
+
+.shelf-slot {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 6px;
+  /* The plank each pot stands on. */
+  background: linear-gradient(#f3e3c4 0 0) top / 100% calc(100% - 52px) no-repeat, #b07a4f;
+  border-bottom: 6px solid #6f452c;
+}
+
+.shelf-slot img {
+  width: 92px;
+  height: 115px;
+  margin-bottom: -4px;
+}
+
+.shelf-slot figcaption {
+  width: calc(100% - 10px);
+  margin: 6px 0 8px;
+  padding: 3px 6px 4px;
+  border-radius: 8px;
+  background: #fff4dc;
+  color: #5e3a24;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.78rem;
+  line-height: 1.15;
+  box-shadow: 0 2px 0 #6f452c;
+}
+
+.shelf-slot figcaption small {
+  display: block;
+  font-weight: 600;
+  font-size: 0.64rem;
+  opacity: 0.8;
+}
+
+/* Friends standing beside the road on the chapter maps. */
+.map-friends {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.map-friend {
+  position: absolute;
+  width: 10%;
+  transform: translate(-50%, -85%);
+}
+
+/* The companion sits at the foot of the board, over the scenery. */
+.board-wrap {
+  position: relative;
+}
+
+.companion {
+  /* left, top and size come from positionCompanion() in main.ts. */
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 52px;
+  height: 64px;
+  transform: translateX(-50%);
+  object-fit: contain;
+  object-position: bottom;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.companion[hidden] {
+  display: none;
+}
