@@ -1,0 +1,65 @@
+[
+  {
+    "file": "finishes-sheet.svg",
+    "width": 600,
+    "height": 524,
+    "label": "Four glaze finishes on six tile colours",
+    "group": "finishes"
+  },
+  {
+    "file": "effect-kiln-puff.svg",
+    "width": 160,
+    "height": 160,
+    "label": "Exit effect: kiln puff, peak frame (180 ms)",
+    "group": "effects"
+  },
+  {
+    "file": "effect-petals.svg",
+    "width": 160,
+    "height": 160,
+    "label": "Exit effect: petals, peak frame (220 ms)",
+    "group": "effects"
+  },
+  {
+    "file": "effect-glaze-splash.svg",
+    "width": 160,
+    "height": 160,
+    "label": "Exit effect: glaze splash, peak frame (150 ms)",
+    "group": "effects"
+  },
+  {
+    "file": "shop-mockup.svg",
+    "width": 375,
+    "height": 812,
+    "label": "Shop screen mock-up (375x812)",
+    "group": "shop"
+  },
+  {
+    "file": "shop-mockup-scroll.svg",
+    "width": 375,
+    "height": 1980,
+    "label": "Shop as one scrolling page, four sections stacked",
+    "group": "shop"
+  },
+  {
+    "file": "glazes.md",
+    "width": null,
+    "height": null,
+    "label": "Glaze finishes: drawing instructions",
+    "group": "finishes"
+  },
+  {
+    "file": "effects.md",
+    "width": null,
+    "height": null,
+    "label": "Exit effects: frames and canvas code",
+    "group": "effects"
+  },
+  {
+    "file": "NOTES-part.md",
+    "width": null,
+    "height": null,
+    "label": "Part notes: files, sizes, undecided items",
+    "group": "finishes"
+  }
+]
